@@ -5,6 +5,7 @@ import com.liparistudios.reactspringsecmysql.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,11 @@ public class PermissionService {
         this.repository = repo;
     }
 
+
+    public List<Permission> getAllPermissions() {
+        return this.repository.findAll();
+    }
+
     public void addPermission(Permission perm) {
         // check
         Optional<Permission> permissionOptional = this.repository.findByName( perm.getName() );
@@ -24,6 +30,10 @@ public class PermissionService {
             throw new IllegalStateException("Permesso già esistente");
         }
         this.repository.save( perm );
+    }
+
+    public Optional<Permission> getByName( String name ) {
+        return this.repository.findByName( name );
     }
 
 }

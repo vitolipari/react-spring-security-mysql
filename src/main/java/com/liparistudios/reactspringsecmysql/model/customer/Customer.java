@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +12,8 @@ import javax.persistence.Table;
 @Entity
 @Table
 public class Customer {
+    @Id
+    @GeneratedValue( strategy = GenerationType.SEQUENCE )
     private Long id;
     private String email;
 }
