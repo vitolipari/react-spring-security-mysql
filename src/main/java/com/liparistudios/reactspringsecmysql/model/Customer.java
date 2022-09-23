@@ -16,6 +16,8 @@ public class Customer {
     @GeneratedValue( strategy = GenerationType.SEQUENCE )
     private Long id;
     private String email;
+    private String password;
+    @ManyToOne
     private Role role;
 }
 

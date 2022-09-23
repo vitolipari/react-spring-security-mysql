@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 public class PermissionConfig {
@@ -17,7 +18,7 @@ public class PermissionConfig {
                 args -> {
                     System.out.println("operazioni di avvio al permission service");
 
-                    List
+                    Stream
                         .of(
                             new Permission(null, "LOGIN",               "permesso di accesso"),
                             new Permission(null, "LOGOUT",              "permesso di uscita"),
@@ -27,12 +28,14 @@ public class PermissionConfig {
                             new Permission(null, "DELETE_CUSTOMER",     "permesso di cancellazione customers"),
                             new Permission(null, "DOWNLOAD_CUSTOMER",   "permesso di download dei dai del customers")
                         )
-                        .stream()
-                        .map( perm -> {
+                        .forEach( perm -> {
+                            System.out.println("aggiungo permesso");
+                            System.out.println( perm.toString() );
                             permissionService.addPermission(perm);
-                            return null;
                         })
                     ;
+
+                    System.out.println("fine dell'inserimento dei permessi");
 
                 }
         );
