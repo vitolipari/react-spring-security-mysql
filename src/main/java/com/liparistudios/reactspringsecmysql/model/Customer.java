@@ -1,4 +1,4 @@
-package com.liparistudios.reactspringsecmysql.model.permission;
+package com.liparistudios.reactspringsecmysql.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,10 +11,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table
-public class Permission {
+public class Customer {
     @Id
     @GeneratedValue( strategy = GenerationType.SEQUENCE )
     private Long id;
-    private String name;
-    private String description;
+    private String email;
+    private Role role;
 }
+

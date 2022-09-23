@@ -1,6 +1,6 @@
 package com.liparistudios.reactspringsecmysql.service;
 
-import com.liparistudios.reactspringsecmysql.model.role.Role;
+import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,11 @@ public class RoleService {
         roleRepository.save( role );
     }
 
-
+    /*
     @Transactional
     public Role editRole( Role role ) {
 
     }
+    */
 
 }

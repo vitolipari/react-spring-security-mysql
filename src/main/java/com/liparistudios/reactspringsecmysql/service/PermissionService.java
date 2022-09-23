@@ -1,6 +1,6 @@
 package com.liparistudios.reactspringsecmysql.service;
 
-import com.liparistudios.reactspringsecmysql.model.permission.Permission;
+import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.repository.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

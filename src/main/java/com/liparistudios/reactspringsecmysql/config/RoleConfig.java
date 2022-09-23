@@ -1,7 +1,7 @@
 package com.liparistudios.reactspringsecmysql.config;
 
-import com.liparistudios.reactspringsecmysql.model.permission.Permission;
-import com.liparistudios.reactspringsecmysql.model.role.Role;
+import com.liparistudios.reactspringsecmysql.model.Permission;
+import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.service.PermissionService;
 import com.liparistudios.reactspringsecmysql.service.RoleService;
 import org.springframework.boot.CommandLineRunner;
@@ -13,9 +13,9 @@ import java.util.List;
 
 @Configuration
 public class RoleConfig {
-
+    /*
     @Bean
-    CommandLineRunner runner(RoleService roleService, PermissionService permissionService) {
+    CommandLineRunner roleCommandLineRunner(RoleService roleService, PermissionService permissionService) {
         return (
             args -> {
                 System.out.println("operazioni di avvio al role service");
@@ -39,5 +39,6 @@ public class RoleConfig {
             }
         );
     }
+    */
 
 }

@@ -1,8 +1,7 @@
 package com.liparistudios.reactspringsecmysql.config;
 
-import com.liparistudios.reactspringsecmysql.model.permission.Permission;
+import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.service.PermissionService;
-import com.liparistudios.reactspringsecmysql.service.RoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +12,7 @@ import java.util.List;
 public class PermissionConfig {
 
     @Bean
-    CommandLineRunner runner(PermissionService permissionService) {
+    CommandLineRunner permissionCommandLineRunner(PermissionService permissionService) {
         return (
                 args -> {
                     System.out.println("operazioni di avvio al permission service");
