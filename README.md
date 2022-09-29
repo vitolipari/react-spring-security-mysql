@@ -1,7 +1,7 @@
 seguendo qesta guida
 https://www.youtube.com/watch?v=KYNR5js2cXE
 
-sono giunto a 21:54
+sono giunto a 21:54, manca il POM da sistemare
 
 
 a seguire
