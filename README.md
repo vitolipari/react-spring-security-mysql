@@ -1,7 +1,7 @@
 seguendo qesta guida
 https://www.youtube.com/watch?v=KYNR5js2cXE
 
-sono giunto a 21:54, manca il POM da sistemare
+sono giunto a 26:00, manca il POM da sistemare
 
 
 a seguire
@@ -24,6 +24,6 @@ openssl rsa -in ./keypair.pem -pubout -out ./public.pem
 
 estrazione della chiave privata
 ```bash
-openssl pkc8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./private.pem
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./private.pem
 ```
 

@@ -1,14 +1,17 @@
 package com.liparistudios.reactspringsecmysql;
 
+import com.liparistudios.reactspringsecmysql.config.RsaKeyProperties;
 import com.liparistudios.reactspringsecmysql.service.PermissionService;
 import com.liparistudios.reactspringsecmysql.service.RoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
 public class ReactSpringSecMysqlApplication {
 
@@ -16,10 +19,10 @@ public class ReactSpringSecMysqlApplication {
 		SpringApplication.run(ReactSpringSecMysqlApplication.class, args);
 	}
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	// @Bean
+	// PasswordEncoder passwordEncoder() {
+		// return new BCryptPasswordEncoder();
+	//}
 
 	@Bean
 	CommandLineRunner runner() {

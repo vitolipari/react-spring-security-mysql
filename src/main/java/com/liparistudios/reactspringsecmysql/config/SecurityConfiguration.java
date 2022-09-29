@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -18,9 +20,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private RsaKeyProperties rsaKeyProperties;
+
+    // @Autowired
+    // private AuthEntryPointJwt unauthorizedHandler;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
 
         return (
             http
@@ -57,11 +63,11 @@ public class SecurityConfiguration {
 
 
                 // Gestione eccezioni
-                .exceptionHandling()
-                .authenticationEntryPoint( unauthorizedHandler )
+                // .exceptionHandling()
+                // .authenticationEntryPoint( unauthorizedHandler )
 
                 // Sessione
-                .and()
+                // .and()
 
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 
@@ -70,21 +76,18 @@ public class SecurityConfiguration {
                 // .sessionCreationPolicy( SessionCreationPolicy.STATELESS )
 
 
-
-
-
-
-
-                .and()
+                //.and()
                 .httpBasic( Customizer.withDefaults() )
                 .build()
 
         );
-        ;
 
 
+    }
 
-
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getRsaPublicKey() ).build();
     }
 
 
