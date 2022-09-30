@@ -18,6 +18,7 @@ public class PermissionConfig {
                 args -> {
                     System.out.println("operazioni di avvio al permission service");
 
+                    /*
                     Stream
                         .of(
                             new Permission(null, "LOGIN",               "permesso di accesso"),
@@ -36,6 +37,7 @@ public class PermissionConfig {
                     ;
 
                     System.out.println("fine dell'inserimento dei permessi");
+                    */
 
                 }
         );

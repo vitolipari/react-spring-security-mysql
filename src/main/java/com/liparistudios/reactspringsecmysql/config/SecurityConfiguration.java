@@ -62,7 +62,12 @@ public class SecurityConfiguration {
 
                         // rotte libere
                         .antMatchers("/token").permitAll()
+                        .antMatchers("/signin").permitAll()
+                        .antMatchers("/signup").permitAll()
                         // .antMatchers("").permitAll()
+
+                        .antMatchers("/prova", "/test").hasAnyRole("Admin", "Editor", "User")
+                        .antMatchers("/prova2", "/test2").hasRole("Admin")
 
                         // rotte private
                         .anyRequest().authenticated()
@@ -83,6 +88,8 @@ public class SecurityConfiguration {
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
                 // .sessionCreationPolicy( SessionCreationPolicy.STATELESS )
 
+
+                .headers( header -> header.frameOptions().sameOrigin() )
 
                 //.and()
                 .httpBasic( Customizer.withDefaults() )
