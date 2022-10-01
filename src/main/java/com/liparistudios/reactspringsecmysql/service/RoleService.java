@@ -21,6 +21,17 @@ public class RoleService {
         roleRepository.save( role );
     }
 
+    public Role findByName( String roleName ) {
+        return
+            this.roleRepository
+                .findByName( roleName )
+                .orElseThrow( () -> {
+                    throw new IllegalStateException("Role not Exists");
+                })
+            ;
+
+    }
+
     /*
     @Transactional
     public Role editRole( Role role ) {

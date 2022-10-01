@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CustomerServiceImplementation implements CustomerService, UserDetailsService {
+public class CustomerServiceImplementation implements CustomerService/*, UserDetailsService*/ {
 
     private final CustomerRepository customerRepository;
     private final RoleRepository roleRepository;
@@ -44,7 +44,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
         if( customer.isPresent() ) {
             Optional<Role> roleToFind = roleRepository.findByName( roleName );
             if( roleToFind.isPresent() ) {
-                customer.get().setRole( roleToFind.get() );
+                customer.get().getRoles().add( roleToFind.get() );
             }
             else {
                 // ruolo inesistente
@@ -65,8 +65,24 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     }
 
 
+    public Customer loadCustomerByEmail(String email) throws UsernameNotFoundException {
+        return loadCustomerByUsername( email );
+    }
+
+
+    public Customer loadCustomerByUsername(String username) throws UsernameNotFoundException {
+        return
+            customerRepository.findByEmail(username)
+                .orElseThrow(() -> {
+                    throw new UsernameNotFoundException("email non esiste");
+                })
+            ;
+    }
+
+    /*
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         Optional<Customer> searchedCustomer = customerRepository.findByEmail( username );
         Customer customer = null;
         if( !searchedCustomer.isPresent() ) {
@@ -76,7 +92,9 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
             customer = searchedCustomer.get();
         }
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add( new SimpleGrantedAuthority( customer.getRole().getName() ));
+        authorities.add( new SimpleGrantedAuthority( customer.getRoles().getName() ));
         return new User( username, customer.getPassword(), authorities );
     }
+    */
+
 }

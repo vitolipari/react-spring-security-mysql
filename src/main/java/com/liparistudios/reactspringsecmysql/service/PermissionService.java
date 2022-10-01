@@ -32,8 +32,14 @@ public class PermissionService {
         this.repository.save( perm );
     }
 
-    public Optional<Permission> getByName( String name ) {
-        return this.repository.findByName( name );
+    public Permission getByName( String name ) {
+        return
+            this.repository
+                .findByName( name )
+                .orElseThrow( () -> {
+                    throw new IllegalStateException("Permission not Exists");
+                })
+            ;
     }
 
 }
