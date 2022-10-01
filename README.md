@@ -1,13 +1,15 @@
 seguendo qesta guida
 https://www.youtube.com/watch?v=KYNR5js2cXE
 
-sono giunto a 26:00, manca il POM da sistemare
+Multi Ruoli
+https://www.youtube.com/watch?v=ErwPP7xLwDY
+
 
 autenticazione con JPA
 https://www.youtube.com/watch?v=awcCiqBO36E
 
 
-a seguire
+paginazione JPA
 https://www.danvega.dev/blog/2022/05/12/spring-data-jpa-pagination/
 
 
