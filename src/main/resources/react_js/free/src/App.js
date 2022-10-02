@@ -12,7 +12,8 @@ function App() {
           {/*<Route index element={<Home />} />          */}
 
           <Route 
-            path="/sign" 
+            path="/sign"
+            exact
             element={ props => {
               console.log("rotta prova");
               console.log( props );
@@ -29,17 +30,19 @@ function App() {
               )
             }} 
           />
-          <Route 
+          <Route
+            exact
             path="/sign-in" 
             element={ props => (<div>SignIn</div>) } 
           />
-          <Route 
+          <Route
+            exact
             path="/sign-up" 
             element={ props => (<div>SignUp</div>) } 
           />
 
           <Route 
-            path="/prova" 
+            path="/public/prova"
             element={
               props => {
                 console.log("path prova");
