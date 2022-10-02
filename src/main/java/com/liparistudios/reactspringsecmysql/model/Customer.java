@@ -17,9 +17,10 @@ public class Customer {
     @GeneratedValue( strategy = GenerationType.SEQUENCE )
     private Long id;
 
-    @Column( unique = true )
+    @Column( unique = true, nullable = false, length = 255)
     private String email;
 
+    @Column( nullable = false, length = 64 )
     private String password;
 
     @ManyToMany(

@@ -37,6 +37,12 @@ public class ReactSpringSecMysqlApplication {
 		RoleService roleService,
 		CustomerService customerService
 	) {
+
+		/*
+		Si dovrebbe definire una classe annotata come Configuration
+		per lanciare le query al commandLineRunner
+		 */
+
 		return (
 			args -> {
 				System.out.println("operazioni di avvio dell'app");

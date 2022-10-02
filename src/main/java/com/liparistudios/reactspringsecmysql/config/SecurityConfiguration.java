@@ -1,5 +1,6 @@
 package com.liparistudios.reactspringsecmysql.config;
 
+import com.liparistudios.reactspringsecmysql.service.SystemUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -15,6 +16,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -32,6 +36,17 @@ public class SecurityConfiguration {
 
     // @Autowired
     // private AuthEntryPointJwt unauthorizedHandler;
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new SystemUserDetailsService();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -61,13 +76,10 @@ public class SecurityConfiguration {
                     auth
 
                         // rotte libere
-                        .antMatchers("/token").permitAll()
-                        .antMatchers("/signin").permitAll()
-                        .antMatchers("/signup").permitAll()
-                        // .antMatchers("").permitAll()
+                        .antMatchers("/prova").permitAll()
+                        // .antMatchers("/prova", "/test").hasAnyRole("Admin", "Editor", "User")
+                        // .antMatchers("/prova2", "/test2").hasRole("Admin")
 
-                        .antMatchers("/prova", "/test").hasAnyRole("Admin", "Editor", "User")
-                        .antMatchers("/prova2", "/test2").hasRole("Admin")
 
                         // rotte private
                         .anyRequest().authenticated()
@@ -75,12 +87,32 @@ public class SecurityConfiguration {
                 )
 
 
+                    .antMatcher("/admin/**")
+                    .authorizeRequests()
+                    .anyRequest()
+                    .hasAuthority( "ADMIN ")
+
+                    .and()
+
+                    .formLogin()
+                    .loginPage("/free/signin")
+                    .usernameParameter("email")
+                    .loginProcessingUrl("/admin/sign-in")
+                    .defaultSuccessUrl("/admin/")
+                    .permitAll()
+
+                    .and()
+
+                    .logout()
+                    .logoutUrl("/admin/sign-out")
+                    .logoutSuccessUrl("/admin/sogn-out")
+
                 // Gestione eccezioni
                 // .exceptionHandling()
                 // .authenticationEntryPoint( unauthorizedHandler )
 
                 // Sessione
-                // .and()
+                .and()
 
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 

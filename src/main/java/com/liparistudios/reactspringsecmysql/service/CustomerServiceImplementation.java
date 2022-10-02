@@ -1,6 +1,7 @@
 package com.liparistudios.reactspringsecmysql.service;
 
 import com.liparistudios.reactspringsecmysql.model.Customer;
+import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,48 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
     @Override
     public List<Customer> getAllCustomer() {
         return customerRepository.findAll();
+    }
+
+    @Override
+    public List<Permission> getAllPermissions(String email) {
+        return
+            customerRepository
+                .findByEmail( email )
+                .orElseThrow( () -> {
+                    throw new IllegalStateException("Email not exist");
+                })
+                .getRoles()
+                .stream()
+                .map( role -> role.getPermissions() )
+                .flatMap( permissions -> permissions.stream() /*Stream.of( permissions )*/ )
+                .collect(Collectors.toSet())
+                .stream()
+                .collect(Collectors.toList())
+        ;
+
+    }
+
+    @Override
+    public List<Permission> getAllPermissions(Long id) {
+        return
+            customerRepository
+                .findById( id )
+                .orElseThrow( () -> {
+                    throw new IllegalStateException("Email not exist");
+                })
+                .getRoles()
+                .stream()
+                .map( role -> role.getPermissions() )
+                .flatMap( permissions -> permissions.stream() /*Stream.of( permissions )*/ )
+                .collect(Collectors.toSet())
+                .stream()
+                .collect(Collectors.toList())
+            ;
+    }
+
+    @Override
+    public List<Permission> getAllPermissions(Customer customer) {
+        return getAllPermissions( customer.getId() );
     }
 
 
