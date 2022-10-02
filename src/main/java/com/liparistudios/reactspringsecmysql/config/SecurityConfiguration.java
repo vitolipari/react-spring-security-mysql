@@ -28,7 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity( prePostEnabled = true )
+//@EnableGlobalMethodSecurity( prePostEnabled = true ) // già definito in AdminSecurityConfiguration
 public class SecurityConfiguration {
 
     @Autowired
@@ -76,9 +76,15 @@ public class SecurityConfiguration {
                     auth
 
                         // rotte libere
-                        .antMatchers("/prova").permitAll()
-                        // .antMatchers("/prova", "/test").hasAnyRole("Admin", "Editor", "User")
-                        // .antMatchers("/prova2", "/test2").hasRole("Admin")
+                        .antMatchers("/public").permitAll()
+                        .antMatchers("/").permitAll()
+//                        .antMatchers("/**").permitAll()
+                        .antMatchers("/**/*.png").permitAll()
+                        .antMatchers("/**/*.ico").permitAll()
+                        .antMatchers("/**/static/js/*.js").permitAll()
+                        .antMatchers("/**/static/css/*.css").permitAll()
+                        .antMatchers("/**/static/**/*.map").permitAll()
+                        .antMatchers("/**/static/media/*").permitAll()
 
 
                         // rotte private
@@ -87,17 +93,18 @@ public class SecurityConfiguration {
                 )
 
 
+                    /*
                     .antMatcher("/admin/**")
                     .authorizeRequests()
-                    .anyRequest()
-                    .hasAuthority( "ADMIN ")
+//                    .anyRequest()
+//                    .hasAuthority( "ADMIN ")
 
                     .and()
 
                     .formLogin()
                     .loginPage("/free/signin")
                     .usernameParameter("email")
-                    .loginProcessingUrl("/admin/sign-in")
+                    .loginProcessingUrl("/public/sign-in")
                     .defaultSuccessUrl("/admin/")
                     .permitAll()
 
@@ -105,14 +112,16 @@ public class SecurityConfiguration {
 
                     .logout()
                     .logoutUrl("/admin/sign-out")
-                    .logoutSuccessUrl("/admin/sogn-out")
+                    .logoutSuccessUrl("/admin/sign-out")
+
+                    */
 
                 // Gestione eccezioni
                 // .exceptionHandling()
                 // .authenticationEntryPoint( unauthorizedHandler )
 
                 // Sessione
-                .and()
+//                .and()
 
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 
@@ -120,8 +129,14 @@ public class SecurityConfiguration {
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
                 // .sessionCreationPolicy( SessionCreationPolicy.STATELESS )
 
-
-                .headers( header -> header.frameOptions().sameOrigin() )
+                /*
+                .headers( header ->
+                    header
+                        .frameOptions()
+                        .sameOrigin().httpStrictTransportSecurity().disable()
+                )
+                */
+                .headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
                 .httpBasic( Customizer.withDefaults() )

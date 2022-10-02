@@ -1,4 +1,4 @@
-package com.liparistudios.reactspringsecmysql.controller;
+package com.liparistudios.reactspringsecmysql.controller.web.v1;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,10 +19,10 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@CrossOrigin( origins = "*")
-@RequestMapping( path = {"/", ""} )
-public class WebController {
+//@RestController
+//@CrossOrigin( origins = "*")
+//@RequestMapping( path = {"/", ""} )
+public class WebControllerTemplate {
 
     @GetMapping
     public ModelAndView home() {
@@ -54,12 +54,12 @@ public class WebController {
 
         final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
         return
-                ResponseEntity
-                        .status(HttpStatus.OK)
-                        .contentLength(inputStream.contentLength())
-                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                        .body(inputStream)
-                ;
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentLength(inputStream.contentLength())
+                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                .body(inputStream)
+        ;
 
     }
 
@@ -80,12 +80,12 @@ public class WebController {
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
 
         return
-                ResponseEntity
-                        .status(HttpStatus.OK)
-                        //.contentLength(inputStream.contentLength())
-                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                        .body(requestedFileContent)
-                ;
+            ResponseEntity
+                    .status(HttpStatus.OK)
+                    //.contentLength(inputStream.contentLength())
+                    .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                    .body(requestedFileContent)
+            ;
 
 
     }

@@ -80,7 +80,12 @@ public class ReactSpringSecMysqlApplication {
 								add( permissionService.getByName("LOGIN") );
 								add( permissionService.getByName("LOGOUT") );
 							}}
-						)
+						),
+							new Role(
+								null,
+								"MASTER",
+								permissionService.getAllPermissions()
+							)
 					)
 					.forEach( role -> {
 						System.out.println("aggiungo ruolo");
@@ -90,13 +95,14 @@ public class ReactSpringSecMysqlApplication {
 				;
 
 				// customer --------------------------------------------------------------------------------
+				System.out.println("preparo il customer");
 				customerService.saveCustomer(
 					new Customer(
 						null,
 						"vitolipari1981@gmail.com",
 						"jRoot@15099#12192537",
 						new ArrayList<Role>(){{
-							add( roleService.findByName("ADMIN") );
+							add( roleService.findByName("MASTER") );
 						}}
 					)
 				);

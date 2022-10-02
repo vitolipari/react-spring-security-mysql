@@ -5,7 +5,7 @@ import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -17,8 +17,15 @@ public class RoleService {
         this.roleRepository = repo;
     }
 
-    public void addRole( Role role ) {
-        roleRepository.save( role );
+    public Role addRole( Role role ) {
+        System.out.println("vado ad aggiungere il ruolo "+ role.getName());
+        Optional<Role> roleToFind = roleRepository.findByName( role.getName() );
+        if( roleToFind.isPresent() ) {
+            return roleToFind.get();
+        }
+        else {
+            return roleRepository.save( role );
+        }
     }
 
     public Role findByName( String roleName ) {

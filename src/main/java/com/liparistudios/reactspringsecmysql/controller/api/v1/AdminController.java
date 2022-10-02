@@ -1,4 +1,4 @@
-package com.liparistudios.reactspringsecmysql.controller;
+package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
 import org.springframework.web.bind.annotation.RestController;
 

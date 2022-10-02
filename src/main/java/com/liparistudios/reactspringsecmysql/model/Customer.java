@@ -24,8 +24,8 @@ public class Customer {
     private String password;
 
     @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL
+        fetch = FetchType.EAGER
+//        cascade = CascadeType.ALL
     )
     @JoinTable(
         name = "users_roles",

@@ -10,6 +10,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table( name = "roles" )
 public class Role {
@@ -20,8 +21,8 @@ public class Role {
     private String name;
 
     @ManyToMany(
-        fetch = FetchType.EAGER,
-        cascade = CascadeType.ALL
+        fetch = FetchType.LAZY
+//        cascade = CascadeType.ALL
     )
     @JoinTable(
         name = "permissions_roles",

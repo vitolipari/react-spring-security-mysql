@@ -1,4 +1,4 @@
-package com.liparistudios.reactspringsecmysql.controller;
+package com.liparistudios.reactspringsecmysql.controller.web.v1;
 
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,22 +20,52 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
 @RestController
 @CrossOrigin( origins = "*")
-@RequestMapping( path = {"/", ""} )
-public class HomeController {
+@RequestMapping("/admin")
+public class WebAdminController {
 
     @GetMapping
-    public ModelAndView home() {
-        Map<String, Object> pageVars = new HashMap<String, Object>() {{
-            put("session", "123abc");
-        }};
-        ModelAndView page = new ModelAndView("index");
+    @PreAuthorize("hasRole('ADMIN')")
+    public ModelAndView adminHome( HttpServletRequest request ) {
+
+        Map<String, Object> pageVars = new HashMap<String, Object>();
+
+        try {
+
+            pageVars.put("session", "123abc");
+
+        }
+        catch (Exception e) {
+
+            System.out.println("Manca l'autorizzazione");
+            e.printStackTrace();
+            pageVars.put("error", "123abc");
+
+        }
+
+        ModelAndView page = new ModelAndView("react_js/admin/build/index");
         page.addAllObjects(pageVars);
         return page;
+
+
     }
 
 
+
+    @GetMapping("/sign-in")
+    public ModelAndView adminSignPage( HttpServletRequest request ) {
+
+        Map<String, Object> pageVars = new HashMap<String, Object>(){{
+            put("session", "123abc");
+        }};
+
+        ModelAndView page = new ModelAndView("admin/build/index");
+        page.addAllObjects(pageVars);
+        return page;
+    }
 
 
     @GetMapping(path = {"{pic}.{ext:[jpngtf]+}"})
@@ -44,7 +75,7 @@ public class HomeController {
             @PathVariable("ext") String picExt
     ) throws IOException {
 
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react/build/"+ picName +"."+ picExt);
+        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/admin/build/"+ picName +"."+ picExt);
         File requestedFile = null;
         try {
             requestedFile = new File(requestedFileUrl.toURI());
@@ -54,12 +85,12 @@ public class HomeController {
 
         final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
         return
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(inputStream.contentLength())
-                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                .body(inputStream)
-        ;
+                ResponseEntity
+                        .status(HttpStatus.OK)
+                        .contentLength(inputStream.contentLength())
+                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                        .body(inputStream)
+                ;
 
     }
 
@@ -69,7 +100,7 @@ public class HomeController {
             @PathVariable( "file" ) String fileName,
             @PathVariable( "ext" ) String ext
     ) throws IOException {
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react/build/"+ fileName +"."+ ext);
+        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/admin/build/"+ fileName +"."+ ext);
         File requestedFile = null;
         try {
             requestedFile = new File(requestedFileUrl.toURI());
@@ -80,12 +111,12 @@ public class HomeController {
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
 
         return
-            ResponseEntity
-                    .status(HttpStatus.OK)
-                    //.contentLength(inputStream.contentLength())
-                    .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                    .body(requestedFileContent)
-            ;
+                ResponseEntity
+                        .status(HttpStatus.OK)
+                        //.contentLength(inputStream.contentLength())
+                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                        .body(requestedFileContent)
+                ;
 
 
     }
@@ -95,7 +126,7 @@ public class HomeController {
             @PathVariable( "file" ) String fileName,
             @PathVariable( "ext" ) String ext
     ) throws IOException {
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react/build/static/media/"+ fileName + ".svg");
+        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/admin/build/static/media/"+ fileName + ".svg");
         File requestedFile = null;
         try {
             requestedFile = new File(requestedFileUrl.toURI());
@@ -111,13 +142,21 @@ public class HomeController {
 
     @GetMapping(path = "/static/js/{file}")
     public ResponseEntity<String> getRootLevelJavascriptFiles(@PathVariable( "file" ) String fileName) throws IOException {
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react/build/static/js/"+ fileName);
+
+        System.out.println("richiesta file JS");
+        System.out.println( fileName );
+
+        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/admin/build/static/js/"+ fileName);
         File requestedFile = null;
         try {
             requestedFile = new File(requestedFileUrl.toURI());
         } catch (URISyntaxException e) {
             requestedFile = new File(requestedFileUrl.getPath());
         }
+
+
+        System.out.println( requestedFileUrl );
+        System.out.println( requestedFileUrl.toString() );
 
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
         return new ResponseEntity<String>(requestedFileContent, null, HttpStatus.OK);
@@ -126,7 +165,7 @@ public class HomeController {
     @GetMapping(path = "/static/css/{file}")
     public ResponseEntity<String> getRootLevelCssStyleFiles(@PathVariable( "file" ) String fileName) throws IOException {
 
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react/build/static/css/"+ fileName);
+        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/admin/build/static/css/"+ fileName);
         File requestedFile = null;
         try {
             requestedFile = new File(requestedFileUrl.toURI());
@@ -137,5 +176,6 @@ public class HomeController {
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
         return new ResponseEntity<String>(requestedFileContent, null, HttpStatus.OK);
     }
-
 }
+
+
