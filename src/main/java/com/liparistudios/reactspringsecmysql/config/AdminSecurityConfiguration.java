@@ -45,7 +45,9 @@ public class AdminSecurityConfiguration {
 
                     auth
                         .antMatchers("/**/*.png").permitAll()
+                        .antMatchers("/**/*.jpg").permitAll()
                         .antMatchers("/**/*.ico").permitAll()
+                        .antMatchers("/**/*.json").permitAll()
                         .antMatchers("/**/static/js/*.js").permitAll()
                         .antMatchers("/**/static/css/*.css").permitAll()
                         .antMatchers("/**/static/**/*.map").permitAll()
@@ -61,8 +63,8 @@ public class AdminSecurityConfiguration {
             .formLogin()
                 .loginPage("/sign")            // path da usare: /admin/sign-in
                 .usernameParameter("email")
-                .loginProcessingUrl("/admin/sign-in")   // path da usare: /admin/sign-in
-                .defaultSuccessUrl("/admin")
+                .loginProcessingUrl("/sign")   // path da usare: /admin/sign-in
+                .defaultSuccessUrl("/")
                 .permitAll()
 
             .and()

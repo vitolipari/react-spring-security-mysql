@@ -77,10 +77,13 @@ public class SecurityConfiguration {
 
                         // rotte libere
                         .antMatchers("/public").permitAll()
+                        .antMatchers("/public/**").permitAll()
                         .antMatchers("/").permitAll()
 //                        .antMatchers("/**").permitAll()
                         .antMatchers("/**/*.png").permitAll()
+                        .antMatchers("/**/*.jpg").permitAll()
                         .antMatchers("/**/*.ico").permitAll()
+                        .antMatchers("/**/*.json").permitAll()
                         .antMatchers("/**/static/js/*.js").permitAll()
                         .antMatchers("/**/static/css/*.css").permitAll()
                         .antMatchers("/**/static/**/*.map").permitAll()
