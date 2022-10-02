@@ -59,7 +59,7 @@ public class AdminSecurityConfiguration {
 
 //            .and()
             .formLogin()
-                .loginPage("/admin/sign-in")            // path da usare: /admin/sign-in
+                .loginPage("/sign")            // path da usare: /admin/sign-in
                 .usernameParameter("email")
                 .loginProcessingUrl("/admin/sign-in")   // path da usare: /admin/sign-in
                 .defaultSuccessUrl("/admin")
@@ -67,7 +67,7 @@ public class AdminSecurityConfiguration {
 
             .and()
             .logout()
-                .logoutUrl("/admin/sign-out")
+                .logoutUrl("/sign-out")
                 .logoutSuccessUrl("/")
 
             // Sessione jwt

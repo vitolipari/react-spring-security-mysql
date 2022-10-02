@@ -42,6 +42,18 @@ public class WebController {
     }
 
 
+    @GetMapping( path = {"/sign", "/sign-in", "/sign-up"} )
+    public ModelAndView adminSignPage( HttpServletRequest request ) {
+
+        Map<String, Object> pageVars = new HashMap<String, Object>(){{
+            put("session", "123abc");
+        }};
+
+        ModelAndView page = new ModelAndView("free/build/index");
+        page.addAllObjects(pageVars);
+        return page;
+    }
+
 
     @GetMapping(path = {"{pic}.{ext:[jpngtf]+}"})
     public ResponseEntity<Resource> getRootLevelBytesFiles(

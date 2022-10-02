@@ -55,17 +55,7 @@ public class WebAdminController {
 
 
 
-    @GetMapping("/sign-in")
-    public ModelAndView adminSignPage( HttpServletRequest request ) {
 
-        Map<String, Object> pageVars = new HashMap<String, Object>(){{
-            put("session", "123abc");
-        }};
-
-        ModelAndView page = new ModelAndView("admin/build/index");
-        page.addAllObjects(pageVars);
-        return page;
-    }
 
 
     @GetMapping(path = {"{pic}.{ext:[jpngtf]+}"})
