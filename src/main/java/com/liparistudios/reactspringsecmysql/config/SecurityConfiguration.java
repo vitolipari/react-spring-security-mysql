@@ -83,6 +83,8 @@ public class SecurityConfiguration {
                         .antMatchers("/**/*.png").permitAll()
                         .antMatchers("/**/*.jpg").permitAll()
                         .antMatchers("/**/*.ico").permitAll()
+                        .antMatchers("/*.ico").permitAll()
+                        .antMatchers("/*.json").permitAll()
                         .antMatchers("/**/*.json").permitAll()
                         .antMatchers("/**/static/js/*.js").permitAll()
                         .antMatchers("/**/static/css/*.css").permitAll()
@@ -142,7 +144,7 @@ public class SecurityConfiguration {
                 .headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
-                .httpBasic( Customizer.withDefaults() )
+                // .httpBasic( Customizer.withDefaults() )
                 .build()
 
         );

@@ -61,9 +61,9 @@ public class AdminSecurityConfiguration {
 
 //            .and()
             .formLogin()
-                .loginPage("/sign")            // path da usare: /admin/sign-in
+                .loginPage("/public/sign-in")            // path da usare: /admin/sign-in
                 .usernameParameter("email")
-                .loginProcessingUrl("/sign")   // path da usare: /admin/sign-in
+                .loginProcessingUrl("/sign-in")   // path da usare: /admin/sign-in
                 .defaultSuccessUrl("/")
                 .permitAll()
 
@@ -78,7 +78,7 @@ public class AdminSecurityConfiguration {
             .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 //            .headers( header -> header.frameOptions().sameOrigin().httpStrictTransportSecurity().disable() )
             .headers( header -> header.defaultsDisabled().cacheControl() )
-            .httpBasic( Customizer.withDefaults() )
+            // .httpBasic( Customizer.withDefaults() )
         ;
 
         return http.build();

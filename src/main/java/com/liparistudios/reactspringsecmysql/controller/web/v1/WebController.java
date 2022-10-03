@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin( origins = "*")
-@RequestMapping( path = {"/", ""} )
+@RequestMapping( path = {"/", "", "/public"} )
 public class WebController {
 
     @GetMapping
@@ -35,6 +35,8 @@ public class WebController {
 
         Map<String, Object> pageVars = new HashMap<String, Object>() {{
             put("session", "123abc");
+            put("certificate", "123abc");
+            put("data", "123abc");
         }};
         ModelAndView page = new ModelAndView("free/build/index");
         page.addAllObjects(pageVars);
@@ -55,7 +57,7 @@ public class WebController {
     }
 
 
-    @GetMapping(path = {"{pic}.{ext:[jpngtf]+}"})
+    @GetMapping(path = {"{pic}.{ext:[jpngtfico]+}"})
     public ResponseEntity<Resource> getRootLevelBytesFiles(
             HttpServletRequest request,
             @PathVariable("pic") String picName,

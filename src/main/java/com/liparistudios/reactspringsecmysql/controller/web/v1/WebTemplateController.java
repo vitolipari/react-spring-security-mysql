@@ -22,7 +22,7 @@ import java.util.Map;
 //@RestController
 //@CrossOrigin( origins = "*")
 //@RequestMapping( path = {"/", ""} )
-public class WebControllerTemplate {
+public class WebTemplateController {
 
     @GetMapping
     public ModelAndView home() {
