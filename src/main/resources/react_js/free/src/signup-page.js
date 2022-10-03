@@ -6,7 +6,7 @@ import './App.css';
 
 
 const loadAllRoles = () => (
-    fetch("/api/v1/permissions")
+    fetch("/api/v1/role")
         .then( result => result.json() )
         .catch(e => Promise.reject( e ))
 )
@@ -71,11 +71,14 @@ export const SignupPage = props => {
                             name={"roles"}
                             className={""}
                             onSelect={ selectedRole => {
+                                console.log("role selected");
+                                console.log(selectedRole);
+
                                 setSelectedRoles([ selectedRole ]);
                             }}
                         >
                             {
-                                !!roles
+                                (!!roles && (roles instanceof Array))
                                     ? (
                                         roles
                                             .map( role => (

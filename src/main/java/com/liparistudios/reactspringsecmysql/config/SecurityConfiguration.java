@@ -76,6 +76,10 @@ public class SecurityConfiguration {
                     auth
 
                         // rotte libere
+                        .antMatchers("/api/v1/customer").permitAll()
+                        .antMatchers("/api/v1/permission").permitAll()
+                        .antMatchers("/api/v1/role").permitAll()
+
                         .antMatchers("/public").permitAll()
                         .antMatchers("/public/**").permitAll()
                         .antMatchers("/").permitAll()
