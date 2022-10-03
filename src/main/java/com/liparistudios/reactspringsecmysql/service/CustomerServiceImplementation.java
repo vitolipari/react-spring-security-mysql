@@ -37,6 +37,10 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
 
     @Override
     public Customer saveCustomer(Customer customer) {
+        // controllo ruoli
+        if( customer.getRoles().isEmpty() ) {
+            throw new IllegalStateException("Customer senza ruoli");
+        }
         return customerRepository.save( customer );
     }
 
