@@ -1,5 +1,9 @@
 import React, {useState} from "react";
-import {ActionButton} from "./action-button";
+import {sha256} from "js-sha256";
+import {ActionButton} from "./components/action-button";
+import logo from './logo.svg';
+import './App.css';
+
 
 const loadAllRoles = () => (
     fetch("/api/v1/permissions")
@@ -16,6 +20,9 @@ export const SignupPage = props => {
      */
     
     const [roles, setRoles] = useState();
+    const [selectedRoles, setSelectedRoles] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
     
     if(!roles) {
         loadAllRoles()
@@ -29,51 +36,93 @@ export const SignupPage = props => {
     }
 
     return (
-        <div className={""}>
-            <div>
-                <label>Email</label>
-                <input
-                    type={"email"}
-                    name={"email"}
-                    id={"email"}
-                />
-            </div>
-            <div>
-                <label>Email</label>
-                <input
-                    type={"email"}
-                    name={"email"}
-                    id={"email"}
-                />
-            </div>
-            <div>
-                <label>Roles</label>
-                <select
-                    id={}
-                    name={}
-                    className={}
-                >
-                    {
-                        !!roles
-                            ? (
-                                roles
-                                    .map( role => (
-                                        <option value={ role.id }>{ role.name }</option>
-                                    ))
+
+
+        <div className="App">
+            <header className="App-header">
+                <img src={logo} className="App-logo" alt="logo" />
+                <div className={"signin-form"}>
+                    <div>
+                        <label>Email</label>
+                        <input
+                            type={"email"}
+                            name={"email"}
+                            id={"email"}
+                            onChange={ text => {
+                                setEmail( text );
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label>Password</label>
+                        <input
+                            type={"password"}
+                            name={"password"}
+                            id={"password"}
+                            onChange={ text => {
+                                setPassword( sha256(text) );
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label>Roles</label>
+                        <select
+                            id={"roles"}
+                            name={"roles"}
+                            className={""}
+                            onSelect={ selectedRole => {
+                                setSelectedRoles([ selectedRole ]);
+                            }}
+                        >
+                            {
+                                !!roles
+                                    ? (
+                                        roles
+                                            .map( role => (
+                                                <option value={ role.id }>{ role.name }</option>
+                                            ))
+                                    )
+                                    : null
+                            }
+                        </select>
+                    </div>
+                    <ActionButton
+                        promise={ () => {
+                            return (
+                                fetch(
+                                    "/api/v1/customer",
+                                    {
+                                        method: "POST",
+                                        body: JSON.stringify({
+                                            email: email,
+                                            password: password,
+                                            roles: selectedRoles
+                                        })
+                                    }
+                                )
+                                .then( response => response.json() )
+                                .catch(e => Promise.reject( e ))
                             )
-                            : null
-                    }
-                </select>
-            </div>
-            <ActionButton
-                promise={}
-                onProgress={}
-                onResult={}
-                onError={}
-                className={}
-                buttonText={}
-                waitingMessage={}
-            />
+                        }}
+                        onResult={ result => {
+                            // TODO
+                            console.log( result );
+                        }}
+                        onError={ err => {
+                            console.log("ERROR");
+                            console.error( err );
+                        }}
+                        className={"custom-button"}
+                        buttonText={
+                            <span>Save</span>
+                        }
+                        waitingMessage={"Waiting"}
+                    />
+                </div>
+            </header>
         </div>
+
+
+        
     );
 }

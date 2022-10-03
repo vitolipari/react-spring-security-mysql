@@ -8,6 +8,8 @@ import {
 import logo from './logo.svg';
 import './App.css';
 import {SignupPage} from "./signup-page";
+import "./style/index.css";
+
 
 const Home = props => {
     console.log("rotta Home");
