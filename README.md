@@ -32,3 +32,12 @@ estrazione della chiave privata
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./private.pem
 ```
 
+Tech Stack
+- Java 11
+- Spring Boot
+- Spring Security
+- JPA
+- MySQL
+- React
+- React Router
+
