@@ -76,9 +76,10 @@ public class SecurityConfiguration {
                     auth
 
                         // rotte libere
-                        .antMatchers("/api/v1/customer").permitAll()
-                        .antMatchers("/api/v1/permission").permitAll()
-                        .antMatchers("/api/v1/role").permitAll()
+                        .antMatchers("/api/v1/customer/signup").permitAll()         // registrazione di un nuovo customer
+                        .antMatchers("/api/v1/customer/signup2").permitAll()         // registrazione di un nuovo customer
+                        .antMatchers("/api/v1/permission").permitAll()              // lista di tutti i permessi
+                        .antMatchers("/api/v1/role").permitAll()                    // lista di tutti i ruoli
 
                         .antMatchers("/public").permitAll()
                         .antMatchers("/public/**").permitAll()
