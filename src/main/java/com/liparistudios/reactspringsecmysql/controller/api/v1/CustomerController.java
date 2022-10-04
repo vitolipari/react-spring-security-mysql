@@ -38,7 +38,7 @@ public class CustomerController {
 
 
     @ResponseBody
-    @PostMapping("/signup2")
+    @PostMapping("/signup")
     public ResponseEntity<Customer> signup(
             HttpServletRequest request,
             @RequestBody Customer customer
@@ -63,7 +63,7 @@ public class CustomerController {
     }
 
     @ResponseBody
-    @PostMapping("/signup")
+    @PostMapping("/signup/parameters")
     public ResponseEntity<Map<String, Object>> signUp(
 
             HttpServletRequest request,
