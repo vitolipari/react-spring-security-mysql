@@ -1,0 +1,24 @@
+.loader {
+	border-radius: 50%;
+	background: #aaa;
+	width: 10px;
+	height: 10px;
+	margin: 0px auto;
+	animation: spin 1s linear infinite;
+	align-self: center;
+}
+
+@keyframes spin {
+	0% {
+		opacity: 0;
+		-webkit-transform: scale(0, 0);
+		-ms-transform: scale(0, 0);
+		transform: scale(0, 0);
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: scale(1, 1);
+		-ms-transform: scale(1, 1);
+		transform: scale(1, 1);
+	}
+}

@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import './App.css';
 
 
+
 const loadAllRoles = () => (
     fetch("/api/v1/role")
         .then( result => result.json() )
