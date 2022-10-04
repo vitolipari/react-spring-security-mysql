@@ -37,8 +37,8 @@ public class WebController {
         Principal principal = request.getUserPrincipal();
         System.out.println("Principal");
         System.out.println( principal );
-        System.out.println( principal.getName() );
-        System.out.println( principal.getName().toString() );
+//        System.out.println( principal.getName() );
+//        System.out.println( principal.getName().toString() );
 
 
         Map<String, Object> pageVars = new HashMap<String, Object>() {{
