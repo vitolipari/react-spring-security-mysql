@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,16 +35,58 @@ public class CustomerController {
         return ResponseEntity.created( uri ).body( customerService.saveCustomer( customer ) );
     }
 
-    @PostMapping("/signup")
+
+
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> signUp(
+    @PostMapping("/signup2")
+    public ResponseEntity<Customer> signup(
             HttpServletRequest request,
-            @RequestBody(required = true) String email,
-            @RequestBody(required = true) String hashedPassword,
-            @RequestBody(required = false) List<String> rolesName
+            @RequestBody Customer customer
     ) {
 
-        Role role = null;
+        System.out.println("\n");
+        System.out.println( "ruolo admin?" );
+        System.out.println( request.isUserInRole("ADMIN") );
+        Principal principal = request.getUserPrincipal();
+        System.out.println("Principal");
+        System.out.println( principal );
+        //System.out.println( principal.getName() );
+        //System.out.println( principal.getName().toString() );
+        System.out.println("Customer arrivato");
+        System.out.println( customer );
+        System.out.println( customer.toString() );
+        System.out.println( customer.toMap() );
+        System.out.println( customer.toMap().toString() );
+        System.out.println("\n");
+
+        return ResponseEntity.ok( customer );
+    }
+
+    @ResponseBody
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, Object>> signUp(
+
+            HttpServletRequest request,
+            @RequestParam(name = "email", required = true) String email,
+            @RequestParam(name = "hashedPassword", required = true) String password,
+            @RequestParam(name = "rolesName", required = false) List<String> roles
+
+    ) {
+
+
+
+        System.out.println("\n");
+        System.out.println( "ruolo admin?" );
+        System.out.println( request.isUserInRole("ADMIN") );
+        Principal principal = request.getUserPrincipal();
+        System.out.println("Principal");
+        System.out.println( principal );
+        System.out.println( principal.getName() );
+        System.out.println( principal.getName().toString() );
+        System.out.println("\n");
+
+
+
 
         // controllo chi fa il signup
         if(request.isUserInRole("ADMIN")) {
@@ -52,6 +95,7 @@ public class CustomerController {
         else {
 
         }
+
 
         try {
 
@@ -83,10 +127,10 @@ public class CustomerController {
                     new Customer(
                         null,
                         email,
-                        hashedPassword,
+                        password,
                         roleService.findAll()
                             .stream()
-                            .filter( currentRole -> rolesName.contains( currentRole.getName() ) )
+                            .filter( currentRole -> roles.contains( currentRole.getName() ) )
                             .collect(Collectors.toList())
                     )
                 )

@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,13 @@ public class WebController {
 
         System.out.println( "ruolo admin?" );
         System.out.println( request.isUserInRole("ADMIN") );
+
+        Principal principal = request.getUserPrincipal();
+        System.out.println("Principal");
+        System.out.println( principal );
+        System.out.println( principal.getName() );
+        System.out.println( principal.getName().toString() );
+
 
         Map<String, Object> pageVars = new HashMap<String, Object>() {{
             put("session", "123abc");
