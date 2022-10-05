@@ -35,9 +35,11 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./
 Tech Stack
 - Java 11
 - Spring Boot
-- Spring Security
 - JPA
 - MySQL
+- Spring Security
+- JWT
+- RSA Keys
+- Thymeleaf
 - React
 - React Router
-
