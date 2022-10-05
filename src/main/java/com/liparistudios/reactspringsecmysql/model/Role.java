@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -25,7 +27,7 @@ public class Role {
     private String name;
 
     @ManyToMany(
-        fetch = FetchType.LAZY
+        fetch = FetchType.EAGER
 //        cascade = CascadeType.ALL
     )
     @JoinTable(
@@ -35,17 +37,12 @@ public class Role {
     )
     private List<Permission> permissions;
 
-    /*
+
     public Role( String name ) {
         this.name = name;
-
-
-
-        List<Permission> permissions =
-
-        this.permissions = new ArrayList<Permission>()
     }
 
-     */
+
+//    public Map<String, Object> toMap() {}
 
 }

@@ -39,7 +39,7 @@ public class CustomerController {
 
     @ResponseBody
     @PostMapping("/signup")
-    public ResponseEntity<Customer> signup(
+    public ResponseEntity<Map<String, Object>> signup(
             HttpServletRequest request,
             @RequestBody Customer customer
     ) {
@@ -50,16 +50,37 @@ public class CustomerController {
         Principal principal = request.getUserPrincipal();
         System.out.println("Principal");
         System.out.println( principal );
-        //System.out.println( principal.getName() );
-        //System.out.println( principal.getName().toString() );
+        if( principal != null ) {
+            System.out.println( principal.getName() );
+            System.out.println(principal.getClass().getName());
+        }
         System.out.println("Customer arrivato");
         System.out.println( customer );
         System.out.println( customer.toString() );
-        System.out.println( customer.toMap() );
-        System.out.println( customer.toMap().toString() );
         System.out.println("\n");
 
-        return ResponseEntity.ok( customer );
+        Customer savedCustomer = customerService.saveCustomer( customer );
+        if( savedCustomer == null ) {
+            return
+                ResponseEntity
+                    .status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body(
+                        new HashMap<String, Object>(){{
+                            put("error", new HashMap<String, Object>(){{
+                                put("message", "Email Esistente");
+                            }});
+                        }}
+                    )
+            ;
+        }
+
+        System.out.println("Customer salvato");
+        System.out.println( savedCustomer );
+        System.out.println( savedCustomer.toString() );
+        System.out.println( savedCustomer.toMap() );
+        System.out.println( savedCustomer.toMap().toString() );
+
+        return ResponseEntity.ok( savedCustomer.toMap() );
     }
 
     @ResponseBody

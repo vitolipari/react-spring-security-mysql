@@ -37,10 +37,57 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
 
     @Override
     public Customer saveCustomer(Customer customer) {
-        // controllo ruoli
-        if( customer.getRoles().isEmpty() ) {
-            throw new IllegalStateException("Customer senza ruoli");
+
+
+        if( customerRepository.findByEmail( customer.getEmail() ).isPresent() ) {
+            return null;
+        };
+
+        if( (customer.getRoles() == null ) || customer.getRoles().isEmpty() ) {
+            Role defaultRole = roleRepository
+                .findByName("FREE_CUSTOMER")
+                .orElseThrow( () -> { throw new IllegalStateException("Ruolo di default non trovato"); })
+            ;
+            System.out.println("Il customer non ha un ruolo, viene settato quello di default");
+            System.out.println( defaultRole.toString() );
+            customer.setRoles( new ArrayList<Role>(){{ add(defaultRole); }} );
         }
+        else {
+            List<Role> allRoles =
+                customer
+                    .getRoles()
+                        .stream()
+                        .filter( role -> ((role.getPermissions() == null) || role.getPermissions().isEmpty()) )
+                        .map( inconsistentRole -> {
+                            return
+                                roleRepository
+                                    .findByName( inconsistentRole.getName() )
+                                    .orElseGet( () -> {
+                                        return
+                                            roleRepository
+                                                .findByName("FREE_CUSTOMER")
+                                                .get()
+                                        ;
+                                    })
+                            ;
+                        })
+                        .collect(Collectors.toList())
+            ;
+            allRoles
+                .addAll(
+                    customer
+                        .getRoles()
+                        .stream()
+                        .filter( role -> (role.getPermissions() != null) && !role.getPermissions().isEmpty() )
+                        .map( inconsistentRole -> {
+                            return roleRepository.findByName( inconsistentRole.getName() ).orElseThrow( () -> { throw new IllegalStateException("Ruolo di default non trovato"); });
+                        })
+                        .collect(Collectors.toList())
+                )
+            ;
+            customer.setRoles( allRoles );
+        }
+
         return customerRepository.save( customer );
     }
 
