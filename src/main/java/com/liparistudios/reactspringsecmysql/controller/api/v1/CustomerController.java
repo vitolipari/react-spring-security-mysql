@@ -7,9 +7,11 @@ import com.liparistudios.reactspringsecmysql.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;
@@ -36,6 +38,20 @@ public class CustomerController {
     }
 
 
+    @GetMapping
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('ADMIN', 'MASTER')")
+    public List<Customer> getAllCustomers() {
+        return customerService.getAllCustomer();
+    }
+
+    @ResponseBody
+    @GetMapping("/{page}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MASTER')")
+    public List<Customer> getAllCustomers( @PathVariable Long page ) {
+        // TODO da finire
+        return customerService.getAllCustomer();
+    }
 
     @ResponseBody
     @PostMapping("/signup")
@@ -58,6 +74,17 @@ public class CustomerController {
         System.out.println( customer );
         System.out.println( customer.toString() );
         System.out.println("\n");
+
+
+        // controllo chi fa il signup
+        if(request.isUserInRole("ADMIN")) {
+            // some kind of legacy
+        }
+        else {
+
+        }
+
+
 
         Customer savedCustomer = customerService.saveCustomer( customer );
         if( savedCustomer == null ) {
@@ -83,83 +110,6 @@ public class CustomerController {
         return ResponseEntity.ok( savedCustomer.toMap() );
     }
 
-    @ResponseBody
-    @PostMapping("/signup/parameters")
-    public ResponseEntity<Map<String, Object>> signUp(
 
-            HttpServletRequest request,
-            @RequestParam(name = "email", required = true) String email,
-            @RequestParam(name = "hashedPassword", required = true) String password,
-            @RequestParam(name = "rolesName", required = false) List<String> roles
-
-    ) {
-
-
-
-        System.out.println("\n");
-        System.out.println( "ruolo admin?" );
-        System.out.println( request.isUserInRole("ADMIN") );
-        Principal principal = request.getUserPrincipal();
-        System.out.println("Principal");
-        System.out.println( principal );
-        System.out.println( principal.getName() );
-        System.out.println( principal.getName().toString() );
-        System.out.println("\n");
-
-
-
-
-        // controllo chi fa il signup
-        if(request.isUserInRole("ADMIN")) {
-            // some kind of legacy
-        }
-        else {
-
-        }
-
-
-        try {
-
-            customerService.loadCustomerByEmail( email );
-            // email esistente
-
-            return
-                ResponseEntity
-                    .status( HttpStatus.INTERNAL_SERVER_ERROR )
-                    .body(
-                        new HashMap<String, Object>(){{
-                            put("error", new HashMap<String, Object>(){{
-                                put("message", "Email Esistente");
-                            }});
-                        }}
-                    )
-                ;
-
-        }
-        catch (Exception e) {
-            // non esiste la email passata
-
-        }
-
-
-        return
-            ResponseEntity.ok(
-                customerService.saveCustomer(
-                    new Customer(
-                        null,
-                        email,
-                        password,
-                        roleService.findAll()
-                            .stream()
-                            .filter( currentRole -> roles.contains( currentRole.getName() ) )
-                            .collect(Collectors.toList())
-                    )
-                )
-                .toMap()
-            )
-        ;
-
-
-    }
 
 }

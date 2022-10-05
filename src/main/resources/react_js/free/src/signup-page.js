@@ -28,6 +28,8 @@ export const SignupPage = props => {
     if(!roles) {
         loadAllRoles()
             .then( list => {
+                console.log("lista dei ruoli");
+                console.log( list );
                 setRoles( list );
             })
             .catch( e => {
@@ -49,8 +51,8 @@ export const SignupPage = props => {
                             type={"email"}
                             name={"email"}
                             id={"email"}
-                            onChange={ text => {
-                                setEmail( text );
+                            onChange={ changeEvent => {
+                                setEmail( changeEvent.target.value );
                             }}
                         />
                     </div>
@@ -60,8 +62,8 @@ export const SignupPage = props => {
                             type={"password"}
                             name={"password"}
                             id={"password"}
-                            onChange={ text => {
-                                setPassword( sha256(text) );
+                            onChange={ changeEvent => {
+                                setPassword( sha256(changeEvent.target.value) );
                             }}
                         />
                     </div>
@@ -92,6 +94,17 @@ export const SignupPage = props => {
                     </div>
                     <ActionButton
                         promise={ () => {
+
+
+
+                            console.log("invio i dati");
+                            console.log({
+                                email: email,
+                                password: password,
+                                roles: selectedRoles
+                            });
+
+
                             return (
                                 fetch(
                                     "/api/v1/customer",

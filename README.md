@@ -11,6 +11,7 @@
 
 [da tenere in considerazione](https://stackoverflow.com/questions/44046154/multiple-home-pages-for-different-roles-in-spring-security)
 
+[microservice con Spring Cloud](https://www.youtube.com/watch?v=p485kUNpPvE)
 
 
 ## Sicurezza
