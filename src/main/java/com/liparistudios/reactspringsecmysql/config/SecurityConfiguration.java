@@ -59,7 +59,7 @@ public class SecurityConfiguration {
 
                 // CSRF disabilitato
                 .and()
-                .csrf( csfr -> csfr.disable() )
+                .csrf( csrf -> csrf.disable() )
                 // .csrf().disable()
 
                 /*
@@ -76,16 +76,17 @@ public class SecurityConfiguration {
                     auth
 
                         // rotte libere
-                        .antMatchers("/api/v1/customer").permitAll()         // registrazione di un nuovo customer
+//                        .antMatchers("/api/v1/customer").permitAll()         // registrazione di un nuovo customer
+//                        .antMatchers("/api/v1/permissions").permitAll()              // lista di tutti i permessi
                         .antMatchers("/api/v1/customer/signup").permitAll()         // registrazione di un nuovo customer
-                        .antMatchers("/api/v1/customer/signup/parameters'").permitAll()         // registrazione di un nuovo customer
-                        .antMatchers("/api/v1/permissions").permitAll()              // lista di tutti i permessi
                         .antMatchers("/api/v1/role").permitAll()                    // lista di tutti i ruoli
 
+                        // public routes
                         .antMatchers("/public").permitAll()
                         .antMatchers("/public/**").permitAll()
+
+                        // FrontEnd
                         .antMatchers("/").permitAll()
-//                        .antMatchers("/**").permitAll()
                         .antMatchers("/**/*.png").permitAll()
                         .antMatchers("/**/*.jpg").permitAll()
                         .antMatchers("/**/*.ico").permitAll()
@@ -103,42 +104,13 @@ public class SecurityConfiguration {
 
                 )
 
-
-                    /*
-                    .antMatcher("/admin/**")
-                    .authorizeRequests()
-//                    .anyRequest()
-//                    .hasAuthority( "ADMIN ")
-
-                    .and()
-
-                    .formLogin()
-                    .loginPage("/free/signin")
-                    .usernameParameter("email")
-                    .loginProcessingUrl("/public/sign-in")
-                    .defaultSuccessUrl("/admin/")
-                    .permitAll()
-
-                    .and()
-
-                    .logout()
-                    .logoutUrl("/admin/sign-out")
-                    .logoutSuccessUrl("/admin/sign-out")
-
-                    */
-
                 // Gestione eccezioni
                 // .exceptionHandling()
                 // .authenticationEntryPoint( unauthorizedHandler )
 
                 // Sessione
-//                .and()
-
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-
-
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
-                // .sessionCreationPolicy( SessionCreationPolicy.STATELESS )
 
                 /*
                 .headers( header ->

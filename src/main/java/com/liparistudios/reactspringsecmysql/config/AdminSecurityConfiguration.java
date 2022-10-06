@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @EnableGlobalMethodSecurity( prePostEnabled = true )
 public class AdminSecurityConfiguration {
 
@@ -39,19 +41,19 @@ public class AdminSecurityConfiguration {
 
             .cors()
             .and()
-            .csrf( csfr -> csfr.disable() )
+            .csrf( csrf -> csrf.disable() )
 
                 .authorizeRequests( auth -> {
 
                     auth
-                        .antMatchers("/**/*.png").permitAll()
-                        .antMatchers("/**/*.jpg").permitAll()
-                        .antMatchers("/**/*.ico").permitAll()
-                        .antMatchers("/**/*.json").permitAll()
-                        .antMatchers("/**/static/js/*.js").permitAll()
-                        .antMatchers("/**/static/css/*.css").permitAll()
-                        .antMatchers("/**/static/**/*.map").permitAll()
-                        .antMatchers("/**/static/media/*").permitAll()
+//                        .antMatchers("/**/admin/*.png").permitAll()
+//                        .antMatchers("/**/admin/*.jpg").permitAll()
+//                        .antMatchers("/**/admin/*.ico").permitAll()
+//                        .antMatchers("/**/admin/*.json").permitAll()
+//                        .antMatchers("/**/admin/static/js/*.js").permitAll()
+//                        .antMatchers("/**/admin/static/css/*.css").permitAll()
+//                        .antMatchers("/**/admin/static/**/*.map").permitAll()
+//                        .antMatchers("/**/admin/static/media/*").permitAll()
 
                         .anyRequest().hasAuthority("ADMIN")
                     ;
@@ -74,8 +76,8 @@ public class AdminSecurityConfiguration {
 
             // Sessione jwt
             .and()
-            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
             .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
+            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 //            .headers( header -> header.frameOptions().sameOrigin().httpStrictTransportSecurity().disable() )
             .headers( header -> header.defaultsDisabled().cacheControl() )
             // .httpBasic( Customizer.withDefaults() )

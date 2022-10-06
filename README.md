@@ -1,17 +1,3 @@
-[seguendo qesta guida](https://www.youtube.com/watch?v=KYNR5js2cXE)
-
-[Multi Ruoli](https://www.youtube.com/watch?v=ErwPP7xLwDY)
-42:40
-
-[autenticazione con JPA](https://www.youtube.com/watch?v=awcCiqBO36E)
-
-[paginazione JPA](https://www.danvega.dev/blog/2022/05/12/spring-data-jpa-pagination/)
-
-[Buona guida](https://www.baeldung.com/role-and-privilege-for-spring-security-registration)
-
-[da tenere in considerazione](https://stackoverflow.com/questions/44046154/multiple-home-pages-for-different-roles-in-spring-security)
-
-[microservice con Spring Cloud](https://www.youtube.com/watch?v=p485kUNpPvE)
 
 
 ## Sicurezza
@@ -33,7 +19,7 @@ estrazione della chiave privata
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./private.pem
 ```
 
-Tech Stack
+## Tech Stack
 - Java 11
 - Spring Boot
 - JPA
@@ -44,3 +30,26 @@ Tech Stack
 - Thymeleaf
 - React
 - React Router
+
+
+## Tutorials & Sitography
+
+### video tutorial
+
+#### best
+[autenticazione con JPA](https://www.youtube.com/watch?v=awcCiqBO36E)
+[Dan Vega JWT](https://www.youtube.com/watch?v=KYNR5js2cXE)
+
+#### normal
+[Dan Vega Spring Security](https://www.youtube.com/watch?v=d7ZmZFbE_qY)
+[Multi Ruoli](https://www.youtube.com/watch?v=ErwPP7xLwDY)
+42:40
+
+
+[paginazione JPA](https://www.danvega.dev/blog/2022/05/12/spring-data-jpa-pagination/)
+
+[Buona guida](https://www.baeldung.com/role-and-privilege-for-spring-security-registration)
+
+[da tenere in considerazione](https://stackoverflow.com/questions/44046154/multiple-home-pages-for-different-roles-in-spring-security)
+
+[microservice con Spring Cloud](https://www.youtube.com/watch?v=p485kUNpPvE)
