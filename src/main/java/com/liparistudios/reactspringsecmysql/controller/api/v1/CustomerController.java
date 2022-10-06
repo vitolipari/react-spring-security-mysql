@@ -49,8 +49,7 @@ public class CustomerController {
     @GetMapping("/{page}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MASTER')")
     public List<Customer> getAllCustomers( @PathVariable Long page ) {
-        // TODO da finire
-        return customerService.getAllCustomer();
+        return customerService.getAllCustomer( page == null ? 0 : Math.toIntExact(page) );
     }
 
     @ResponseBody

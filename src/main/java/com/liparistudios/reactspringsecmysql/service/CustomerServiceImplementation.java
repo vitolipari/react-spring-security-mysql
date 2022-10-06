@@ -6,6 +6,7 @@ import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -113,9 +114,15 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
 
     }
 
+    public List<Customer> getAllCustomer( Integer pageIndex ) {
+        PageRequest page = PageRequest.of( pageIndex +1, 255 );  // page, size
+        return customerRepository.findAll( page ).getContent();     // .toList()
+    }
+
     @Override
     public List<Customer> getAllCustomer() {
-        return customerRepository.findAll();
+        PageRequest page = PageRequest.of( 1, 255 );  // page, size
+        return customerRepository.findAll( page ).getContent();     // .toList()
     }
 
     @Override
