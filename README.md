@@ -38,7 +38,9 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./
 
 #### best
 [autenticazione con JPA](https://www.youtube.com/watch?v=awcCiqBO36E)
+18min
 [Dan Vega JWT](https://www.youtube.com/watch?v=KYNR5js2cXE)
+9min
 
 #### normal
 [Dan Vega Spring Security](https://www.youtube.com/watch?v=d7ZmZFbE_qY)
