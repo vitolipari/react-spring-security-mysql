@@ -1,4 +1,4 @@
-package com.liparistudios.reactspringsecmysql.config;
+package com.liparistudios.reactspringsecmysql.model;
 
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SystemUserDetails implements UserDetails {
 
@@ -20,11 +21,22 @@ public class SystemUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        /*
         List<GrantedAuthority> authorityList = new ArrayList<GrantedAuthority>();
         this.customer.getRoles()
             .stream()
             .forEach( role -> authorityList.add( new SimpleGrantedAuthority( role.getName() ) ) )
         ;
+        */
+        List<GrantedAuthority> authorityList =
+            this.customer
+                .getRoles()
+                    .stream()
+                    .map( role -> role.getName() )
+                    .map( SimpleGrantedAuthority::new )
+                    .collect(Collectors.toList())
+        ;
+
         return authorityList;
     }
 

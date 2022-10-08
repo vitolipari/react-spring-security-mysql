@@ -31,21 +31,28 @@ import org.springframework.security.web.SecurityFilterChain;
 //@EnableGlobalMethodSecurity( prePostEnabled = true ) // già definito in AdminSecurityConfiguration
 public class SecurityConfiguration {
 
-    @Autowired
-    private RsaKeyProperties rsaKeys;
 
     // @Autowired
     // private AuthEntryPointJwt unauthorizedHandler;
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new SystemUserDetailsService();
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return new SystemUserDetailsService();
+//    }
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return NoOpPasswordEncoder.getInstance();
+//    }
+
+
+    private final SystemUserDetailsService systemUserDetailsService;
+
+
+    public SecurityConfiguration( SystemUserDetailsService systemUserDetailsService ) {
+        this.systemUserDetailsService = systemUserDetailsService;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -112,6 +119,8 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
+                .userDetailsService( systemUserDetailsService )
+
                 /*
                 .headers( header ->
                     header
@@ -130,16 +139,5 @@ public class SecurityConfiguration {
 
     }
 
-    @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.getRsaPublicKey() ).build();
-    }
 
-
-    @Bean
-    JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder( rsaKeys.getRsaPublicKey() ).privateKey( rsaKeys.getRsaPrivateKey() ).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
-        return new NimbusJwtEncoder( jwks );
-    }
 }

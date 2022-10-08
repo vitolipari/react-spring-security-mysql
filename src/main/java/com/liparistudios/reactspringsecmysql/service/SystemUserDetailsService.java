@@ -1,6 +1,6 @@
 package com.liparistudios.reactspringsecmysql.service;
 
-import com.liparistudios.reactspringsecmysql.config.SystemUserDetails;
+import com.liparistudios.reactspringsecmysql.model.SystemUserDetails;
 import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,9 +17,7 @@ public class SystemUserDetailsService implements UserDetailsService {
             new SystemUserDetails(
                 customerRepository
                     .findByEmail( username )
-                    .orElseThrow( () -> {
-                        throw new UsernameNotFoundException("email doesn't exists");
-                    })
+                    .orElseThrow( () -> new UsernameNotFoundException("email doesn't exists") )
             )
         ;
     }

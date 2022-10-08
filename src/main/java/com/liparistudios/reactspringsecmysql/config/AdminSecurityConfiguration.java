@@ -1,6 +1,13 @@
 package com.liparistudios.reactspringsecmysql.config;
 
 import com.liparistudios.reactspringsecmysql.service.SystemUserDetailsService;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,13 +20,27 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
+
+// TODO da mergiare con SecurityConfiguration
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @EnableGlobalMethodSecurity( prePostEnabled = true )
 public class AdminSecurityConfiguration {
+
+//    @Autowired
+    private RsaKeyProperties rsaKeys;
+
+    public AdminSecurityConfiguration( RsaKeyProperties rsaKeys ) {
+        this.rsaKeys = rsaKeys;
+    }
 
     @Bean
     public UserDetailsService adminDetailsService() {
@@ -76,14 +97,28 @@ public class AdminSecurityConfiguration {
 
             // Sessione jwt
             .and()
-            .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+            .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 //            .headers( header -> header.frameOptions().sameOrigin().httpStrictTransportSecurity().disable() )
             .headers( header -> header.defaultsDisabled().cacheControl() )
             // .httpBasic( Customizer.withDefaults() )
         ;
 
         return http.build();
+    }
+
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.getRsaPublicKey() ).build();
+    }
+
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder( rsaKeys.getRsaPublicKey() ).privateKey( rsaKeys.getRsaPrivateKey() ).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
+        return new NimbusJwtEncoder( jwks );
     }
 
 }

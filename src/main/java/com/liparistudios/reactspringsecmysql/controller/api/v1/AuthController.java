@@ -17,7 +17,7 @@ public class AuthController {
     @PostMapping("/token")
     public String token(Authentication authentication) {
         String token = tokenService.generateToken( authentication );
-        System.out.println("Token granted");
+        System.out.println("Token granted for user "+ authentication.getName());
         System.out.println( token );
         return token;
     }
