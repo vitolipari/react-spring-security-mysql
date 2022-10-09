@@ -45,12 +45,26 @@ public class CustomerController {
         return customerService.getAllCustomer();
     }
 
-    @ResponseBody
+
     @GetMapping("/{page}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MASTER')")
-    public List<Customer> getAllCustomers( @PathVariable Long page ) {
-        return customerService.getAllCustomer( page == null ? 0 : Math.toIntExact(page) );
+    public ResponseEntity<List<Customer>> getAllCustomers( @PathVariable Long page ) {
+        return
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .body( customerService.getAllCustomer( page == null ? 0 : Math.toIntExact(page) ) )
+        ;
     }
+
+
+    @ResponseBody
+    @GetMapping("/data")
+    @PreAuthorize("hasAnyRole('FREE_CUSTOMER')")
+    public Customer getCustomerData( HttpServletRequest request ) {
+        Long id = ((Customer) request.getUserPrincipal()).getId();
+        return customerService.loadCustomerById( id );
+    }
+
 
     @ResponseBody
     @PostMapping("/signup")

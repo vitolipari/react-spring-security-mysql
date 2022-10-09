@@ -182,6 +182,15 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
             ;
     }
 
+    public Customer loadCustomerById(Long id) throws UsernameNotFoundException {
+        return
+            customerRepository.findById( id )
+                .orElseThrow(() -> {
+                    throw new UsernameNotFoundException("email non esiste");
+                })
+            ;
+    }
+
     /*
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -115,7 +115,21 @@ public class SecurityConfiguration {
                 // .exceptionHandling()
                 // .authenticationEntryPoint( unauthorizedHandler )
 
-                // Sessione
+
+                .formLogin()
+                    .loginPage("/public/sign-in")            // path da usare: /admin/sign-in
+                    .usernameParameter("email")
+                    .loginProcessingUrl("/sign-in")   // path da usare: /admin/sign-in
+                    .defaultSuccessUrl("/")
+                    .permitAll()
+
+                .and()
+                .logout()
+                    .logoutUrl("/sign-out")
+                    .logoutSuccessUrl("/")
+
+                // Sessione jwt
+                .and()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
