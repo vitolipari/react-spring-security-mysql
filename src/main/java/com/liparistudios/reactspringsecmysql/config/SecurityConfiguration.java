@@ -23,6 +23,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.HashMap;
@@ -46,7 +48,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @SuppressWarnings("deprecation")    // soluzione che no nmi piace!
+//    @SuppressWarnings("deprecation")    // soluzione che no nmi piace!
     public PasswordEncoder passwordEncoder() {
         // return new BCryptPasswordEncoder();
         // return NoOpPasswordEncoder.getInstance();
@@ -54,8 +56,13 @@ public class SecurityConfiguration {
         Map<String, PasswordEncoder> encoders = new HashMap<>(){{
             put("bcrypt", new BCryptPasswordEncoder());
             put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
-            put("sha256", new StandardPasswordEncoder());
+            put("SHA-512", new Sha512PasswordEncoder());
+            put("sha512", new Sha512PasswordEncoder());
+            put("sha256", new Sha256PasswordEncoder());
+            put("SHA-256", new Sha256PasswordEncoder());
+
+//            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
+//            put("sha256", new StandardPasswordEncoder());
             // put("ldap", new LdapShaPasswordEncoder());
             // put("MD4", new Md4PasswordEncoder());
             // put("MD5", new MessageDigestPasswordEncoder("MD5"));
@@ -138,14 +145,12 @@ public class SecurityConfiguration {
 
 
                         // rotte private
+//                        .antMatchers("/admin").hasAuthority("ADMIN")
+//                        .antMatchers("/admin/**").hasAuthority("ADMIN")
+
                         .anyRequest().authenticated()
 
                 )
-
-                // Gestione eccezioni
-                // .exceptionHandling()
-                // .authenticationEntryPoint( unauthorizedHandler )
-
 
                 .formLogin()
                     .loginPage("/public/sign-in")
@@ -173,10 +178,21 @@ public class SecurityConfiguration {
                         .sameOrigin().httpStrictTransportSecurity().disable()
                 )
                 */
-                .headers( header -> header.defaultsDisabled().cacheControl() )
+
+
+                // Gestione eccezioni ( non fa il redirect al login url )
+//                 .exceptionHandling( ex ->
+//                     ex
+//                         .authenticationEntryPoint( new BearerTokenAuthenticationEntryPoint() )
+//                         .accessDeniedHandler( new BearerTokenAccessDeniedHandler() )
+//                 )
+                    // .authenticationEntryPoint( unauthorizedHandler )
+
+
+                    .headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
-                .httpBasic( Customizer.withDefaults() ) // credo che usi il PéasswordEncoder
+                .httpBasic( Customizer.withDefaults() )
                 .build()
 
         );

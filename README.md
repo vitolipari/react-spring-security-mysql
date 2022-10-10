@@ -63,6 +63,8 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./
 [Dan Vega JWT](https://www.youtube.com/watch?v=KYNR5js2cXE)
 35min
 
+[Continuo del video](https://www.youtube.com/watch?v=UaB-0e76LdQ)
+
 #### normal
 [Dan Vega Spring Security](https://www.youtube.com/watch?v=d7ZmZFbE_qY)
 [Multi Ruoli](https://www.youtube.com/watch?v=ErwPP7xLwDY)
