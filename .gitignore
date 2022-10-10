@@ -34,9 +34,12 @@ build/
 
 
 
-src/main/resources/react_js/package-lock.json
-src/main/resources/react_js/node_modules
-src/main/resources/react_js/build
+src/main/resources/react_js/**/package-lock.json
+src/main/resources/react_js/**/yarn-lock.json
+src/main/resources/react_js/**/node_modules
+# src/main/resources/react_js/**/build
+src/main/resources/react_js/**/.idea
+
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

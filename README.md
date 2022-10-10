@@ -46,6 +46,12 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./
 - React Router
 
 
+## Plugins
+
+### H2
+[ufficiale](https://www.baeldung.com/spring-boot-h2-database)
+
+
 ## Tutorials & Sitography
 
 ### video tutorial
