@@ -40,14 +40,27 @@ public class WebController {
 //        System.out.println( principal.getName() );
 //        System.out.println( principal.getName().toString() );
 
+        ModelAndView page = null;
+        if( principal == null ) {
+            Map<String, Object> pageVars = new HashMap<String, Object>() {{
+                put("session", "123abc");
+                put("certificate", "123abc");
+                put("data", "123abc");
+            }};
+            page = new ModelAndView("free/build/index");
+            page.addAllObjects(pageVars);
 
-        Map<String, Object> pageVars = new HashMap<String, Object>() {{
-            put("session", "123abc");
-            put("certificate", "123abc");
-            put("data", "123abc");
-        }};
-        ModelAndView page = new ModelAndView("free/build/index");
-        page.addAllObjects(pageVars);
+        }
+        else {
+            Map<String, Object> pageVars = new HashMap<String, Object>() {{
+                put("session", "123abc");
+                put("certificate", "123abc");
+                put("data", "123abc");
+            }};
+            page = new ModelAndView("customer/build/index");
+            page.addAllObjects(pageVars);
+        }
+
         return page;
     }
 

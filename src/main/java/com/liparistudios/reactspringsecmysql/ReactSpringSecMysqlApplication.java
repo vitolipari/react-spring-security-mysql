@@ -35,7 +35,8 @@ public class ReactSpringSecMysqlApplication {
 	CommandLineRunner runner(
 		PermissionService permissionService,
 		RoleService roleService,
-		CustomerService customerService
+		CustomerService customerService,
+		PasswordEncoder passwordEncoder
 	) {
 
 		/*
@@ -100,7 +101,7 @@ public class ReactSpringSecMysqlApplication {
 					new Customer(
 						null,
 						"vitolipari1981@gmail.com",
-						"jRoot@15099#12192537",
+						passwordEncoder.encode("jRoot@15099#12192537"),
 						new ArrayList<Role>(){{
 							add( roleService.findByName("MASTER") );
 						}}

@@ -27,12 +27,14 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
+/*
+
 
 // TODO da mergiare con SecurityConfiguration
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@EnableGlobalMethodSecurity( prePostEnabled = true )
+// @EnableGlobalMethodSecurity( prePostEnabled = true )  // già definito in AdminSecurityConfiguration
 public class AdminSecurityConfiguration {
 
 //    @Autowired
@@ -47,10 +49,10 @@ public class AdminSecurityConfiguration {
         return new SystemUserDetailsService();
     }
 
-    @Bean
-    public PasswordEncoder adminPasswordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+//    @Bean
+//    public PasswordEncoder adminPasswordEncoder() {
+//        return NoOpPasswordEncoder.getInstance();
+//    }
 
     @Bean
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
@@ -67,14 +69,14 @@ public class AdminSecurityConfiguration {
                 .authorizeRequests( auth -> {
 
                     auth
-//                        .antMatchers("/**/admin/*.png").permitAll()
-//                        .antMatchers("/**/admin/*.jpg").permitAll()
-//                        .antMatchers("/**/admin/*.ico").permitAll()
-//                        .antMatchers("/**/admin/*.json").permitAll()
-//                        .antMatchers("/**/admin/static/js/*.js").permitAll()
-//                        .antMatchers("/**/admin/static/css/*.css").permitAll()
-//                        .antMatchers("/**/admin/static/**/*.map").permitAll()
-//                        .antMatchers("/**/admin/static/media/*").permitAll()
+//                        .antMatchers("/** /admin/*.png").permitAll()
+//                        .antMatchers("/** /admin/*.jpg").permitAll()
+//                        .antMatchers("/** /admin/*.ico").permitAll()
+//                        .antMatchers("/** /admin/*.json").permitAll()
+//                        .antMatchers("/** /admin/static/js/*.js").permitAll()
+//                        .antMatchers("/** /admin/static/css/*.css").permitAll()
+//                        .antMatchers("/** /admin/static/** /*.map").permitAll()
+//                        .antMatchers("/** /admin/static/media/*").permitAll()
 
                         .anyRequest().hasAuthority("ADMIN")
                     ;
@@ -122,3 +124,4 @@ public class AdminSecurityConfiguration {
     }
 
 }
+*/

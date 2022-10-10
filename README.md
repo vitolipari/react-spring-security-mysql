@@ -1,6 +1,20 @@
 
 
 ## Sicurezza
+
+### PasswordEncoder
+[ufficiale](https://www.baeldung.com/spring-security-5-password-storage)
+
+[Esempio 1](https://www.dontpanicblog.co.uk/2022/03/14/spring-security-delegating-password-encoder/)
+
+[Esempio 2](https://springhow.com/spring-security-password-encoder/)
+
+[Esempio 3](https://blog.marcosbarbero.com/password-encoder-migration-spring-security-5/)
+
+[Esempio 4](https://howtodoinjava.com/spring-security/password-encoders/)
+
+
+
 ### per la configurazione jwt
 #### creazione di una coppia di chiavi
 

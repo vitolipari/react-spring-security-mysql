@@ -59,8 +59,15 @@ public class CustomerController {
 
     @ResponseBody
     @GetMapping("/data")
-    @PreAuthorize("hasAnyRole('FREE_CUSTOMER')")
     public Customer getCustomerData( HttpServletRequest request ) {
+        Long id = ((Customer) request.getUserPrincipal()).getId();
+        return customerService.loadCustomerById( id );
+    }
+
+    @ResponseBody
+    @GetMapping("/data/full")
+    @PreAuthorize("hasAnyRole('FREE_CUSTOMER')")
+    public Customer getFullCustomerData( HttpServletRequest request ) {
         Long id = ((Customer) request.getUserPrincipal()).getId();
         return customerService.loadCustomerById( id );
     }

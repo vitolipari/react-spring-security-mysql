@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -28,29 +29,33 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity( prePostEnabled = true ) // già definito in AdminSecurityConfiguration
+@EnableGlobalMethodSecurity( prePostEnabled = true ) // già definito in AdminSecurityConfiguration
 public class SecurityConfiguration {
 
+
+    private RsaKeyProperties rsaKeys;
 
     // @Autowired
     // private AuthEntryPointJwt unauthorizedHandler;
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return new SystemUserDetailsService();
-//    }
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new SystemUserDetailsService();
+    }
 
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return NoOpPasswordEncoder.getInstance();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+        // return NoOpPasswordEncoder.getInstance();
+    }
 
 
     private final SystemUserDetailsService systemUserDetailsService;
 
 
-    public SecurityConfiguration( SystemUserDetailsService systemUserDetailsService ) {
-        this.systemUserDetailsService = systemUserDetailsService;
+    public SecurityConfiguration( SystemUserDetailsService sudService, RsaKeyProperties rsaKeyProperties ) {
+        this.systemUserDetailsService = sudService;
+        this.rsaKeys = rsaKeyProperties;
     }
 
 
@@ -117,9 +122,9 @@ public class SecurityConfiguration {
 
 
                 .formLogin()
-                    .loginPage("/public/sign-in")            // path da usare: /admin/sign-in
+                    .loginPage("/public/sign-in")
                     .usernameParameter("email")
-                    .loginProcessingUrl("/sign-in")   // path da usare: /admin/sign-in
+                    .loginProcessingUrl("/sign-in")
                     .defaultSuccessUrl("/")
                     .permitAll()
 
@@ -145,12 +150,26 @@ public class SecurityConfiguration {
                 .headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
-                // .httpBasic( Customizer.withDefaults() )
+                .httpBasic( Customizer.withDefaults() ) // credo che usi il PéasswordEncoder
                 .build()
 
         );
 
 
+    }
+
+
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeys.getRsaPublicKey() ).build();
+    }
+
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder( rsaKeys.getRsaPublicKey() ).privateKey( rsaKeys.getRsaPrivateKey() ).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
+        return new NimbusJwtEncoder( jwks );
     }
 
 
