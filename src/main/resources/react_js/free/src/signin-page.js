@@ -48,7 +48,7 @@ export const SigninPage = props => {
 
 							return (
 								fetch(
-									"/api/v1/login",
+									"/api/v1/sign-in",
 									{
 										method: "POST",
 										body: JSON.stringify({

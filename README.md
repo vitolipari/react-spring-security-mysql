@@ -7,6 +7,7 @@
 
 [Esempio 1](https://www.dontpanicblog.co.uk/2022/03/14/spring-security-delegating-password-encoder/)
 
+forse il migliore, da usare per lo SHA-256
 [Esempio 2](https://springhow.com/spring-security-password-encoder/)
 
 [Esempio 3](https://blog.marcosbarbero.com/password-encoder-migration-spring-security-5/)

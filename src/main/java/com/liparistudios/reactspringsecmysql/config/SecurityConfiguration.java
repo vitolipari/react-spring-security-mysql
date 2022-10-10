@@ -18,13 +18,15 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.*;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Configuration
@@ -44,9 +46,33 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @SuppressWarnings("deprecation")    // soluzione che no nmi piace!
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // return new BCryptPasswordEncoder();
         // return NoOpPasswordEncoder.getInstance();
+
+        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
+            put("bcrypt", new BCryptPasswordEncoder());
+            put("noop", NoOpPasswordEncoder.getInstance());
+            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
+            put("sha256", new StandardPasswordEncoder());
+            // put("ldap", new LdapShaPasswordEncoder());
+            // put("MD4", new Md4PasswordEncoder());
+            // put("MD5", new MessageDigestPasswordEncoder("MD5"));
+            // put("pbkdf2", new Pbkdf2PasswordEncoder());
+            // put("scrypt", new SCryptPasswordEncoder());
+            // put("SHA-1", new MessageDigestPasswordEncoder("SHA-1"));
+            // put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
+        }};
+
+        /*
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
+        return delegatingPasswordEncoder;
+        */
+
+        return new DelegatingPasswordEncoder("sha256", encoders);
+
     }
 
 
