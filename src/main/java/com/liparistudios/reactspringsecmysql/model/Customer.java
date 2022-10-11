@@ -96,5 +96,41 @@ public class Customer {
     }
 
 
+    @PreUpdate
+    public void preUpdate() {
+
+    }
+
+    @PrePersist
+    public void prePersist() {
+
+    }
+
+    @PostPersist
+    public void postPersist() {
+
+    }
+
+    @PostLoad
+    public void postLoad() {
+
+    }
+
+    @PostRemove
+    public void postRemove() {
+
+    }
+
+    @PostUpdate
+    public void postUpdate() {
+
+    }
+
+    @PreRemove
+    public void preRemove() {
+
+    }
+
+
 }
 
