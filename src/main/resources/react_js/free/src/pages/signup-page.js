@@ -84,7 +84,7 @@ export const SignupPage = props => {
                             onChange={ changeEvent => {
                                 setData({
                                     ...data,
-                                    dob: moment( changeEvent.target.value, "DD/MM/YYYY" ).format()
+                                    dob: moment( changeEvent.target.value, "DD/MM/YYYY" ).format("yyyy-MM-dd")
                                 })
                             }}
                         />

@@ -33,7 +33,7 @@ public class Customer {
 
     private String phoneNumber;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column( nullable = false )
     private LocalDate dob;
 
@@ -98,37 +98,37 @@ public class Customer {
 
     @PreUpdate
     public void preUpdate() {
-
+        System.out.println("pre-update customer");
     }
 
     @PrePersist
     public void prePersist() {
-
+        System.out.println("pre-save customer");
     }
 
     @PostPersist
     public void postPersist() {
-
+        System.out.println("customer saved");
     }
 
     @PostLoad
     public void postLoad() {
-
+        System.out.println("customer loaded");
     }
 
     @PostRemove
     public void postRemove() {
-
+        System.out.println("customer removed");
     }
 
     @PostUpdate
     public void postUpdate() {
-
+        System.out.println("customer updated");
     }
 
     @PreRemove
     public void preRemove() {
-
+        System.out.println("pre remove customer");
     }
 
 

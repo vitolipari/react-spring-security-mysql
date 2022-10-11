@@ -2,7 +2,6 @@ package com.liparistudios.reactspringsecmysql.service;
 
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Permission;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -18,6 +17,8 @@ public interface CustomerService {
     List<Permission> getAllPermissions( String email );
     List<Permission> getAllPermissions( Long id );
     List<Permission> getAllPermissions( Customer customer );
+
+    Long count();
 
 
 }

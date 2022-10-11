@@ -7,24 +7,18 @@ import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional // non sono sicuro
 public class CustomerServiceImplementation implements CustomerService/*, UserDetailsService*/ {
 
     private final CustomerRepository customerRepository;
@@ -165,6 +159,11 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
     @Override
     public List<Permission> getAllPermissions(Customer customer) {
         return getAllPermissions( customer.getId() );
+    }
+
+    @Override
+    public Long count() {
+        return Long.valueOf( customerRepository.count() );
     }
 
 
