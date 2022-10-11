@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {sha256} from "js-sha256";
-import {ActionButton} from "./components/action-button";
-import logo from './logo.svg';
-import './App.css';
+import {ActionButton} from "../components/action-button";
+import logo from '../logo.svg';
+import '../App.css';
 
 
 
@@ -19,12 +19,12 @@ export const SignupPage = props => {
     password: <string>
     roles: [ <string> ]
      */
-    
+
     const [roles, setRoles] = useState();
     const [selectedRoles, setSelectedRoles] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    
+
     if(!roles) {
         loadAllRoles()
             .then( list => {
@@ -140,6 +140,6 @@ export const SignupPage = props => {
         </div>
 
 
-        
+
     );
 }

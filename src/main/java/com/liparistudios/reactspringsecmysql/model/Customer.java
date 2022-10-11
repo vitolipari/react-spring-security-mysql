@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,11 +20,26 @@ public class Customer {
     @GeneratedValue( strategy = GenerationType.SEQUENCE )
     private Long id;
 
-    @Column( unique = true, nullable = false, length = 255)
+    @Column(
+        unique = true,
+        nullable = false,
+        length = 255
+    )
     private String email;
 
     @Column( nullable = false, length = 128 )
     private String password;
+
+    private String phoneNumber;
+    @Column( nullable = false )
+    private LocalDate dob;
+
+    @Transient
+    private Integer age;
+
+    public Integer getAge() {
+        return Period.between( this.dob, LocalDate.now() ).getYears();
+    }
 
     @ManyToMany(
         fetch = FetchType.EAGER

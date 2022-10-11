@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import logo from './logo.svg';
 import './App.css';
-import {SignupPage} from "./signup-page";
 import "./style/index.css";
+import {SignupPage, SigninPage} from "./pages";
 
 
 const Home = props => {
@@ -44,10 +44,6 @@ const Prova = props => {
     )
 }
 
-const SignIn = props => (<div>SignIn</div>);
-
-
-
 const SignOut = props => (<div>SignOut</div>);
 
 const NotFound = props => (<div>Not Found</div>);
@@ -63,7 +59,7 @@ const allPublicFreeRoutes = createBrowserRouter([
     {
         exact: true,
         path: "/public/sign-in",
-        element: <SignIn/>
+        element: <SigninPage/>
     },
     {
         exact: true,

@@ -1,7 +1,7 @@
 import React from "react";
-import logo from "./logo.svg";
+import logo from "../logo.svg";
 import {sha256} from "js-sha256";
-import {ActionButton} from "./components/action-button";
+import {ActionButton} from "../components/action-button";
 import {useState} from "@types/react";
 
 export const SigninPage = props => {
@@ -46,10 +46,10 @@ export const SigninPage = props => {
 							});
 
 
-							
+
 							return (
 								fetch(
-									"/api/v1/sign-in",
+									"/public/login",
 									{
 										method: "POST",
 										body: JSON.stringify({

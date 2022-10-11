@@ -33,7 +33,7 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity( prePostEnabled = true ) // già definito in AdminSecurityConfiguration
+@EnableGlobalMethodSecurity( prePostEnabled = true )
 public class SecurityConfiguration {
 
 
@@ -48,7 +48,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-//    @SuppressWarnings("deprecation")    // soluzione che no nmi piace!
     public PasswordEncoder passwordEncoder() {
         // return new BCryptPasswordEncoder();
         // return NoOpPasswordEncoder.getInstance();
@@ -153,9 +152,10 @@ public class SecurityConfiguration {
                 )
 
                 .formLogin()
-                    .loginPage("/public/sign-in")
+                    .loginPage("/public/sign-in")       // url di redirect in caso non si sia autenticati
                     .usernameParameter("email")
-                    .loginProcessingUrl("/sign-in")
+                    .passwordParameter("password")
+                    .loginProcessingUrl("/public/login")
                     .defaultSuccessUrl("/")
                     .permitAll()
 
@@ -170,15 +170,6 @@ public class SecurityConfiguration {
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
                 .userDetailsService( systemUserDetailsService )
-
-                /*
-                .headers( header ->
-                    header
-                        .frameOptions()
-                        .sameOrigin().httpStrictTransportSecurity().disable()
-                )
-                */
-
 
                 // Gestione eccezioni ( non fa il redirect al login url )
 //                 .exceptionHandling( ex ->
