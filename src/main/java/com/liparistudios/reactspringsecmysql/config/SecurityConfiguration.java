@@ -129,6 +129,8 @@ public class SecurityConfiguration {
                         .antMatchers("/public").permitAll()
                         .antMatchers("/public/**").permitAll()
 
+                        .antMatchers("/h2-console/**").permitAll()
+
                         // FrontEnd
                         .antMatchers("/").permitAll()
                         .antMatchers("/**/*.png").permitAll()

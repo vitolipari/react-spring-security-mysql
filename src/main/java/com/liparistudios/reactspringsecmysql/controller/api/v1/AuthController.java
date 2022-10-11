@@ -30,12 +30,19 @@ public class AuthController {
     }
 
 
+    @ResponseBody
     @PostMapping("/public/login")
-    public @ResponseBody Map<String, Object> login(
+    public Map<String, Object> login(
             HttpServletRequest request,
             String email,
             String password
     ) {
+        System.out.println("POST al login");
+        System.out.println( "AUTH type" );
+        System.out.println( request.getAuthType() );
+        System.out.println("principal");
+        System.out.println( request.getUserPrincipal() );
+
         Map<String, Object> result = null;
         try {
             result = new HashMap<String, Object>(){{

@@ -34,8 +34,6 @@ public class Customer {
     @Column( nullable = false )
     private LocalDate dob;
 
-    @Transient
-    private Integer age;
 
     public Integer getAge() {
         return Period.between( this.dob, LocalDate.now() ).getYears();
@@ -87,6 +85,9 @@ public class Customer {
         return new HashMap<String, Object>(){{
             put("id", id);
             put("email", email);
+            put("DoB", dob.toString());
+            put("age", getAge());
+            put("phone", phoneNumber);
             put("roles", rolesList);
         }};
     }

@@ -22,8 +22,9 @@ export const SignupPage = props => {
 
     const [roles, setRoles] = useState();
     const [selectedRoles, setSelectedRoles] = useState();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [data, setData] = useState();
+    // const [email, setEmail] = useState();
+    // const [password, setPassword] = useState();
 
     if(!roles) {
         loadAllRoles()
@@ -52,7 +53,10 @@ export const SignupPage = props => {
                             name={"email"}
                             id={"email"}
                             onChange={ changeEvent => {
-                                setEmail( changeEvent.target.value );
+                                setData({
+                                    ...data,
+                                    email: changeEvent.target.value
+                                })
                             }}
                         />
                     </div>
@@ -63,7 +67,38 @@ export const SignupPage = props => {
                             name={"password"}
                             id={"password"}
                             onChange={ changeEvent => {
-                                setPassword( sha256(changeEvent.target.value) );
+                                setData({
+                                    ...data,
+                                    password: sha256(changeEvent.target.value)
+                                })
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label>DoB</label>
+                        <input
+                            type={"dob"}
+                            name={"dob"}
+                            id={"dob"}
+                            onChange={ changeEvent => {
+                                setData({
+                                    ...data,
+                                    dob: changeEvent.target.value
+                                })
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label>Phone Number</label>
+                        <input
+                            type={"phone"}
+                            name={"phone"}
+                            id={"phone"}
+                            onChange={ changeEvent => {
+                                setData({
+                                    ...data,
+                                    phone: changeEvent.target.value
+                                })
                             }}
                         />
                     </div>
@@ -96,25 +131,24 @@ export const SignupPage = props => {
                         promise={ () => {
 
 
+                            let payload = {
+                                ...data,
+                                roles: selectedRoles
+                            };
 
                             console.log("invio i dati");
-                            console.log({
-                                email: email,
-                                password: password,
-                                roles: selectedRoles
-                            });
+                            console.log( payload );
 
 
                             return (
                                 fetch(
-                                    "/api/v1/customer",
+                                    "/api/v1/customer/signup",
                                     {
                                         method: "POST",
-                                        body: JSON.stringify({
-                                            email: email,
-                                            password: password,
-                                            roles: selectedRoles
-                                        })
+                                        body: JSON.stringify( payload ),
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        }
                                     }
                                 )
                                 .then( response => response.json() )

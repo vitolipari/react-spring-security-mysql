@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
@@ -102,6 +104,8 @@ public class ReactSpringSecMysqlApplication {
 						null,
 						"vitolipari1981@gmail.com",
 						passwordEncoder.encode("jRoot@15099#12192537"),
+						"+393000000000",
+						LocalDate.of(1981, 4, 25),
 						new ArrayList<Role>(){{
 							add( roleService.findByName("MASTER") );
 						}}
