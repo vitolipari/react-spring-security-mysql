@@ -3,6 +3,7 @@ import {sha256} from "js-sha256";
 import {ActionButton} from "../components/action-button";
 import logo from '../logo.svg';
 import '../App.css';
+import moment from "moment";
 
 
 
@@ -83,7 +84,7 @@ export const SignupPage = props => {
                             onChange={ changeEvent => {
                                 setData({
                                     ...data,
-                                    dob: changeEvent.target.value
+                                    dob: moment( changeEvent.target.value, "DD/MM/YYYY" ).format()
                                 })
                             }}
                         />

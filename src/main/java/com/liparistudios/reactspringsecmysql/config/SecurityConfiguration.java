@@ -104,7 +104,6 @@ public class SecurityConfiguration {
                 // CSRF disabilitato
                 .and()
                 .csrf( csrf -> csrf.disable() )
-                // .csrf().disable()
 
                 /*
                 .csrf(csrf -> csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
@@ -129,6 +128,9 @@ public class SecurityConfiguration {
                         .antMatchers("/public").permitAll()
                         .antMatchers("/public/**").permitAll()
 
+                        .antMatchers("/h2-console").permitAll()
+                        .antMatchers("/h2-console/").permitAll()
+                        .antMatchers("/h2-console/*").permitAll()
                         .antMatchers("/h2-console/**").permitAll()
 
                         // FrontEnd
