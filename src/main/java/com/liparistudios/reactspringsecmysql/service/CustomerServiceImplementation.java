@@ -48,10 +48,13 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
             ;
             System.out.println("Il customer non ha un ruolo, viene settato quello di default");
             System.out.println( defaultRole.toString() );
-            customer.setRoles( new ArrayList<Role>(){{ add(defaultRole); }} );
+            customerDTO.setRoles( new ArrayList<Role>(){{ add(defaultRole); }} );
         }
         else {
             List<Role> allRoles =
+
+                // ruoli corretti corrispondenti ai
+                // ruoli senza permessi del customerDTO
                 customerDTO
                     .getRoles()
                         .stream()
@@ -71,6 +74,8 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
                         })
                         .collect(Collectors.toList())
             ;
+
+            // aggiunta dei ruoli corretti
             allRoles
                 .addAll(
                     customerDTO
@@ -83,7 +88,7 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
                         .collect(Collectors.toList())
                 )
             ;
-            customer.setRoles( allRoles );
+            customerDTO.setRoles( allRoles );
         }
 
 
