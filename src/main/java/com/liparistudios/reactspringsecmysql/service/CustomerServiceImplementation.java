@@ -1,13 +1,16 @@
 package com.liparistudios.reactspringsecmysql.service;
 
+import com.liparistudios.reactspringsecmysql.config.Sha256PasswordEncoder;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,21 +27,21 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
     private final CustomerRepository customerRepository;
     private final RoleRepository roleRepository;
 
-    // TODO da finire
-    //  https://www.youtube.com/watch?v=VVn9OG9nfH0&t=546s
-    //  video al minuto 1:22:22
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
     @Override
-    public Customer saveCustomer(Customer customer) {
+    public Customer saveCustomer(Customer customerDTO) {
 
 
-        if( customerRepository.findByEmail( customer.getEmail() ).isPresent() ) {
+        Customer customer = new Customer();
+        if( customerRepository.findByEmail( customerDTO.getEmail() ).isPresent() ) {
             return null;
         };
 
-        if( (customer.getRoles() == null ) || customer.getRoles().isEmpty() ) {
+        if( (customerDTO.getRoles() == null ) || customerDTO.getRoles().isEmpty() ) {
             Role defaultRole = roleRepository
                 .findByName("FREE_CUSTOMER")
                 .orElseThrow( () -> { throw new IllegalStateException("Ruolo di default non trovato"); })
@@ -49,7 +52,7 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
         }
         else {
             List<Role> allRoles =
-                customer
+                customerDTO
                     .getRoles()
                         .stream()
                         .filter( role -> ((role.getPermissions() == null) || role.getPermissions().isEmpty()) )
@@ -70,7 +73,7 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
             ;
             allRoles
                 .addAll(
-                    customer
+                    customerDTO
                         .getRoles()
                         .stream()
                         .filter( role -> (role.getPermissions() != null) && !role.getPermissions().isEmpty() )
@@ -82,6 +85,22 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
             ;
             customer.setRoles( allRoles );
         }
+
+
+        if( (customer.getRoles() == null ) || customer.getRoles().isEmpty() ) {
+            customer.setRoles( customerDTO.getRoles() );
+        }
+
+        customer.setPassword( passwordEncoder.encode( customerDTO.getPassword() ) );
+
+        customer.setDob( customerDTO.getDob() );
+        customer.setEmail( customerDTO.getEmail() );
+        customer.setPhoneNumber( customerDTO.getPhoneNumber() );
+
+
+        System.out.println("controllo password encoder");
+        System.out.println("abc = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
+        System.out.println(passwordEncoder.encode("abc"));
 
         return customerRepository.save( customer );
     }

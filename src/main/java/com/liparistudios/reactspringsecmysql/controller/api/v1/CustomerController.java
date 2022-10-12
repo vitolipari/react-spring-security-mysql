@@ -123,9 +123,8 @@ public class CustomerController {
 
         System.out.println("Customer salvato");
         System.out.println( savedCustomer );
-        System.out.println( savedCustomer.toString() );
         System.out.println( savedCustomer.toMap() );
-        System.out.println( savedCustomer.toMap().toString() );
+
 
         return ResponseEntity.ok( savedCustomer.toMap() );
     }

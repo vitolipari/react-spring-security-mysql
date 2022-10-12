@@ -109,6 +109,8 @@ public class Customer {
     @PostPersist
     public void postPersist() {
         System.out.println("customer saved");
+        System.out.println( toMap() );
+        System.out.println("-----------");
     }
 
     @PostLoad

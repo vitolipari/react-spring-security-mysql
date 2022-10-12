@@ -82,9 +82,11 @@ export const SignupPage = props => {
                             name={"dob"}
                             id={"dob"}
                             onChange={ changeEvent => {
+                                console.log("data");
+                                console.log( moment( changeEvent.target.value, "DD/MM/YYYY", "it" ).format("YYYY-MM-DD") );
                                 setData({
                                     ...data,
-                                    dob: moment( changeEvent.target.value, "DD/MM/YYYY" ).format("yyyy-MM-dd")
+                                    dob: moment( changeEvent.target.value, "DD/MM/YYYY", "it" ).format("YYYY-MM-DD")
                                 })
                             }}
                         />
@@ -98,7 +100,7 @@ export const SignupPage = props => {
                             onChange={ changeEvent => {
                                 setData({
                                     ...data,
-                                    phone: changeEvent.target.value
+                                    phoneNumber: changeEvent.target.value
                                 })
                             }}
                         />
@@ -109,11 +111,21 @@ export const SignupPage = props => {
                             id={"roles"}
                             name={"roles"}
                             className={""}
-                            onSelect={ selectedRole => {
+                            onChange={ selectedRole => {
+                            // onSelect={ selectedRole => {
                                 console.log("role selected");
-                                console.log(selectedRole);
+                                console.log(selectedRole.target.value);
+                                console.log(
+                                    roles
+                                        .filter( r => r.id === parseInt(selectedRole.target.value, 10) )
+                                );
+                                console.log( roles );
 
-                                setSelectedRoles([ selectedRole ]);
+                                setSelectedRoles(
+                                    roles
+                                        .filter( r => r.id === parseInt(selectedRole.target.value, 10) )
+                                )
+
                             }}
                         >
                             {
