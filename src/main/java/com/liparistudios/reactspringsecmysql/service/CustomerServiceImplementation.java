@@ -9,6 +9,8 @@ import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional // non sono sicuro
-public class CustomerServiceImplementation implements CustomerService/*, UserDetailsService*/ {
+public class CustomerServiceImplementation implements CustomerService, UserDetailsService {
 
     private final CustomerRepository customerRepository;
     private final RoleRepository roleRepository;
@@ -212,6 +214,11 @@ public class CustomerServiceImplementation implements CustomerService/*, UserDet
                     throw new UsernameNotFoundException("email non esiste");
                 })
             ;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return loadCustomerByUsername( username ); // TODO da trovare una soluzione
     }
 
     /*
