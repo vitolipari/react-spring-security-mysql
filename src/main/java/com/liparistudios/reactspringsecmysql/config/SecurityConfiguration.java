@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,45 +42,6 @@ public class SecurityConfiguration {
 
     // @Autowired
     // private AuthEntryPointJwt unauthorizedHandler;
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new SystemUserDetailsService();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
-        // return NoOpPasswordEncoder.getInstance();
-
-        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
-            put("bcrypt", new BCryptPasswordEncoder());
-            put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-512", new Sha512PasswordEncoder());
-            put("sha512", new Sha512PasswordEncoder());
-            put("sha256", new Sha256PasswordEncoder());
-            put("SHA-256", new Sha256PasswordEncoder());
-
-//            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
-//            put("sha256", new StandardPasswordEncoder());
-            // put("ldap", new LdapShaPasswordEncoder());
-            // put("MD4", new Md4PasswordEncoder());
-            // put("MD5", new MessageDigestPasswordEncoder("MD5"));
-            // put("pbkdf2", new Pbkdf2PasswordEncoder());
-            // put("scrypt", new SCryptPasswordEncoder());
-            // put("SHA-1", new MessageDigestPasswordEncoder("SHA-1"));
-            // put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
-        }};
-
-        /*
-        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-        return delegatingPasswordEncoder;
-        */
-
-        return new DelegatingPasswordEncoder("sha256", encoders);
-
-    }
 
 
     private final SystemUserDetailsService systemUserDetailsService;
@@ -156,17 +118,22 @@ public class SecurityConfiguration {
                 )
 
                 .formLogin()
-                    .loginPage("/public/sign-in")       // url di redirect in caso non si sia autenticati
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .loginProcessingUrl("/public/login")
+                    .loginPage("/public/sign-in")       // url di redirect in caso non si sia autenticati
+                    .loginProcessingUrl("/public/login")    // endpoint di chiamata per il login
+                    .successHandler(new AppAuthenticationSuccessHandler())
                     .defaultSuccessUrl("/")
+                    .failureHandler( new AppAuthenticationFailureHandler() )
+                    .failureUrl("/public/sign-in?error=true")
                     .permitAll()
+
 
                 .and()
                 .logout()
                     .logoutUrl("/sign-out")
                     .logoutSuccessUrl("/")
+                    .permitAll()
 
                 // Sessione jwt
                 .and()
@@ -207,6 +174,50 @@ public class SecurityConfiguration {
         JWK jwk = new RSAKey.Builder( rsaKeys.getRsaPublicKey() ).privateKey( rsaKeys.getRsaPrivateKey() ).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
         return new NimbusJwtEncoder( jwks );
+    }
+
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new AppAuthenticationFailureHandler();
+    }
+
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new SystemUserDetailsService();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
+            put("bcrypt", new BCryptPasswordEncoder());
+            put("noop", NoOpPasswordEncoder.getInstance());
+            put("SHA-512", new Sha512PasswordEncoder());
+            put("sha512", new Sha512PasswordEncoder());
+            put("sha256", new Sha256PasswordEncoder());
+            put("SHA-256", new Sha256PasswordEncoder());
+
+//            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
+//            put("sha256", new StandardPasswordEncoder());
+            // put("ldap", new LdapShaPasswordEncoder());
+            // put("MD4", new Md4PasswordEncoder());
+            // put("MD5", new MessageDigestPasswordEncoder("MD5"));
+            // put("pbkdf2", new Pbkdf2PasswordEncoder());
+            // put("scrypt", new SCryptPasswordEncoder());
+            // put("SHA-1", new MessageDigestPasswordEncoder("SHA-1"));
+            // put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
+        }};
+
+        /*
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
+        return delegatingPasswordEncoder;
+        */
+
+        return new DelegatingPasswordEncoder("sha256", encoders);
+
     }
 
 

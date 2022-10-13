@@ -1,7 +1,10 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
+import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 import com.liparistudios.reactspringsecmysql.service.TokenService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +23,13 @@ public class AuthController {
         this.tokenService = tokenService;
     }
 
+
+    @Autowired
+    private CustomerServiceImplementation customerService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //@PostMapping("/token")
     @GetMapping("/token")
     public String token(Authentication authentication) {
@@ -31,7 +41,7 @@ public class AuthController {
 
 
     @ResponseBody
-    @PostMapping("/public/login")
+    @PostMapping("/public/custom-login")
     public Map<String, Object> login(
             HttpServletRequest request,
             String email,
@@ -45,11 +55,34 @@ public class AuthController {
 
         Map<String, Object> result = null;
         try {
-            result = new HashMap<String, Object>(){{
-                put("status", "success");
-            }};
+
+            if(
+                passwordEncoder.encode(
+                    customerService
+                            .loadCustomerByEmail( email )
+                            .getPassword()
+                )
+                .equals( passwordEncoder.encode( password ) )
+            ) {
+                // login OK
+                result = new HashMap<String, Object>(){{
+                    put("status", "success");
+                }};
+            }
+            else {
+                // password errata
+                result = new HashMap<String, Object>(){{
+                    put("status", "error");
+                    put("error", new HashMap<String, Object>(){{
+                        put("message", "password errata");
+                    }});
+                }};
+            }
+
         }
         catch (Exception e) {
+
+            // probabilmente email non esiste
 
             System.out.println("errore al login");
             e.printStackTrace();
