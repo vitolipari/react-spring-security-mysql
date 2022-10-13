@@ -81,3 +81,18 @@ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in ./keypair.pem -out ./
 [da tenere in considerazione](https://stackoverflow.com/questions/44046154/multiple-home-pages-for-different-roles-in-spring-security)
 
 [microservice con Spring Cloud](https://www.youtube.com/watch?v=p485kUNpPvE)
+
+### note e appunti
+#### nota 01
+Nella configurazione oltre al login bisogna indicare una classe che 
+sia un service e che implementi UserDetailsServer, questa classe la si può 
+iniettare nel costruttore (~34:00) 
+La classe che implementa l'interfaccia deve implementare il metodo loadUserByUsername
+che si aspetta un return di tipo UserDetails, allora viene creata una classe che implementa
+UserDetails e che ha come mebro privato la classe relativa alle utenze, 
+questa viene iniettata nel costruttore, va fatta attenzione al 
+getAuthorities()
+
+
+Per l'autenticazione bisogna avere un model di tipo SecurityUser 
+e un service che imlementa UserDetailsService 
