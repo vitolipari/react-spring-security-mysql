@@ -48,12 +48,17 @@ public class SecurityConfiguration {
 
     //private final SystemUserDetailsService systemUserDetailsService;
 
-    private CustomerServiceImplementation customerService;
+    private final CustomerServiceImplementation customerService;
 
-
-    public SecurityConfiguration( /*SystemUserDetailsService sudService,*/ RsaKeyProperties rsaKeyProperties, CustomerServiceImplementation service ) {
-        this.customerService = service;
+/*
+    public SecurityConfiguration( RsaKeyProperties rsaKeyProperties/*, CustomerServiceImplementation service * /) {
+        //this.customerService = service;
         this.rsaKeys = rsaKeyProperties;
+    }
+    */
+
+    public SecurityConfiguration( CustomerServiceImplementation service) {
+        this.customerService = service;
     }
 
 
@@ -187,11 +192,12 @@ public class SecurityConfiguration {
         return new AppAuthenticationFailureHandler();
     }
 
-
+/*
     @Bean
     public UserDetailsService userDetailsService() {
         return new SystemUserDetailsService();
     }
+    */
 
     @Bean
     public PasswordEncoder passwordEncoder() {

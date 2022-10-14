@@ -1,6 +1,5 @@
 package com.liparistudios.reactspringsecmysql.service;
 
-import com.liparistudios.reactspringsecmysql.config.Sha256PasswordEncoder;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.model.Role;
@@ -22,16 +21,30 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-@Transactional // non sono sicuro
+//@RequiredArgsConstructor
+//@Transactional // non sono sicuro
 public class CustomerServiceImplementation implements CustomerService, UserDetailsService {
 
-    private final CustomerRepository customerRepository;
-    private final RoleRepository roleRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+/*
+    public CustomerServiceImplementation(
+        CustomerRepository customerRepository,
+        RoleRepository roleRepository,
+        PasswordEncoder encoder
+    ) {
+        this.customerRepository = customerRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = encoder;
+    }
+*/
 
 
     @Override
@@ -218,7 +231,15 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return loadCustomerByUsername( username );
+
+        return
+            customerRepository
+                .findByEmail( username )
+                .map( Customer::new )
+                .orElseThrow( () -> new UsernameNotFoundException("email non esiste") )
+        ;
+
+
     }
 
     /*

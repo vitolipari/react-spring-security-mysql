@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Entity
 @Table( name = "customers" )
 public class Customer implements UserDetails {
@@ -38,6 +39,17 @@ public class Customer implements UserDetails {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column( nullable = false )
     private LocalDate dob;
+
+    public Customer() {
+
+    }
+
+    public Customer(Customer customer) {
+        this.id = customer.getId();
+        this.email = customer.getEmail();
+        this.dob = customer.getDob();
+        this.roles = customer.getRoles();
+    }
 
 
     public Integer getAge() {
@@ -138,7 +150,17 @@ public class Customer implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        getRoles()
+            .stream()
+            .map( role -> role.getName() )
+            .forEach( roleName -> {
+                authorities.add( new SimpleGrantedAuthority( roleName ));
+            })
+        ;
+
+        return authorities;
     }
 
     @Override
