@@ -1,5 +1,7 @@
 package com.liparistudios.reactspringsecmysql.config;
 
+import com.liparistudios.reactspringsecmysql.service.CustomerService;
+import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 import com.liparistudios.reactspringsecmysql.service.SystemUserDetailsService;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -44,11 +46,13 @@ public class SecurityConfiguration {
     // private AuthEntryPointJwt unauthorizedHandler;
 
 
-    private final SystemUserDetailsService systemUserDetailsService;
+    //private final SystemUserDetailsService systemUserDetailsService;
+
+    private CustomerServiceImplementation customerService;
 
 
-    public SecurityConfiguration( SystemUserDetailsService sudService, RsaKeyProperties rsaKeyProperties ) {
-        this.systemUserDetailsService = sudService;
+    public SecurityConfiguration( /*SystemUserDetailsService sudService,*/ RsaKeyProperties rsaKeyProperties, CustomerServiceImplementation service ) {
+        this.customerService = service;
         this.rsaKeys = rsaKeyProperties;
     }
 
@@ -140,7 +144,8 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
-                .userDetailsService( systemUserDetailsService )
+                //.userDetailsService( systemUserDetailsService )
+                .userDetailsService( customerService )
 
                 // Gestione eccezioni ( non fa il redirect al login url )
 //                 .exceptionHandling( ex ->
