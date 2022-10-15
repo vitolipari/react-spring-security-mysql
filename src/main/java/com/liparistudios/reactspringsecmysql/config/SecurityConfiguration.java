@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 
 @Configuration
 @EnableWebSecurity
@@ -54,16 +56,8 @@ public class SecurityConfiguration {
     // private AuthEntryPointJwt unauthorizedHandler;
 
 
-    //private final SystemUserDetailsService systemUserDetailsService;
-
     private final CustomerServiceImplementation customerService;
 
-/*
-    public SecurityConfiguration( RsaKeyProperties rsaKeyProperties/*, CustomerServiceImplementation service * /) {
-        //this.customerService = service;
-        this.rsaKeys = rsaKeyProperties;
-    }
-    */
 
     public SecurityConfiguration( CustomerServiceImplementation service, RsaKeyProperties rsaKeyProperties ) {
         this.customerService = service;
@@ -128,9 +122,10 @@ public class SecurityConfiguration {
 
 
                         // rotte private
-//                        .antMatchers("/admin").hasAuthority("ADMIN")
-//                        .antMatchers("/admin/**").hasAuthority("ADMIN")
+                        .antMatchers("/admin").hasAuthority("ADMIN")
+                        .antMatchers("/admin/**").hasAuthority("ADMIN")
 
+                        // tutto il resto
                         .anyRequest().authenticated()
 
                 )
@@ -162,6 +157,8 @@ public class SecurityConfiguration {
                 //.userDetailsService( systemUserDetailsService )
                 .userDetailsService( customerService )
 
+
+
                 // Gestione eccezioni ( non fa il redirect al login url )
                  .exceptionHandling( ex ->
                      ex
@@ -172,8 +169,10 @@ public class SecurityConfiguration {
 
                     //.headers( header -> header.defaultsDisabled().cacheControl() )
 
+                .headers(headers -> headers.frameOptions().sameOrigin())
+
                 //.and()
-                //.httpBasic( Customizer.withDefaults() )
+                .httpBasic(withDefaults())
                 .build()
 
         );

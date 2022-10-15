@@ -25,7 +25,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin( origins = "*")
-@RequestMapping( path = {"/", "", "/public"} )
+@RequestMapping( path = {"/", ""} )
 public class WebController {
 
     @GetMapping
@@ -65,7 +65,7 @@ public class WebController {
     }
 
 
-    @GetMapping( path = {"/sign", "/sign-in", "/sign-up"} )
+    @GetMapping( path = {"/sign", "/sign-in", "/sign-up", "/public"} )
     public ModelAndView adminSignPage( HttpServletRequest request ) {
 
         Map<String, Object> pageVars = new HashMap<String, Object>(){{
