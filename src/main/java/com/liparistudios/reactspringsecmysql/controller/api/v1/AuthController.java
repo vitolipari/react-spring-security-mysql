@@ -1,14 +1,13 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
+import com.liparistudios.reactspringsecmysql.model.Customer;
+import com.liparistudios.reactspringsecmysql.model.LoginAuthPack;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 import com.liparistudios.reactspringsecmysql.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -41,11 +40,12 @@ public class AuthController {
 
 
     @ResponseBody
-    @PostMapping("/public/custom-login")
+    @PostMapping("/public/customer-login")
     public Map<String, Object> login(
             HttpServletRequest request,
-            String email,
-            String password
+            @RequestBody LoginAuthPack credentials
+            // @RequestParam String email,
+            // @RequestParam String password
     ) {
         System.out.println("POST al login");
         System.out.println( "AUTH type" );
@@ -53,17 +53,19 @@ public class AuthController {
         System.out.println("principal");
         System.out.println( request.getUserPrincipal() );
 
+        System.out.println("email arrivata");
+        System.out.println( credentials.getEmail() );
+        System.out.println();
+
         Map<String, Object> result = null;
         try {
 
-            if(
-                passwordEncoder.encode(
+            Customer customer =
                     customerService
-                            .loadCustomerByEmail( email )
-                            .getPassword()
-                )
-                .equals( passwordEncoder.encode( password ) )
-            ) {
+                            .loadCustomerByEmail( credentials.getEmail() )
+            ;
+
+            if( customer.getPassword().equals( passwordEncoder.encode( credentials.getPassword() ) ) ) {
                 // login OK
                 result = new HashMap<String, Object>(){{
                     put("status", "success");
@@ -75,6 +77,8 @@ public class AuthController {
                     put("status", "error");
                     put("error", new HashMap<String, Object>(){{
                         put("message", "password errata");
+                        put("correct password", customer.getPassword());
+                        put("search password", passwordEncoder.encode( credentials.getPassword() ));
                     }});
                 }};
             }

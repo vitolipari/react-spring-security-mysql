@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.*;
@@ -27,9 +28,16 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,11 +140,12 @@ public class SecurityConfiguration {
                     .passwordParameter("password")
                     .loginPage("/public/sign-in")       // url di redirect in caso non si sia autenticati
                     .loginProcessingUrl("/public/login")    // endpoint di chiamata per il login
-                    .successHandler(new AppAuthenticationSuccessHandler())
+                .permitAll()
+                    .successHandler( authenticationSuccessHandler() )
                     .defaultSuccessUrl("/")
-                    .failureHandler( new AppAuthenticationFailureHandler() )
+                    .failureHandler( authenticationFailureHandler() )
                     .failureUrl("/public/sign-in?error=true")
-                    .permitAll()
+                .permitAll()
 
 
                 .and()
@@ -147,22 +156,21 @@ public class SecurityConfiguration {
 
                 // Sessione jwt
                 .and()
-                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
+                // .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                // .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
                 //.userDetailsService( systemUserDetailsService )
                 .userDetailsService( customerService )
 
                 // Gestione eccezioni ( non fa il redirect al login url )
-//                 .exceptionHandling( ex ->
-//                     ex
-//                         .authenticationEntryPoint( new BearerTokenAuthenticationEntryPoint() )
-//                         .accessDeniedHandler( new BearerTokenAccessDeniedHandler() )
-//                 )
+                 .exceptionHandling( ex ->
+                     ex
+                         .accessDeniedHandler( accessDeniedHandler() )
+                 )
                     // .authenticationEntryPoint( unauthorizedHandler )
 
 
-                    .headers( header -> header.defaultsDisabled().cacheControl() )
+                    //.headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
                 //.httpBasic( Customizer.withDefaults() )
@@ -172,6 +180,12 @@ public class SecurityConfiguration {
 
 
     }
+
+
+//    @Bean
+//    public AuthenticationEntryPoint authenticationEntryPoint() {
+//        return new RestAuthenticationEntryPoint();
+//    }
 
 
     @Bean
@@ -193,6 +207,16 @@ public class SecurityConfiguration {
         return new AppAuthenticationFailureHandler();
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new AppAuthenticationSuccessHandler();
+    }
+
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AppAccessDeniedHandler();
+    }
 
 /*
     @Bean
