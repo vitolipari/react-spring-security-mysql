@@ -57,8 +57,9 @@ public class SecurityConfiguration {
     }
     */
 
-    public SecurityConfiguration( CustomerServiceImplementation service) {
+    public SecurityConfiguration( CustomerServiceImplementation service, RsaKeyProperties rsaKeyProperties ) {
         this.customerService = service;
+        this.rsaKeys = rsaKeyProperties;
     }
 
 
@@ -164,7 +165,7 @@ public class SecurityConfiguration {
                     .headers( header -> header.defaultsDisabled().cacheControl() )
 
                 //.and()
-                .httpBasic( Customizer.withDefaults() )
+                //.httpBasic( Customizer.withDefaults() )
                 .build()
 
         );
@@ -192,6 +193,7 @@ public class SecurityConfiguration {
         return new AppAuthenticationFailureHandler();
     }
 
+
 /*
     @Bean
     public UserDetailsService userDetailsService() {
@@ -199,37 +201,7 @@ public class SecurityConfiguration {
     }
     */
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
 
-        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
-            put("bcrypt", new BCryptPasswordEncoder());
-            put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-512", new Sha512PasswordEncoder());
-            put("sha512", new Sha512PasswordEncoder());
-            put("sha256", new Sha256PasswordEncoder());
-            put("SHA-256", new Sha256PasswordEncoder());
-
-//            put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
-//            put("sha256", new StandardPasswordEncoder());
-            // put("ldap", new LdapShaPasswordEncoder());
-            // put("MD4", new Md4PasswordEncoder());
-            // put("MD5", new MessageDigestPasswordEncoder("MD5"));
-            // put("pbkdf2", new Pbkdf2PasswordEncoder());
-            // put("scrypt", new SCryptPasswordEncoder());
-            // put("SHA-1", new MessageDigestPasswordEncoder("SHA-1"));
-            // put("SHA-256", new MessageDigestPasswordEncoder("SHA-256"));
-        }};
-
-        /*
-        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-        return delegatingPasswordEncoder;
-        */
-
-        return new DelegatingPasswordEncoder("sha256", encoders);
-
-    }
 
 
 }
