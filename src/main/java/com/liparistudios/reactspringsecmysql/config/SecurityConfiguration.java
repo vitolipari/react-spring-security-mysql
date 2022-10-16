@@ -73,6 +73,7 @@ public class SecurityConfiguration {
             http
 
                 // CORS
+//                .cors( cors -> cors.disable() )
                 .cors()
 
                 // CSRF disabilitato
