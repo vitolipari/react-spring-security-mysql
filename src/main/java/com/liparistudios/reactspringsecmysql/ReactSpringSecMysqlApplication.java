@@ -103,7 +103,7 @@ public class ReactSpringSecMysqlApplication {
 					new Customer(
 						null,
 						"vitolipari1981@gmail.com",
-						passwordEncoder.encode("jRoot@15099#12192537"),
+						passwordEncoder.encode("abc"),
 						"+393000000000",
 						LocalDate.of(1981, 4, 25),
 						new ArrayList<Role>(){{
