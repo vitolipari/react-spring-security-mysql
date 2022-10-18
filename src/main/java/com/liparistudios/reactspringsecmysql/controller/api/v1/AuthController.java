@@ -3,7 +3,7 @@ package com.liparistudios.reactspringsecmysql.controller.api.v1;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.LoginAuthPack;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
-import com.liparistudios.reactspringsecmysql.service.TokenService;
+//import com.liparistudios.reactspringsecmysql.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,13 +15,13 @@ import java.util.Map;
 
 @RestController
 public class AuthController {
-
+/*
     private final TokenService tokenService;
 
     public AuthController( TokenService tokenService ) {
         this.tokenService = tokenService;
     }
-
+*/
 
     @Autowired
     private CustomerServiceImplementation customerService;
@@ -29,6 +29,8 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    /*
     //@PostMapping("/token")
     @GetMapping("/token")
     public String token(Authentication authentication) {
@@ -37,7 +39,7 @@ public class AuthController {
         System.out.println( token );
         return token;
     }
-
+*/
 
     @ResponseBody
     @PostMapping("/public/customer-login")

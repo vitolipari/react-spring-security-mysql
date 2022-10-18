@@ -20,7 +20,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-@EnableConfigurationProperties(RsaKeyProperties.class)
+//@EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
 public class ReactSpringSecMysqlApplication {
 

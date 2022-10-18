@@ -50,7 +50,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
 
-    private RsaKeyProperties rsaKeys;
+//    private RsaKeyProperties rsaKeys;
 
     // @Autowired
     // private AuthEntryPointJwt unauthorizedHandler;
@@ -59,9 +59,9 @@ public class SecurityConfiguration {
     private final CustomerServiceImplementation customerService;
 
 
-    public SecurityConfiguration( CustomerServiceImplementation service, RsaKeyProperties rsaKeyProperties ) {
+    public SecurityConfiguration( CustomerServiceImplementation service/*, RsaKeyProperties rsaKeyProperties*/ ) {
         this.customerService = service;
-        this.rsaKeys = rsaKeyProperties;
+//        this.rsaKeys = rsaKeyProperties;
     }
 
 
@@ -187,7 +187,7 @@ public class SecurityConfiguration {
 //        return new RestAuthenticationEntryPoint();
 //    }
 
-
+/*
     @Bean
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(rsaKeys.getRsaPublicKey() ).build();
@@ -200,7 +200,7 @@ public class SecurityConfiguration {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
         return new NimbusJwtEncoder( jwks );
     }
-
+*/
 
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
