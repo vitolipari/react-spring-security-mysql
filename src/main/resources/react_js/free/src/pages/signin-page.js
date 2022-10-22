@@ -45,17 +45,16 @@ export const SigninPage = props => {
 								password: password
 							});
 
-
-
+							
+							let formData = new FormData();
+							formData.append("email", email);
+							formData.append("password", password);
 							return (
 								fetch(
 									"/public/login",
 									{
 										method: "POST",
-										body: JSON.stringify({
-											email: email,
-											password: password
-										})
+										body: formData
 									}
 								)
 									.then( response => response.json() )

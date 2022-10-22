@@ -120,13 +120,17 @@ public class WebController {
 
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
 
+        System.out.println("path del file che da problemi col mime type");
+        System.out.println( requestedFile.toPath() );
+
+
         return
-                ResponseEntity
-                        .status(HttpStatus.OK)
-                        //.contentLength(inputStream.contentLength())
-                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                        .body(requestedFileContent)
-                ;
+            ResponseEntity
+                .status(HttpStatus.OK)
+                //.contentLength(inputStream.contentLength())
+                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                .body(requestedFileContent)
+            ;
 
 
     }
@@ -168,8 +172,23 @@ public class WebController {
         System.out.println( requestedFileUrl );
         System.out.println( requestedFileUrl.toString() );
 
+
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
-        return new ResponseEntity<String>(requestedFileContent, null, HttpStatus.OK);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf("application/javascript"));
+        return new ResponseEntity<String>(requestedFileContent, headers, HttpStatus.OK);
+
+        /*
+        String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
+        final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
+        return
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentLength(inputStream.contentLength())
+                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                .body(inputStream)
+            ;
+         */
     }
 
     @GetMapping(path = "/static/css/{file}")

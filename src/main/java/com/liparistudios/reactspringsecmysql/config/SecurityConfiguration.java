@@ -12,6 +12,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -58,10 +59,40 @@ public class SecurityConfiguration {
 
     private final CustomerServiceImplementation customerService;
 
+//    private PasswordEncoder encoder;
+//    private CustomEncoder encoder;
 
-    public SecurityConfiguration( CustomerServiceImplementation service/*, RsaKeyProperties rsaKeyProperties*/ ) {
+
+
+/*    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
+            put("bcrypt", new BCryptPasswordEncoder());
+            put("noop", NoOpPasswordEncoder.getInstance());
+            put("SHA-512", new Sha512PasswordEncoder());
+            put("sha512", new Sha512PasswordEncoder());
+            put("sha256", new Sha256PasswordEncoder());
+            put("SHA-256", new Sha256PasswordEncoder());
+        }};
+
+        *//*
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
+        return delegatingPasswordEncoder;
+        *//*
+
+        return new DelegatingPasswordEncoder("sha256", encoders);
+
+    }*/
+
+
+
+
+    public SecurityConfiguration( CustomerServiceImplementation service/*, RsaKeyProperties rsaKeyProperties*//*, CustomEncoder encoder*/ ) {
         this.customerService = service;
 //        this.rsaKeys = rsaKeyProperties;
+//        this.encoder = encoder;
     }
 
 
@@ -138,9 +169,9 @@ public class SecurityConfiguration {
                     .loginProcessingUrl("/public/login")    // endpoint di chiamata per il login
                 .permitAll()
                     .successHandler( authenticationSuccessHandler() )
-                    .defaultSuccessUrl("/")
+                    .defaultSuccessUrl("/", true)
                     .failureHandler( authenticationFailureHandler() )
-                    .failureUrl("/public/sign-in?error=true")
+                    .failureUrl("/public/error?login=true")
                 .permitAll()
 
 
@@ -152,12 +183,9 @@ public class SecurityConfiguration {
 
                 // Sessione jwt
                 .and()
-                // .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-                // .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
+                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
-                //.userDetailsService( systemUserDetailsService )
                 .userDetailsService( customerService )
-
 
 
                 // Gestione eccezioni ( non fa il redirect al login url )
@@ -167,13 +195,20 @@ public class SecurityConfiguration {
                  )
                     // .authenticationEntryPoint( unauthorizedHandler )
 
-
                     //.headers( header -> header.defaultsDisabled().cacheControl() )
+//                .headers(headers -> headers.frameOptions().sameOrigin())
+                    .headers( headers ->
+                        headers
+                            .defaultsDisabled()
+                            .contentTypeOptions()
 
-                .headers(headers -> headers.frameOptions().sameOrigin())
+                            .and()
+                            .frameOptions()
+                            .disable()
+                    )
 
                 //.and()
-                .httpBasic(withDefaults())
+//                .httpBasic(withDefaults())
                 .build()
 
         );

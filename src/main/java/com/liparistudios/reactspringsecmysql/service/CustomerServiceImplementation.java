@@ -1,5 +1,7 @@
 package com.liparistudios.reactspringsecmysql.service;
 
+import com.liparistudios.reactspringsecmysql.config.Sha256PasswordEncoder;
+import com.liparistudios.reactspringsecmysql.config.Sha512PasswordEncoder;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Permission;
 import com.liparistudios.reactspringsecmysql.model.Role;
@@ -7,17 +9,19 @@ import com.liparistudios.reactspringsecmysql.repository.CustomerRepository;
 import com.liparistudios.reactspringsecmysql.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,20 +35,40 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+    @Bean
+    public PasswordEncoder passwordEncoder() {
 
-/*
-    public CustomerServiceImplementation(
-        CustomerRepository customerRepository,
-        RoleRepository roleRepository,
-        PasswordEncoder encoder
-    ) {
-        this.customerRepository = customerRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = encoder;
+        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
+            put("bcrypt", new BCryptPasswordEncoder());
+            put("noop", NoOpPasswordEncoder.getInstance());
+            put("SHA-512", new Sha512PasswordEncoder());
+            put("sha512", new Sha512PasswordEncoder());
+            put("sha256", new Sha256PasswordEncoder());
+            put("SHA-256", new Sha256PasswordEncoder());
+        }};
+
+            /*
+            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
+            return delegatingPasswordEncoder;
+            */
+
+        return new DelegatingPasswordEncoder("sha256", encoders);
+
     }
-*/
+
+
+    public CustomerServiceImplementation(
+//        CustomerRepository customerRepository,
+//        RoleRepository roleRepository,
+//        PasswordEncoder encoder
+    ) {
+//        this.customerRepository = customerRepository;
+//        this.roleRepository = roleRepository;
+//        this.passwordEncoder = encoder;
+    }
+
 
 
     @Override
@@ -111,7 +135,8 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
             customer.setRoles( customerDTO.getRoles() );
         }
 
-        customer.setPassword( passwordEncoder.encode( customerDTO.getPassword() ) );
+
+        customer.setPassword( passwordEncoder().encode( customerDTO.getPassword() ) );
 
         customer.setDob( customerDTO.getDob() );
         customer.setEmail( customerDTO.getEmail() );
@@ -120,7 +145,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 
         System.out.println("controllo password encoder");
         System.out.println("abc = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
-        System.out.println(passwordEncoder.encode("abc"));
+        System.out.println(passwordEncoder().encode("abc"));
 
         return customerRepository.save( customer );
     }

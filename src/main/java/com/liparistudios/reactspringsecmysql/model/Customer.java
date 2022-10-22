@@ -130,6 +130,7 @@ public class Customer implements UserDetails {
     @PostLoad
     public void postLoad() {
         System.out.println("customer loaded");
+        System.out.println( toMap() );
     }
 
     @PostRemove

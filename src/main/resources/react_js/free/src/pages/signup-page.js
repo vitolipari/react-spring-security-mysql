@@ -23,7 +23,10 @@ export const SignupPage = props => {
 
     const [roles, setRoles] = useState();
     const [selectedRoles, setSelectedRoles] = useState();
-    const [data, setData] = useState();
+    const [data, setData] = useState({
+        dob: "1981-04-25",
+        phoneNumber : "+391234567"
+    });
     // const [email, setEmail] = useState();
     // const [password, setPassword] = useState();
 
@@ -59,6 +62,7 @@ export const SignupPage = props => {
                                     email: changeEvent.target.value
                                 })
                             }}
+                            value={ (!!data && data.email) ? data.email : "" }
                         />
                     </div>
                     <div>
@@ -89,6 +93,7 @@ export const SignupPage = props => {
                                     dob: moment( changeEvent.target.value, "DD/MM/YYYY", "it" ).format("YYYY-MM-DD")
                                 })
                             }}
+                            value={ (!!data && data.dob) ? moment(data.dob, "YYYY-MM-DD").format("DD/MM/YYYY") : "" }
                         />
                     </div>
                     <div>
@@ -103,6 +108,7 @@ export const SignupPage = props => {
                                     phoneNumber: changeEvent.target.value
                                 })
                             }}
+                            value={ (!!data && data.phoneNumber) ? data.phoneNumber : "" }
                         />
                     </div>
                     <div>
@@ -165,6 +171,9 @@ export const SignupPage = props => {
                                     }
                                 )
                                 .then( response => response.json() )
+                                .then( response => {
+                                    
+                                })
                                 .catch(e => Promise.reject( e ))
                             )
                         }}
