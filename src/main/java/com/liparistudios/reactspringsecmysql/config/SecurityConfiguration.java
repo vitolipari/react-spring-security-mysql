@@ -167,11 +167,11 @@ public class SecurityConfiguration {
                     .passwordParameter("password")
                     .loginPage("/public/sign-in")       // url di redirect in caso non si sia autenticati
                     .loginProcessingUrl("/public/login")    // endpoint di chiamata per il login
-                .permitAll()
-                    .successHandler( authenticationSuccessHandler() )
                     .defaultSuccessUrl("/", true)
-                    .failureHandler( authenticationFailureHandler() )
                     .failureUrl("/public/error?login=true")
+                    .successHandler( authenticationSuccessHandler() )
+                    .failureHandler( authenticationFailureHandler() )
+//                    .authenticationDetailsSource(authenticationDetailsSource)
                 .permitAll()
 
 
@@ -239,6 +239,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
+        System.out.println("AuthenticationFailureHandler");
         return new AppAuthenticationFailureHandler();
     }
 

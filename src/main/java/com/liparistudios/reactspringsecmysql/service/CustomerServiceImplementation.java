@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 //@RequiredArgsConstructor
 //@Transactional // non sono sicuro
+//@EnableWebSecurity
 public class CustomerServiceImplementation implements CustomerService, UserDetailsService {
 
     @Autowired
