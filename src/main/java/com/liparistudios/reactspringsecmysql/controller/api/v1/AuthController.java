@@ -42,7 +42,7 @@ public class AuthController {
 */
 
     @ResponseBody
-    @PostMapping("/public/customer-login")
+    @PostMapping("/public/login")
     public Map<String, Object> login(
             HttpServletRequest request,
             @RequestBody LoginAuthPack credentials

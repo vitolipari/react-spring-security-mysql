@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -154,6 +155,10 @@ public class SecurityConfiguration {
 
                 .userDetailsService( customerService )
 
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class)
+
+                .and()
 
                 // Gestione eccezioni ( non fa il redirect al login url )
                  .exceptionHandling( ex ->
