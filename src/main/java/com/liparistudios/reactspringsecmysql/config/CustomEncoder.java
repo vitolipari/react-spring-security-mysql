@@ -9,6 +9,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -22,13 +23,10 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import java.util.HashMap;
 import java.util.Map;
 
-//@Configuration
+@Configuration
 public class CustomEncoder {
 
-
-/*
     @Bean
-    @Primary
     public PasswordEncoder passwordEncoder() {
 
         Map<String, PasswordEncoder> encoders = new HashMap<>(){{
@@ -40,16 +38,21 @@ public class CustomEncoder {
             put("SHA-256", new Sha256PasswordEncoder());
         }};
 
-        /*
-        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-        return delegatingPasswordEncoder;
-        * /
+            /*
+            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
+            return delegatingPasswordEncoder;
+            */
 
         return new DelegatingPasswordEncoder("sha256", encoders);
 
     }
-*/
+
+
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
 
 }

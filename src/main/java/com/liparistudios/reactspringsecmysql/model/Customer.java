@@ -8,16 +8,18 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
-//@NoArgsConstructor
 @Entity
+@AllArgsConstructor
 @Table( name = "customers" )
 public class Customer implements UserDetails {
     @Id
@@ -29,9 +31,18 @@ public class Customer implements UserDetails {
         nullable = false,
         length = 255
     )
+    @Email
+    @Length(min = 8, max = 255)
     private String email;
 
-    @Column( nullable = false, length = 128 )
+    @Column(
+        nullable = false,
+        length = 256,
+        insertable = true,
+        updatable = true,
+        unique = false
+    )
+    @Length(min = 8, max = 524)
     private String password;
 
     private String phoneNumber;
@@ -62,8 +73,8 @@ public class Customer implements UserDetails {
     )
     @JoinTable(
         name = "customers_roles",
-        joinColumns = @JoinColumn( name = "customer_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn( name = "role_id", referencedColumnName = "id")
+        joinColumns =           @JoinColumn( name = "customer_id",  referencedColumnName = "id"),
+        inverseJoinColumns =    @JoinColumn( name = "role_id",      referencedColumnName = "id")
     )
     private Collection<Role> roles;
 

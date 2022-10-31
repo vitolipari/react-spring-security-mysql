@@ -1,5 +1,7 @@
 package com.liparistudios.reactspringsecmysql.service;
 
+import com.liparistudios.reactspringsecmysql.config.CustomEncoder;
+import com.liparistudios.reactspringsecmysql.config.SecurityConfiguration;
 import com.liparistudios.reactspringsecmysql.config.Sha256PasswordEncoder;
 import com.liparistudios.reactspringsecmysql.config.Sha512PasswordEncoder;
 import com.liparistudios.reactspringsecmysql.model.Customer;
@@ -37,28 +39,15 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     @Autowired
     private RoleRepository roleRepository;
 
+
 //    @Autowired
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+//    private SecurityConfiguration securityConfiguration;
 
-        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
-            put("bcrypt", new BCryptPasswordEncoder());
-            put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-512", new Sha512PasswordEncoder());
-            put("sha512", new Sha512PasswordEncoder());
-            put("sha256", new Sha256PasswordEncoder());
-            put("SHA-256", new Sha256PasswordEncoder());
-        }};
+    @Autowired
+    private CustomEncoder encoder;
 
-            /*
-            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-            return delegatingPasswordEncoder;
-            */
+//    @Autowired
 
-        return new DelegatingPasswordEncoder("sha256", encoders);
-
-    }
 
 
     public CustomerServiceImplementation(
@@ -138,7 +127,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
         }
 
 
-        customer.setPassword( passwordEncoder().encode( customerDTO.getPassword() ) );
+        customer.setPassword( encoder.passwordEncoder().encode( customerDTO.getPassword() ) );
 
         customer.setDob( customerDTO.getDob() );
         customer.setEmail( customerDTO.getEmail() );
@@ -147,7 +136,17 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 
         System.out.println("controllo password encoder");
         System.out.println("abc = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
-        System.out.println(passwordEncoder().encode("abc"));
+        System.out.println(encoder.passwordEncoder().encode("abc"));
+
+
+        System.out.println("password arrivata");
+        System.out.println(customerDTO.getPassword());
+        System.out.println("password arrivata encripted");
+        System.out.println( encoder.passwordEncoder().encode(customerDTO.getPassword()));
+        System.out.println("password da salvare (encripted)");
+        System.out.println( customer.getPassword() );
+
+
 
         return customerRepository.save( customer );
     }

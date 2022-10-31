@@ -2,6 +2,9 @@
 
 ## Sicurezza
 
+
+[guida attuale](https://www.codejava.net/frameworks/spring-boot/spring-security-jwt-authentication-tutorial)
+
 ### PasswordEncoder
 [ufficiale](https://www.baeldung.com/spring-security-5-password-storage)
 

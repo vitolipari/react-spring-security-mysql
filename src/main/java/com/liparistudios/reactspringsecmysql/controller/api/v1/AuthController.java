@@ -1,10 +1,15 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
+import com.liparistudios.reactspringsecmysql.config.JwtTokenUtil;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.LoginAuthPack;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 //import com.liparistudios.reactspringsecmysql.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -15,19 +20,20 @@ import java.util.Map;
 
 @RestController
 public class AuthController {
-/*
-    private final TokenService tokenService;
 
-    public AuthController( TokenService tokenService ) {
-        this.tokenService = tokenService;
-    }
-*/
+
 
     @Autowired
     private CustomerServiceImplementation customerService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authManager;
+
+    @Autowired
+    JwtTokenUtil jwtUtil;
 
 
     /*
@@ -41,9 +47,8 @@ public class AuthController {
     }
 */
 
-    @ResponseBody
     @PostMapping("/public/login")
-    public Map<String, Object> login(
+    public ResponseEntity<Map<String, Object>> login(
             HttpServletRequest request,
             @RequestBody LoginAuthPack credentials
             // @RequestParam String email,
@@ -61,6 +66,9 @@ public class AuthController {
 
         Map<String, Object> result = null;
         try {
+
+
+
 
             Customer customer =
                     customerService
@@ -85,6 +93,24 @@ public class AuthController {
                 }};
             }
 
+
+            System.out.println("Customer");
+            System.out.println( customer );
+
+
+            Authentication authentication = authManager.authenticate( new UsernamePasswordAuthenticationToken( credentials.getEmail(), credentials.getPassword() ) );
+            Customer customerToAuth = (Customer) authentication.getPrincipal();
+            String accessToken = jwtUtil.generateAccessToken(customerToAuth);
+
+            System.out.println("customerToAuth");
+            System.out.println( customerToAuth );
+            System.out.println("accessToken");
+            System.out.println( accessToken );
+
+
+
+
+
         }
         catch (Exception e) {
 
@@ -101,7 +127,17 @@ public class AuthController {
             }};
 
         }
-        return result;
+
+
+
+        return
+            ResponseEntity
+                .status(HttpStatus.OK)
+//                .body( customerService.getAllCustomer( page == null ? 0 : Math.toIntExact(page) ) )
+                .build()
+        ;
+
+
     }
 
 }

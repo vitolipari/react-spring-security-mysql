@@ -1,17 +1,35 @@
 package com.liparistudios.reactspringsecmysql.config;
 
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
+
+ // questa guida
+// https://www.codejava.net/frameworks/spring-boot/spring-security-jwt-authentication-tutorial
+
 
 @Configuration
 @EnableWebSecurity
@@ -25,35 +43,41 @@ public class SecurityConfiguration {
     // private AuthEntryPointJwt unauthorizedHandler;
 
 
+//    @Autowired
+//    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+
     private final CustomerServiceImplementation customerService;
 
-//    private PasswordEncoder encoder;
-//    private CustomEncoder encoder;
+
+    @Autowired
+    private CustomEncoder encoder;
 
 
 
-/*    @Bean
-    public PasswordEncoder passwordEncoder() {
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        final List<GlobalAuthenticationConfigurerAdapter> configurers = new ArrayList<>();
+        configurers.add(new GlobalAuthenticationConfigurerAdapter() {
+                            @Override
+                            public void configure(AuthenticationManagerBuilder auth) throws Exception {
+                                // auth.doSomething()
+                                System.out.println("dentro ");
+                                System.out.println(auth);
+                                System.out.println(auth.toString());
 
-        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
-            put("bcrypt", new BCryptPasswordEncoder());
-            put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-512", new Sha512PasswordEncoder());
-            put("sha512", new Sha512PasswordEncoder());
-            put("sha256", new Sha256PasswordEncoder());
-            put("SHA-256", new Sha256PasswordEncoder());
-        }};
 
-        *//*
-        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-        return delegatingPasswordEncoder;
-        *//*
 
-        return new DelegatingPasswordEncoder("sha256", encoders);
+                            }
+                        }
+        );
 
-    }*/
+        System.out.println("authConfig");
+        System.out.println(authConfig);
+        System.out.println(authConfig.toString());
 
+
+        return authConfig.getAuthenticationManager();
+    }
 
 
 
@@ -126,9 +150,14 @@ public class SecurityConfiguration {
                         .antMatchers("/admin/**").hasAuthority("ADMIN")
 
                         // tutto il resto
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                            .authenticated()
+//                            .and()
+//                            .authenticationEntryPoint(authenticationEntryPoint)
 
                 )
+
+
 
                 .formLogin()
                     .usernameParameter("email")
@@ -143,22 +172,33 @@ public class SecurityConfiguration {
                 .permitAll()
 
 
+
+
+
+
                 .and()
                 .logout()
                     .logoutUrl("/sign-out")
                     .logoutSuccessUrl("/")
                     .permitAll()
 
-                // Sessione jwt
+
+
+
+                    // Sessione jwt
                 .and()
                  .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
                 .userDetailsService( customerService )
 
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class)
 
-                .and()
+
+
+//                    .addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class)
+                    
+
+//                    .and()
+
 
                 // Gestione eccezioni ( non fa il redirect al login url )
                  .exceptionHandling( ex ->
@@ -179,8 +219,17 @@ public class SecurityConfiguration {
                             .disable()
                     )
 
-                //.and()
-//                .httpBasic(withDefaults())
+
+
+
+//                    .and()
+//                    .httpBasic(withDefaults())
+
+                    .authenticationManager( authenticationManager( http.getSharedObject(AuthenticationConfiguration.class) )  )
+
+//                    .authenticationEntryPoint(authenticationEntryPoint)
+
+
                 .build()
 
         );
