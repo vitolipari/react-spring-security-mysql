@@ -3,9 +3,11 @@ package com.liparistudios.reactspringsecmysql;
 import com.liparistudios.reactspringsecmysql.config.RsaKeyProperties;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Permission;
+import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Role;
 import com.liparistudios.reactspringsecmysql.service.CustomerService;
 import com.liparistudios.reactspringsecmysql.service.PermissionService;
+import com.liparistudios.reactspringsecmysql.service.PlatformService;
 import com.liparistudios.reactspringsecmysql.service.RoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.stream.Stream;
@@ -38,6 +41,7 @@ public class ReactSpringSecMysqlApplication {
 		PermissionService permissionService,
 		RoleService roleService,
 		CustomerService customerService,
+		PlatformService platformService,
 		PasswordEncoder passwordEncoder
 	) {
 
@@ -113,6 +117,22 @@ public class ReactSpringSecMysqlApplication {
 				);
 
 				System.out.println("fine dell'inserimento dei permessi");
+
+
+				Platform mobileAgentDiagnosticPortal =
+					new Platform(
+						null,
+						"Mobile Agent Dignostic Portal",
+						null,
+						LocalDateTime.now(),
+						null,
+						null,
+						null,
+						null
+					)
+				;
+				platformService.addPlatform( mobileAgentDiagnosticPortal );
+				System.out.println("Piattaforma aggiunta");
 
 			}
 		);

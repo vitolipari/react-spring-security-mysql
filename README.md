@@ -5,13 +5,13 @@
 
 [guida attuale](https://www.codejava.net/frameworks/spring-boot/spring-security-jwt-authentication-tutorial)
 [#01](https://www.javadevjournal.com/spring-security/custom-filter-in-spring-security/)
-[](https://stackoverflow.com/questions/31826233/custom-authentication-manager-with-spring-security-and-java-configuration)
-[](https://stackoverflow.com/questions/70101522/how-the-spring-security-authenticationmanager-authenticate-method-is-able-to-c)
-[](https://stackoverflow.com/questions/73037471/spring-get-instance-of-authenticationmanager-complicated-since-websecurityconfig)
-[](https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter)
-[](https://www.baeldung.com/spring-security-authenticationmanagerresolver)
-[](https://medium.com/geekculture/spring-security-in-motion-part-1-8fc2644244f)
-[](https://www.appsdeveloperblog.com/migrating-from-deprecated-websecurityconfigureradapter/)
+[#02](https://stackoverflow.com/questions/31826233/custom-authentication-manager-with-spring-security-and-java-configuration)
+[#03](https://stackoverflow.com/questions/70101522/how-the-spring-security-authenticationmanager-authenticate-method-is-able-to-c)
+[#04](https://stackoverflow.com/questions/73037471/spring-get-instance-of-authenticationmanager-complicated-since-websecurityconfig)
+[#05](https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter)
+[#06](https://www.baeldung.com/spring-security-authenticationmanagerresolver)
+[#07](https://medium.com/geekculture/spring-security-in-motion-part-1-8fc2644244f)
+[#08](https://www.appsdeveloperblog.com/migrating-from-deprecated-websecurityconfigureradapter/)
 
 
 ### PasswordEncoder

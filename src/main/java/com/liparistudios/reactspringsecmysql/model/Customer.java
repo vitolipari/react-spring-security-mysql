@@ -45,11 +45,22 @@ public class Customer implements UserDetails {
     @Length(min = 8, max = 524)
     private String password;
 
+    @Column(
+        nullable = false,
+        length = 64,
+        insertable = true,
+        updatable = true,
+        unique = false
+    )
+    @Length(min = 8, max = 64)
     private String phoneNumber;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column( nullable = false )
     private LocalDate dob;
+
+
+
 
     public Customer() {
 

@@ -12,4 +12,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
     @Query("SELECT p FROM Permission p WHERE p.name = ?1")
     Optional<Permission> findByName( String name );
+
+
 }
+

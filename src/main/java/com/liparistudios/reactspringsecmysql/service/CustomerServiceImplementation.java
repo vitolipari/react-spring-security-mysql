@@ -174,7 +174,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     }
 
     public List<Customer> getAllCustomer( Integer pageIndex ) {
-        PageRequest page = PageRequest.of( pageIndex +1, 255 );  // page, size
+        PageRequest page = PageRequest.of( pageIndex, 255 );  // page, size
         return customerRepository.findAll( page ).getContent();     // .toList()
     }
 
