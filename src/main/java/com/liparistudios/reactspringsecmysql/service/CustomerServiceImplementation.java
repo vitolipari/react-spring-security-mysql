@@ -258,6 +258,8 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+
+
         return
             customerRepository
                 .findByEmail( username )
