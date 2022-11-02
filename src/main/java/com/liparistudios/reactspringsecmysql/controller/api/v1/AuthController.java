@@ -29,8 +29,8 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    AuthenticationManager authManager;
+    // @Autowired
+    // AuthenticationManager authManager;
 
     @Autowired
     JwtTokenUtil jwtUtil;
@@ -98,6 +98,7 @@ public class AuthController {
             System.out.println( customer );
 
 
+            /*
             Authentication authentication = authManager.authenticate( new UsernamePasswordAuthenticationToken( credentials.getEmail(), credentials.getPassword() ) );
             Customer customerToAuth = (Customer) authentication.getPrincipal();
             String accessToken = jwtUtil.generateAccessToken(customerToAuth);
@@ -106,7 +107,7 @@ public class AuthController {
             System.out.println( customerToAuth );
             System.out.println("accessToken");
             System.out.println( accessToken );
-
+            */
 
 
 

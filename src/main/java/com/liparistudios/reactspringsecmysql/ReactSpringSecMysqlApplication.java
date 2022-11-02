@@ -116,6 +116,19 @@ public class ReactSpringSecMysqlApplication {
 					)
 				);
 
+				customerService.saveCustomer(
+					new Customer(
+						null,
+						"test42@mail.com",
+						passwordEncoder.encode("abc"),
+						"+393000000000",
+						LocalDate.of(1981, 4, 25),
+						new ArrayList<Role>(){{
+							add( roleService.findByName("FREE_CUSTOMER") );
+						}}
+					)
+				);
+
 				System.out.println("fine dell'inserimento dei permessi");
 
 

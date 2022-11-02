@@ -53,9 +53,24 @@ public class SecurityConfiguration {
     private CustomEncoder encoder;
 
 
+    /*
+    AuthenticationManager customersAuthenticationManager() {
+        return authentication -> {
+            if (isCustomer(authentication)) {
+                return new UsernamePasswordAuthenticationToken(/*credentials* /);
+            }
+            throw new UsernameNotFoundException(/*principal name* /);
+        };
+    }
+    */
 
+
+    /*
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+
+        System.out.println("authenticationManager");
+
         final List<GlobalAuthenticationConfigurerAdapter> configurers = new ArrayList<>();
         configurers.add(new GlobalAuthenticationConfigurerAdapter() {
                             @Override
@@ -76,8 +91,10 @@ public class SecurityConfiguration {
         System.out.println(authConfig.toString());
 
 
+        System.out.println("prima del return di authenticationManager");
         return authConfig.getAuthenticationManager();
     }
+    */
 
 
 
@@ -189,7 +206,7 @@ public class SecurityConfiguration {
             .and()
              .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
-            .userDetailsService( customerService )
+            // .userDetailsService( customerService )
 
 
 
