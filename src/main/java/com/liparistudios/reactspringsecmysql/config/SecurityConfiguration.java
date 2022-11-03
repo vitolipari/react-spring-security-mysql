@@ -17,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.util.ArrayList;
@@ -65,37 +66,17 @@ public class SecurityConfiguration {
     */
 
 
-    /*
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-
-        System.out.println("authenticationManager");
-
-        final List<GlobalAuthenticationConfigurerAdapter> configurers = new ArrayList<>();
-        configurers.add(new GlobalAuthenticationConfigurerAdapter() {
-                            @Override
-                            public void configure(AuthenticationManagerBuilder auth) throws Exception {
-                                // auth.doSomething()
-                                System.out.println("dentro ");
-                                System.out.println(auth);
-                                System.out.println(auth.toString());
-
-
-
-                            }
-                        }
-        );
-
-        System.out.println("authConfig");
-        System.out.println(authConfig);
-        System.out.println(authConfig.toString());
-
-
-        System.out.println("prima del return di authenticationManager");
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
-    */
 
+
+
+    @Bean
+    public JwtAuthTokenFilter authenticationJwtTokenFilter() {
+        return new JwtAuthTokenFilter();
+    }
 
 
     public SecurityConfiguration( CustomerServiceImplementation service/*, RsaKeyProperties rsaKeyProperties*//*, CustomEncoder encoder*/ ) {
@@ -111,6 +92,9 @@ public class SecurityConfiguration {
 
 
         http
+
+            .addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+
 
             // CORS
 //                .cors( cors -> cors.disable() )
@@ -254,6 +238,7 @@ public class SecurityConfiguration {
 
             // TODO
             // http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
 
             return http.build();
 

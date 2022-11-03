@@ -257,6 +257,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    // public Customer loadUserByUsername(String username) throws UsernameNotFoundException {
 
 
 
