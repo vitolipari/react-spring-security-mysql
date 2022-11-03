@@ -93,7 +93,8 @@ public class SecurityConfiguration {
 
         http
 
-            .addFilterBefore(authenticationJwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            // preso da qui https://github.com/hendisantika/spring-boot-jwt-authentication/blob/master/src/main/java/com/hendisantika/springbootjwtauthentication/jwt/JwtProvider.java
+            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
 
 
             // CORS
