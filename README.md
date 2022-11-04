@@ -13,6 +13,11 @@
 [#07](https://medium.com/geekculture/spring-security-in-motion-part-1-8fc2644244f)
 [#08](https://www.appsdeveloperblog.com/migrating-from-deprecated-websecurityconfigureradapter/)
 
+secondo step di ricerca
+https://www.kindsonthegenius.com/introduction-to-spring-security-a-practical-tutorial/
+https://www.baeldung.com/security-spring
+
+
 
 ### PasswordEncoder
 [ufficiale](https://www.baeldung.com/spring-security-5-password-storage)

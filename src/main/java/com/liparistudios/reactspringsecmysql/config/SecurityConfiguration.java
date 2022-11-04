@@ -47,7 +47,8 @@ public class SecurityConfiguration {
 //    @Autowired
 //    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
 
-    private final CustomerServiceImplementation customerService;
+    @Autowired
+    private  CustomerServiceImplementation customerService;
 
 
     @Autowired
@@ -78,13 +79,13 @@ public class SecurityConfiguration {
         return new JwtAuthTokenFilter();
     }
 
-
-    public SecurityConfiguration( CustomerServiceImplementation service/*, RsaKeyProperties rsaKeyProperties*//*, CustomEncoder encoder*/ ) {
+/*
+    public SecurityConfiguration( CustomerServiceImplementation service/ *, RsaKeyProperties rsaKeyProperties* //*, CustomEncoder encoder* / ) {
         this.customerService = service;
 //        this.rsaKeys = rsaKeyProperties;
 //        this.encoder = encoder;
     }
-
+*/
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -94,7 +95,7 @@ public class SecurityConfiguration {
         http
 
             // preso da qui https://github.com/hendisantika/spring-boot-jwt-authentication/blob/master/src/main/java/com/hendisantika/springbootjwtauthentication/jwt/JwtProvider.java
-            .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            // .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
 
 
             // CORS
@@ -191,7 +192,7 @@ public class SecurityConfiguration {
             .and()
              .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
 
-            // .userDetailsService( customerService )
+            .userDetailsService( customerService )
 
 
 
