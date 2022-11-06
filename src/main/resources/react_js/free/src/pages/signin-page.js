@@ -60,8 +60,8 @@ export const SigninPage = props => {
 									"/public/login",
 									{
 										method: "POST",
-										// body: formData
-										body: dataJson
+										body: formData
+										// body: dataJson
 									}
 								)
 									.then( response => response.json() )

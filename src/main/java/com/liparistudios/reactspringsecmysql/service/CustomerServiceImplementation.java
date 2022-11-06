@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Service
 //@RequiredArgsConstructor
 //@Transactional // non sono sicuro
-//@EnableWebSecurity
+@EnableWebSecurity
 public class CustomerServiceImplementation implements CustomerService, UserDetailsService {
 
     @Autowired
@@ -49,7 +49,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 //    @Autowired
 
 
-
+/*
     public CustomerServiceImplementation(
 //        CustomerRepository customerRepository,
 //        RoleRepository roleRepository,
@@ -59,7 +59,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
 //        this.roleRepository = roleRepository;
 //        this.passwordEncoder = encoder;
     }
-
+*/
 
 
     @Override
@@ -260,6 +260,7 @@ public class CustomerServiceImplementation implements CustomerService, UserDetai
     // public Customer loadUserByUsername(String username) throws UsernameNotFoundException {
 
 
+        System.out.println("loadUserByUsername {"+ username +"}");
 
         return
             customerRepository

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
@@ -13,6 +14,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -44,8 +50,8 @@ public class SecurityConfiguration {
     // private AuthEntryPointJwt unauthorizedHandler;
 
 
-//    @Autowired
-//    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private AppBasicAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     private  CustomerServiceImplementation customerService;
@@ -54,30 +60,39 @@ public class SecurityConfiguration {
     @Autowired
     private CustomEncoder encoder;
 
-
-    /*
-    AuthenticationManager customersAuthenticationManager() {
-        return authentication -> {
-            if (isCustomer(authentication)) {
-                return new UsernamePasswordAuthenticationToken(/*credentials* /);
-            }
-            throw new UsernameNotFoundException(/*principal name* /);
-        };
-    }
-    */
-
-
+/*
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public PasswordEncoder passwordEncoder() {
+
+        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
+            put("bcrypt", new BCryptPasswordEncoder());
+            put("noop", NoOpPasswordEncoder.getInstance());
+            put("SHA-512", new Sha512PasswordEncoder());
+            put("sha512", new Sha512PasswordEncoder());
+            put("sha256", new Sha256PasswordEncoder());
+            put("SHA-256", new Sha256PasswordEncoder());
+            put(null, new Sha256PasswordEncoder());
+        }};
+
+
+            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder("sha256", encoders);
+            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new Sha256PasswordEncoder());
+            return delegatingPasswordEncoder;
+
+
+//        return new DelegatingPasswordEncoder("sha256", encoders);
+
     }
+*/
 
-
-
+/*
     @Bean
     public JwtAuthTokenFilter authenticationJwtTokenFilter() {
         return new JwtAuthTokenFilter();
     }
+
+    */
+
 
 /*
     public SecurityConfiguration( CustomerServiceImplementation service/ *, RsaKeyProperties rsaKeyProperties* //*, CustomEncoder encoder* / ) {
@@ -86,6 +101,10 @@ public class SecurityConfiguration {
 //        this.encoder = encoder;
     }
 */
+
+
+
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -155,6 +174,9 @@ public class SecurityConfiguration {
                     // tutto il resto
                     .anyRequest()
                         .authenticated()
+
+                        //.and()
+                        // .authenticationEntryPoint(authenticationEntryPoint)
 //                            .and()
 //                            .authenticationEntryPoint(authenticationEntryPoint)
 
@@ -179,6 +201,7 @@ public class SecurityConfiguration {
 
 
 
+
             .and()
             .logout()
                 .logoutUrl("/sign-out")
@@ -190,9 +213,14 @@ public class SecurityConfiguration {
 
                 // Sessione jwt
             .and()
-             .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) )
+             .sessionManagement( session -> {
+                 System.out.println("sessionCreationPolicy");
+                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+             })
 
-            .userDetailsService( customerService )
+            //.userDetailsService( customerService )
+            .authenticationProvider(authProvider)
+//            .authenticationProvider(authProvider2())
 
 
 
@@ -222,7 +250,8 @@ public class SecurityConfiguration {
                         .disable()
                 )
 
-
+                // .and()
+                // .authenticationEntryPoint(authenticationEntryPoint)
 
 
 //                    .and()
@@ -231,6 +260,7 @@ public class SecurityConfiguration {
                 // .authenticationManager( authenticationManager( http.getSharedObject(AuthenticationConfiguration.class) )  )
 
 //                    .authenticationEntryPoint(authenticationEntryPoint)
+
 
 
 
@@ -250,26 +280,6 @@ public class SecurityConfiguration {
     }
 
 
-//    @Bean
-//    public AuthenticationEntryPoint authenticationEntryPoint() {
-//        return new RestAuthenticationEntryPoint();
-//    }
-
-/*
-    @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.getRsaPublicKey() ).build();
-    }
-
-
-    @Bean
-    JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder( rsaKeys.getRsaPublicKey() ).privateKey( rsaKeys.getRsaPrivateKey() ).build();
-        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>( new JWKSet( jwk ) );
-        return new NimbusJwtEncoder( jwks );
-    }
-*/
-
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         System.out.println("AuthenticationFailureHandler");
@@ -278,6 +288,9 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
+
+        System.out.println("bean authenticationSuccessHandler");
+
         return new AppAuthenticationSuccessHandler();
     }
 
@@ -286,6 +299,52 @@ public class SecurityConfiguration {
     public AccessDeniedHandler accessDeniedHandler() {
         return new AppAccessDeniedHandler();
     }
+
+
+
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+
+    @Bean
+    public AuthenticationManager auth(HttpSecurity http) throws Exception {
+
+        System.out.println("auth manager");
+        System.out.println(http.toString());
+
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        //authenticationManagerBuilder.authenticationProvider(authProvider2());
+        authenticationManagerBuilder.authenticationProvider(authProvider);
+
+        authenticationManagerBuilder.jdbcAuthentication().passwordEncoder(encoder.passwordEncoder());
+
+        return authenticationManagerBuilder.build();
+    }
+
+
+
+    //@Bean
+    public DaoAuthenticationProvider authProvider2() {
+
+        System.out.println("authProvider2");
+//        System.out.println(authentication);
+
+
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customerService);
+
+        System.out.println("set PasswordEncoder");
+        System.out.println(encoder.passwordEncoder());
+        System.out.println(encoder.passwordEncoder().toString());
+
+        authProvider.setPasswordEncoder(encoder.passwordEncoder());
+
+
+
+//        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+
 
 /*
     @Bean

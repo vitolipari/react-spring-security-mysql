@@ -19,12 +19,16 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+//@Component
 public class CustomEncoder {
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -36,17 +40,17 @@ public class CustomEncoder {
             put("sha512", new Sha512PasswordEncoder());
             put("sha256", new Sha256PasswordEncoder());
             put("SHA-256", new Sha256PasswordEncoder());
+            put(null, new Sha256PasswordEncoder());
         }};
 
-            /*
-            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new CustomPasswordEncoder());
-            return delegatingPasswordEncoder;
-            */
 
-        return new DelegatingPasswordEncoder("sha256", encoders);
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder("sha256", encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new Sha256PasswordEncoder());
+        return delegatingPasswordEncoder;
+
 
     }
+
 
 
 //    @Bean
