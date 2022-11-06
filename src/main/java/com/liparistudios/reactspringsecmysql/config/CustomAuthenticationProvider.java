@@ -27,16 +27,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         System.out.println("CustomAuthenticationProvider");
+        System.out.println("authentication, name, principal, credentials");
         System.out.println(authentication);
         System.out.println(authentication.getName());
         System.out.println(authentication.getPrincipal());
         System.out.println(authentication.getCredentials());
-
-
-
-
-        String name = authentication.getName();
-        String password = authentication.getCredentials().toString();
 
 
         String passwordEncoded = encoder.passwordEncoder().encode( authentication.getCredentials().toString() );
@@ -44,7 +39,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 //        System.out.println(passwordEncoded);
 
 
-        Customer customer = customerService.loadCustomerByUsername( name );
+        Customer customer = customerService.loadCustomerByUsername( authentication.getName() );
         System.out.println("customer");
         System.out.println(customer);
         System.out.println("le password corrispondono?");
@@ -54,7 +49,27 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
         if ( customer.getPassword().equals( passwordEncoded ) ) {
-            return new UsernamePasswordAuthenticationToken( customer.getUsername(), customer.getPassword(), customer.getAuthorities() );
+            System.out.println("Auth Success");
+
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken( customer.getUsername(), customer.getPassword(), customer.getAuthorities() );
+            System.out.println("auth token, credentials, principal, name, authorities, details, isAuthenticated");
+            System.out.println(authToken);
+            System.out.println(authToken.getCredentials());
+            System.out.println(authToken.getPrincipal());
+            System.out.println(authToken.getName());
+            System.out.println(authToken.getAuthorities());
+            System.out.println(authToken.getDetails());
+            System.out.println(authToken.isAuthenticated());
+
+
+            // da capire se avviene tutte le volte o soltanto al login
+            // nel caso di login
+            // jwt
+            // session
+
+            return authToken;
+
         } else {
             return null;
         }
