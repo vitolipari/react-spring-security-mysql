@@ -44,65 +44,55 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
 
-//    private RsaKeyProperties rsaKeys;
-
-    // @Autowired
-    // private AuthEntryPointJwt unauthorizedHandler;
-
-
     @Autowired
     private AppBasicAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     private  CustomerServiceImplementation customerService;
 
-
     @Autowired
     private CustomEncoder encoder;
 
-/*
+
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
-
-        Map<String, PasswordEncoder> encoders = new HashMap<>(){{
-            put("bcrypt", new BCryptPasswordEncoder());
-            put("noop", NoOpPasswordEncoder.getInstance());
-            put("SHA-512", new Sha512PasswordEncoder());
-            put("sha512", new Sha512PasswordEncoder());
-            put("sha256", new Sha256PasswordEncoder());
-            put("SHA-256", new Sha256PasswordEncoder());
-            put(null, new Sha256PasswordEncoder());
-        }};
-
-
-            DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder("sha256", encoders);
-            delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new Sha256PasswordEncoder());
-            return delegatingPasswordEncoder;
-
-
-//        return new DelegatingPasswordEncoder("sha256", encoders);
-
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        System.out.println("AuthenticationFailureHandler");
+        return new AppAuthenticationFailureHandler();
     }
-*/
 
-/*
     @Bean
-    public JwtAuthTokenFilter authenticationJwtTokenFilter() {
-        return new JwtAuthTokenFilter();
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+
+        System.out.println("bean authenticationSuccessHandler");
+
+        return new AppAuthenticationSuccessHandler();
     }
 
-    */
 
-
-/*
-    public SecurityConfiguration( CustomerServiceImplementation service/ *, RsaKeyProperties rsaKeyProperties* //*, CustomEncoder encoder* / ) {
-        this.customerService = service;
-//        this.rsaKeys = rsaKeyProperties;
-//        this.encoder = encoder;
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new AppAccessDeniedHandler();
     }
-*/
 
 
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
+
+    @Bean
+    public AuthenticationManager auth(HttpSecurity http) throws Exception {
+
+        System.out.println("auth manager");
+        System.out.println(http.toString());
+
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        //authenticationManagerBuilder.authenticationProvider(authProvider2());
+        authenticationManagerBuilder.authenticationProvider(authProvider);
+
+        authenticationManagerBuilder.jdbcAuthentication().passwordEncoder(encoder.passwordEncoder());
+
+        return authenticationManagerBuilder.build();
+    }
 
 
 
@@ -113,16 +103,10 @@ public class SecurityConfiguration {
 
         http
 
-            // preso da qui https://github.com/hendisantika/spring-boot-jwt-authentication/blob/master/src/main/java/com/hendisantika/springbootjwtauthentication/jwt/JwtProvider.java
-            // .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-
-
             // CORS
-//                .cors( cors -> cors.disable() )
-            .cors()
+            .cors( cors -> cors.disable() )
 
             // CSRF disabilitato
-            .and()
             .csrf( csrf -> csrf.disable() )
 
             /*
@@ -139,8 +123,6 @@ public class SecurityConfiguration {
                 auth
 
                     // rotte libere
-//                        .antMatchers("/api/v1/customer").permitAll()         // registrazione di un nuovo customer
-//                        .antMatchers("/api/v1/permissions").permitAll()              // lista di tutti i permessi
                     .antMatchers("/api/v1/customer/signup").permitAll()         // registrazione di un nuovo customer
                     .antMatchers("/api/v1/role").permitAll()                    // lista di tutti i ruoli
 
@@ -175,13 +157,7 @@ public class SecurityConfiguration {
                     .anyRequest()
                         .authenticated()
 
-                        //.and()
-                        // .authenticationEntryPoint(authenticationEntryPoint)
-//                            .and()
-//                            .authenticationEntryPoint(authenticationEntryPoint)
-
             )
-
 
 
             .formLogin()
@@ -193,13 +169,7 @@ public class SecurityConfiguration {
                 .failureUrl("/public/error?login=true")
                 .successHandler( authenticationSuccessHandler() )
                 .failureHandler( authenticationFailureHandler() )
-//                    .authenticationDetailsSource(authenticationDetailsSource)
             .permitAll()
-
-
-
-
-
 
 
             .and()
@@ -209,151 +179,43 @@ public class SecurityConfiguration {
                 .permitAll()
 
 
-
-
-                // Sessione jwt
             .and()
              .sessionManagement( session -> {
-                 System.out.println("sessionCreationPolicy");
-                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                 System.out.println("sessionCreation");
+                 session
+                     .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                     .invalidSessionUrl("/public/invalid-session")
+                     .maximumSessions(1)
+                     .maxSessionsPreventsLogin(true)
+                 ;
              })
 
-            //.userDetailsService( customerService )
             .authenticationProvider(authProvider)
-//            .authenticationProvider(authProvider2())
-
-
-
-
-//                    .addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class)
-
-
-//                    .and()
-
 
             // Gestione eccezioni ( non fa il redirect al login url )
              .exceptionHandling( ex ->
                  ex
                      .accessDeniedHandler( accessDeniedHandler() )
              )
-                // .authenticationEntryPoint( unauthorizedHandler )
+            .headers( headers ->
+                headers
+                    .defaultsDisabled()
+                    .contentTypeOptions()
 
-                //.headers( header -> header.defaultsDisabled().cacheControl() )
-//                .headers(headers -> headers.frameOptions().sameOrigin())
-                .headers( headers ->
-                    headers
-                        .defaultsDisabled()
-                        .contentTypeOptions()
+                    .and()
+                    .frameOptions()
+                    .disable()
+            )
 
-                        .and()
-                        .frameOptions()
-                        .disable()
-                )
-
-                // .and()
-                // .authenticationEntryPoint(authenticationEntryPoint)
+        ;
 
 
-//                    .and()
-//                    .httpBasic(withDefaults())
-
-                // .authenticationManager( authenticationManager( http.getSharedObject(AuthenticationConfiguration.class) )  )
-
-//                    .authenticationEntryPoint(authenticationEntryPoint)
-
-
-
-
-                ;
-
-
-
-            // TODO
-            // http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-
-            return http.build();
+        return http.build();
 
 
 
 
     }
-
-
-    @Bean
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        System.out.println("AuthenticationFailureHandler");
-        return new AppAuthenticationFailureHandler();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-
-        System.out.println("bean authenticationSuccessHandler");
-
-        return new AppAuthenticationSuccessHandler();
-    }
-
-
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return new AppAccessDeniedHandler();
-    }
-
-
-
-    @Autowired
-    private CustomAuthenticationProvider authProvider;
-
-    @Bean
-    public AuthenticationManager auth(HttpSecurity http) throws Exception {
-
-        System.out.println("auth manager");
-        System.out.println(http.toString());
-
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        //authenticationManagerBuilder.authenticationProvider(authProvider2());
-        authenticationManagerBuilder.authenticationProvider(authProvider);
-
-        authenticationManagerBuilder.jdbcAuthentication().passwordEncoder(encoder.passwordEncoder());
-
-        return authenticationManagerBuilder.build();
-    }
-
-
-
-    //@Bean
-    public DaoAuthenticationProvider authProvider2() {
-
-        System.out.println("authProvider2");
-//        System.out.println(authentication);
-
-
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customerService);
-
-        System.out.println("set PasswordEncoder");
-        System.out.println(encoder.passwordEncoder());
-        System.out.println(encoder.passwordEncoder().toString());
-
-        authProvider.setPasswordEncoder(encoder.passwordEncoder());
-
-
-
-//        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-
-
-/*
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return new SystemUserDetailsService();
-    }
-    */
-
-
 
 
 }
