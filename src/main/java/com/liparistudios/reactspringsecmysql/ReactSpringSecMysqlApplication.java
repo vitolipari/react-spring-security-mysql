@@ -54,6 +54,7 @@ public class ReactSpringSecMysqlApplication {
 			args -> {
 				System.out.println("operazioni di avvio dell'app");
 
+				/*
 				// permessi --------------------------------------------------------------------------------
 				Stream
 					.of(
@@ -71,6 +72,7 @@ public class ReactSpringSecMysqlApplication {
 						permissionService.addPermission(perm);
 					})
 				;
+				*/
 
 				// ruoli --------------------------------------------------------------------------------
 				Stream
@@ -100,6 +102,7 @@ public class ReactSpringSecMysqlApplication {
 						roleService.addRole( role );
 					})
 				;
+
 
 				// customer --------------------------------------------------------------------------------
 				System.out.println("preparo il customer");

@@ -95,12 +95,12 @@ public class WebController {
 
         final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
         return
-                ResponseEntity
-                        .status(HttpStatus.OK)
-                        .contentLength(inputStream.contentLength())
-                        .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                        .body(inputStream)
-                ;
+            ResponseEntity
+                .status(HttpStatus.OK)
+                .contentLength(inputStream.contentLength())
+                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                .body(inputStream)
+        ;
 
     }
 
