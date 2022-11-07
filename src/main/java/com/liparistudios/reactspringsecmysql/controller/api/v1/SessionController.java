@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.spi.LocaleNameProvider;
+
 
 @RestController
 @RequestMapping("/api/v1/session")
@@ -42,7 +42,7 @@ public class SessionController {
 
     @GetMapping("/access/{sessionCode}")
     public ModelAndView accessByVirginSession(
-            @PathVariable(name = "sessionCode", required = true, value = "ghost") String code,
+            @PathVariable(name = "sessionCode", required = true, value = "c1051") String code,
 //        @RequestParam(required = false, defaultValue = "invalid") String auth,
             HttpServletRequest request,
             HttpServletResponse response
@@ -51,9 +51,9 @@ public class SessionController {
 
         Map<String, Object> pageVars = new HashMap<String, Object>(){{
             put("session",
-                    new HashMap<String, Object>(){{
-                        put("code", code);
-                    }}
+                new HashMap<String, Object>(){{
+                    put("code", code);
+                }}
             );
         }};
         LocalDateTime now = LocalDateTime.now();
@@ -69,9 +69,9 @@ public class SessionController {
             // controllo sessione che può essere abilitata
             if( !session.isLive() ) {
                 ((Map<String, Object>) pageVars.get("session")).put("live",
-                        new HashMap<String, Object>(){{
-                            put("since", session.getAccess());
-                        }}
+                    new HashMap<String, Object>(){{
+                        put("since", session.getAccess());
+                    }}
                 );
             }
 
@@ -114,12 +114,12 @@ public class SessionController {
             // codice sessione non trovato
 
             pageVars.put("error",
-                    new HashMap<String, Object>(){{
-                        put("code", 600);
-                        put("title", "Codice sessione non trovato");
-                        put("message", e.getMessage());
-                        put("stackTrace", e.getStackTrace());
-                    }}
+                new HashMap<String, Object>(){{
+                    put("code", 600);
+                    put("title", "Codice sessione non trovato");
+                    put("message", e.getMessage());
+                    put("stackTrace", e.getStackTrace());
+                }}
             );
             page.addAllObjects(pageVars);
             return page;
