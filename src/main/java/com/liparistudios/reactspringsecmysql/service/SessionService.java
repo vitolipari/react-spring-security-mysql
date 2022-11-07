@@ -1,5 +1,6 @@
 package com.liparistudios.reactspringsecmysql.service;
 
+import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
 import com.liparistudios.reactspringsecmysql.repository.SessionRepository;
 import org.hibernate.validator.constraints.Length;
@@ -21,6 +22,8 @@ public class SessionService {
 
     @Autowired
     private SessionRepository sessionRepository;
+
+    @Autowired private PlatformService platformService;
 
     /*
     List<Session> findByOpenBefore(LocalDateTime open );
@@ -45,7 +48,7 @@ public class SessionService {
         return sessionRepository.save( session );
     }
 
-    public Session openNewSession() {
+    public Session openNewSession( Long platformId ) {
 
         Long now = System.currentTimeMillis();
         StringBuilder result = new StringBuilder();
@@ -81,6 +84,13 @@ public class SessionService {
                 null
             )
         ;
+
+        Platform platform = platformService.getPlatformById( platformId );
+        List<Session> platformSessions = platform.getSessions();
+        platformSessions.add(newSession);
+        platform.setSessions( platformSessions );
+        platformService.save( platform );
+
         return sessionRepository.save( newSession );
     }
 

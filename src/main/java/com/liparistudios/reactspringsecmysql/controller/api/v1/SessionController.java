@@ -33,19 +33,15 @@ public class SessionController {
     @ResponseBody
     @GetMapping("/open/{platformID}")
     public Map<String, Object> openNewSession(HttpServletRequest request, HttpServletResponse response, @PathVariable(name = "platformID", required = true) Long platformId ) {
-        Session newSession = sessionService.openNewSession();
-        Platform platform = platformService.getPlatformById( platformId );
-        List<Session> platformSessions = platform.getSessions();
-        platformSessions.add(newSession);
-        platform.setSessions( platformSessions );
-        platformService.save( platform );
+        Session newSession = sessionService.openNewSession( platformId );
+
         return
             new HashMap<String, Object>(){{
                 put("id", newSession.getId());
                 put("code", newSession.getCode());
                 put("openAt", newSession.getOpen());
                 put("expiresAt", newSession.getExp());
-                put("platform", platform.toMap() );
+                put("platform", platformService.getPlatformById( platformId ).toMap() );
             }}
         ;
     }
@@ -75,6 +71,10 @@ public class SessionController {
             // controllo sessione
             Session session = sessionService.getSessionByCode( code );
             ((Map<String, Object>) pageVars.get("session")).put("id", session.getId());
+
+
+            // Platform platform = platformService.getPlatformBySessionCode( code );
+            Platform platform = platformService.getPlatformBySessionId( session.getId() );
 
 
             // controllo sessione che può essere abilitata
