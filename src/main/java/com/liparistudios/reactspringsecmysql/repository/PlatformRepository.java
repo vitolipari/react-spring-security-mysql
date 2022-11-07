@@ -18,4 +18,7 @@ public interface PlatformRepository extends JpaRepository<Platform, Long> {
     @Query("SELECT p FROM Platform p WHERE p.name LIKE %?1%")
     List<Platform> searchByName( String name );
 
+//    @Query("SELECT p FROM Platform p WHERE p.name LIKE %?1%")
+//    Optional<Platform> findBySessionId( Long id );
+
 }

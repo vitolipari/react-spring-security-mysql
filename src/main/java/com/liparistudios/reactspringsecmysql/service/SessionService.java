@@ -62,7 +62,7 @@ public class SessionService {
             throw new RuntimeException("Bad algorithm");
         }
         @Length(min = 64, max = 64)
-        String code = result.toString();;
+        String code = result.toString();
 
 
         LocalDateTime open = LocalDateTime.now();

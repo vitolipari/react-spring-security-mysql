@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PlatformService {
@@ -58,7 +59,44 @@ public class PlatformService {
 
 
 
+    public Platform getPlatformBySessionId( Long id ) {
+        return
+            platformRepository
+                .findAll()
+                .stream()
+                .filter( platform ->
+                    platform
+                        .getSessions()
+                        .stream()
+                        .map( session -> session.getId() )
+                        .anyMatch( sessionID -> sessionID == id )
+                )
+                .reduce( null, (last, current) -> current )
+        ;
+    }
 
+
+    public Platform getPlatformBySessionCode( String code ) {
+        return
+            platformRepository
+                .findAll()
+                .stream()
+                .filter( platform ->
+                    platform
+                        .getSessions()
+                        .stream()
+                        .map( session -> session.getCode() )
+                        .anyMatch( sessionCODE -> sessionCODE.equals( code ) )
+                )
+                .reduce( null, (last, current) -> current )
+        ;
+    }
+
+
+
+    public Platform save( Platform plat ) {
+        return platformRepository.save( plat );
+    }
 
 
 }
