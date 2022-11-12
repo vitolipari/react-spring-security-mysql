@@ -30,6 +30,13 @@ public class SessionController {
     @Autowired private SessionService sessionService;
     @Autowired private CustomerServiceImplementation customerService;
 
+    /**
+     * Apertura di una nuova sessione
+     * @param request
+     * @param response
+     * @param platformId
+     * @return
+     */
     @ResponseBody
     @GetMapping("/open/{platformID}")
     public Map<String, Object> openNewSession(HttpServletRequest request, HttpServletResponse response, @PathVariable(name = "platformID", required = true) Long platformId ) {
@@ -47,10 +54,22 @@ public class SessionController {
     }
 
 
+    /**
+     * Accesso alla sessione, avviene quando viene scansionato il QRCode
+     *
+     * controlla se la sessione esiste, se è in live, se è scaduta
+     * o se è chiusa.
+     * Se la sessione esiste non è in live, non è chiusa, e
+     *
+     * @param code
+     * @param request
+     * @param response
+     * @return
+     */
     @GetMapping("/access/{sessionCode}")
     public ModelAndView accessByVirginSession(
             @PathVariable(name = "sessionCode", required = true, value = "c1051") String code,
-//        @RequestParam(required = false, defaultValue = "invalid") String auth,
+            @RequestParam(name = "auth", required = false, defaultValue = "invalid") String pin,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
@@ -78,45 +97,54 @@ public class SessionController {
 
 
             // controllo sessione che può essere abilitata
-            if( !session.isLive() ) {
+            if( session.isLive() ) {
                 ((Map<String, Object>) pageVars.get("session")).put("live",
                     new HashMap<String, Object>(){{
                         put("since", session.getAccess());
                     }}
                 );
             }
-
-            // controllo sessione scaduta
-            if( session.isExpired() ) {
-                ((Map<String, Object>) pageVars.get("session")).put("expired", session.isExpired());
-            }
-
-            // controllo sessione già attiva
-            if( !session.isClosed() ) {
-                ((Map<String, Object>) pageVars.get("session")).put("closed", session.isClosed());
-            }
-
-
-            ((Map<String, Object>) pageVars.get("session")).put("access", now);
-
-            // controllo timeToEnable
-            if(now.isBefore( session.getOpen().plus(90, ChronoUnit.SECONDS) )) {
-                // sessione scansionabile
-                session.setAccess( now );
-
-            }
             else {
-                // sessione scaduta
-                session.setClosed( now );
-                ((Map<String, Object>) pageVars.get("session")).put("closed", now);
+
+                // controllo sessione scaduta
+                if( session.isExpired() ) {
+                    ((Map<String, Object>) pageVars.get("session")).put("expired", session.isExpired());
+                }
+                else {
+
+                    // controllo sessione chiusa
+                    if( session.isClosed() ) {
+                        ((Map<String, Object>) pageVars.get("session")).put("closed", session.isClosed());
+                    }
+                    else {
+
+                        // sessione OK
+                        ((Map<String, Object>) pageVars.get("session")).put("access", now);
+
+                        // controllo timeToEnable
+                        if(now.isBefore( session.getOpen().plus(90, ChronoUnit.SECONDS) )) {
+                            // sessione scansionabile
+                            session.setAccess( now );
+
+                        }
+                        else {
+                            // sessione scaduta
+                            session.setClosed( now );
+                            ((Map<String, Object>) pageVars.get("session")).put("closed", now);
+
+                        }
+
+
+                    }
+
+                }
 
 
             }
+
+
 
             sessionService.save( session );
-
-
-
             page.addAllObjects(pageVars);
             return page;
 
