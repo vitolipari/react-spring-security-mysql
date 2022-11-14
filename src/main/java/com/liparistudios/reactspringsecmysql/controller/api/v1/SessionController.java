@@ -1,5 +1,6 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
+import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
@@ -75,95 +76,12 @@ public class SessionController {
     ) {
 
 
-        Map<String, Object> pageVars = new HashMap<String, Object>(){{
-            put("session",
-                new HashMap<String, Object>(){{
-                    put("code", code);
-                }}
-            );
-        }};
-        LocalDateTime now = LocalDateTime.now();
+        SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
+        Map<String, Object> pageVars = sessionHandler.accessSession( request, response, code, pin );
         ModelAndView page = new ModelAndView("mobile/build/index");
+        page.addAllObjects(pageVars);
+        return page;
 
-        try {
-
-            // controllo sessione
-            Session session = sessionService.getSessionByCode( code );
-            ((Map<String, Object>) pageVars.get("session")).put("id", session.getId());
-
-
-            // Platform platform = platformService.getPlatformBySessionCode( code );
-            Platform platform = platformService.getPlatformBySessionId( session.getId() );
-
-
-            // controllo sessione che può essere abilitata
-            if( session.isLive() ) {
-                ((Map<String, Object>) pageVars.get("session")).put("live",
-                    new HashMap<String, Object>(){{
-                        put("since", session.getAccess());
-                    }}
-                );
-            }
-            else {
-
-                // controllo sessione scaduta
-                if( session.isExpired() ) {
-                    ((Map<String, Object>) pageVars.get("session")).put("expired", session.isExpired());
-                }
-                else {
-
-                    // controllo sessione chiusa
-                    if( session.isClosed() ) {
-                        ((Map<String, Object>) pageVars.get("session")).put("closed", session.isClosed());
-                    }
-                    else {
-
-                        // sessione OK
-                        ((Map<String, Object>) pageVars.get("session")).put("access", now);
-
-                        // controllo timeToEnable
-                        if(now.isBefore( session.getOpen().plus(90, ChronoUnit.SECONDS) )) {
-                            // sessione scansionabile
-                            session.setAccess( now );
-
-                        }
-                        else {
-                            // sessione scaduta
-                            session.setClosed( now );
-                            ((Map<String, Object>) pageVars.get("session")).put("closed", now);
-
-                        }
-
-
-                    }
-
-                }
-
-
-            }
-
-
-
-            sessionService.save( session );
-            page.addAllObjects(pageVars);
-            return page;
-
-        }
-        catch (Exception e) {
-            // codice sessione non trovato
-
-            pageVars.put("error",
-                new HashMap<String, Object>(){{
-                    put("code", 600);
-                    put("title", "Codice sessione non trovato");
-                    put("message", e.getMessage());
-                    put("stackTrace", e.getStackTrace());
-                }}
-            );
-            page.addAllObjects(pageVars);
-            return page;
-
-        }
 
     }
 
