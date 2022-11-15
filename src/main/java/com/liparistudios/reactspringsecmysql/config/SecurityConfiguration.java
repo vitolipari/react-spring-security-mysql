@@ -130,6 +130,11 @@ public class SecurityConfiguration {
                     .antMatchers("/public").permitAll()
                     .antMatchers("/public/**").permitAll()
 
+                    .antMatchers("/api/v1/session/open/*").permitAll()
+                    .antMatchers("/api/v1/session/open/*").permitAll()
+                    .antMatchers("/s/*").permitAll()
+                    .antMatchers("/s?*").permitAll()
+
                     .antMatchers("/h2-console").permitAll()
                     .antMatchers("/h2-console/").permitAll()
                     .antMatchers("/h2-console/*").permitAll()

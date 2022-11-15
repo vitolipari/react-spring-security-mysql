@@ -3,6 +3,7 @@ package com.liparistudios.reactspringsecmysql.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.time.Period;
 
 @Data
 @Entity
+@NoArgsConstructor
 @AllArgsConstructor
 @Table( name = "sessions" )
 public class Session {

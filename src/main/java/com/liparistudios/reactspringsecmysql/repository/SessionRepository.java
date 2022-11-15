@@ -53,11 +53,14 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
 
     /**
      * Tutte le sessioni del customer
+     *
+     * da aggiustare perchè va in errore
+     *
      * @param customerId
      * @return
      */
-    @Query("SELECT s FROM Session s WHERE s.customer_id = ?1")
-    List<Session> findAllByCustomerId( Long customerId );
+    // @Query("SELECT s FROM Session s WHERE s.customer_id = ?1")
+    // List<Session> findAllByCustomerId( Long customerId );
 
 
 

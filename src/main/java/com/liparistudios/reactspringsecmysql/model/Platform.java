@@ -69,7 +69,7 @@ public class Platform {
     @Length(min = 16, max = 1024)
     private String logoFileUrl;
 
-    @OneToMany
+    @OneToMany( cascade = CascadeType.ALL )
     @JoinColumn( name = "platform_id", nullable = true )
     private List<Session> sessions;
 

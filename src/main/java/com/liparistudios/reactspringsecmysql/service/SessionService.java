@@ -67,8 +67,8 @@ public class SessionService {
 
         LocalDateTime open = LocalDateTime.now();
 
-        // da controllare
-        Period startUpTime = Period.between(LocalDate.now(), LocalDate.now().plus(90, ChronoUnit.SECONDS) );
+        // da controllare ATTENZIONE i secondi vanno in errore
+        // Period startUpTime = Period.between(LocalDate.now(), LocalDate.now().plus(90, ChronoUnit.SECONDS) );
 
         LocalDateTime expies = open.plus(90, ChronoUnit.DAYS);
 
