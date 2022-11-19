@@ -70,7 +70,7 @@ public class SessionController {
     @GetMapping("/access/{sessionCode}")
     public ModelAndView accessByVirginSession(
             @PathVariable(name = "sessionCode", required = true, value = "c1051") String code,
-            @RequestParam(name = "auth", required = false, defaultValue = "invalid") String pin,
+            @RequestParam(name = "auth", required = false, defaultValue = "invalid-01234567") String pin,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
