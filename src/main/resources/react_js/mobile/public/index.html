@@ -28,10 +28,9 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div>
-      <code>Dati dal server</code>
-      <pre>{{ session }}</pre>
-    </div>
+    <input type="hidden" value="{{session}}"/>
+    <input type="hidden" value="{{platform}}"/>
+    <input type="hidden" value="{{ pin }}"/>
     <div id="root"></div>
     <!--
       This HTML file is a template.
