@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.Period;
 
@@ -23,13 +24,14 @@ public class Session {
     private Long id;
 
     @Column(
-            nullable = false,
-            length = 64,
-            insertable = true,
-            updatable = false,
-            unique = false
+        nullable = false,
+        length = 64,
+        insertable = true,
+        updatable = false,
+        unique = false
     )
-    @Length(min = 64, max = 64)
+//    @Length(min = 64, max = 64)
+    @NotNull( message = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" )
     private String code;
 
     @Column( nullable = false )

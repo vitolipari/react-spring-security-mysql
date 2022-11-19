@@ -89,9 +89,24 @@ public class SessionService {
         List<Session> platformSessions = platform.getSessions();
         platformSessions.add(newSession);
         platform.setSessions( platformSessions );
+
+        System.out.println("platform");
+        System.out.println( platform );
+        System.out.println("new session");
+        System.out.println(newSession);
+        System.out.println("platform sessions");
+        platformSessions
+            .stream()
+            .forEach( session -> {
+                System.out.println( session );
+            })
+        ;
+
+        Session saveResult = sessionRepository.save( newSession );
         platformService.save( platform );
 
-        return sessionRepository.save( newSession );
+        return saveResult;
+
     }
 
 
