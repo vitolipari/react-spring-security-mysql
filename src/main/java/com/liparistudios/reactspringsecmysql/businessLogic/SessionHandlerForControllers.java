@@ -27,7 +27,8 @@ public class SessionHandlerForControllers {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		String code,
-		String pin
+		String pin,
+		Long platformID
 	) {
 
 		Map<String, Object> pageVars = new HashMap<String, Object>();
@@ -50,6 +51,7 @@ public class SessionHandlerForControllers {
 			// Platform platform = platformService.getPlatformBySessionCode( code );
 			Platform platform = platformService.getPlatformBySessionId( session.getId() );
 
+			pageVars.put("platform", platform);
 
 			// controllo sessione che può essere abilitata
 			if( session.isLive() ) {

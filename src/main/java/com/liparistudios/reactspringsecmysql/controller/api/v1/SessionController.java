@@ -71,13 +71,14 @@ public class SessionController {
     public ModelAndView accessByVirginSession(
             @PathVariable(name = "sessionCode", required = true, value = "c1051") String code,
             @RequestParam(name = "auth", required = false, defaultValue = "invalid-01234567") String pin,
+            @RequestParam(name = "platform", required = true) Long platformID,
             HttpServletRequest request,
             HttpServletResponse response
     ) {
 
 
         SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
-        Map<String, Object> pageVars = sessionHandler.accessSession( request, response, code, pin );
+        Map<String, Object> pageVars = sessionHandler.accessSession( request, response, code, pin, platformID );
         ModelAndView page = new ModelAndView("mobile/build/index");
         page.addAllObjects(pageVars);
         return page;
