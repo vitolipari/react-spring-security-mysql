@@ -134,6 +134,7 @@ public class SecurityConfiguration {
                     .antMatchers("/api/v1/session/open/*").permitAll()
                     .antMatchers("/s/*").permitAll()
                     .antMatchers("/s?*").permitAll()
+                    .antMatchers("/s").permitAll()
 
                     .antMatchers("/h2-console").permitAll()
                     .antMatchers("/h2-console/").permitAll()

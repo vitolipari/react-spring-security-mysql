@@ -25,7 +25,7 @@ public class ShortUrlController {
 	 * /api/v{ version }/session/access/{ sessionCode }?auth={ pin }&platform={ platformID }
 	 *
 	 * Esempio
-	 * /s?v=1&s=d164663b9ba3d4869b6bd47119ebee34449b75b740d1ebc0b68dddbdca84&pin=0123456789012345&pl=6
+	 * /s?v=1&s=a87043e26113f240d3b3ee354b9d920e0b0318c5e97b67bba3d03aaa71fd&p=0123456789012345&pl=6
      */
 	@GetMapping("/s")
 	public ModelAndView accessByVirginSessionShortUrl(
@@ -58,9 +58,15 @@ public class ShortUrlController {
 				put("msg", e.getMessage());
 			}});
 		}
+
+
+
+
 		// ---------------------------------------------
 
 
+		System.out.println("Controllo dati per la pagina");
+		System.out.println(pageVars);
 
 		ModelAndView page = new ModelAndView("mobile/build/index");
 		page.addAllObjects(pageVars);

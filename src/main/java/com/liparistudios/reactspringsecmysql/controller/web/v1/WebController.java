@@ -23,10 +23,70 @@ import java.util.Map;
 
 
 
+
 @RestController
 @CrossOrigin( origins = "*")
 @RequestMapping( path = {"/", "/public"} )
 public class WebController {
+
+
+    private String[] stepsWeb = {
+        "free",
+        "admin",
+        "mobile"
+    };
+
+
+    private File getRequestedStaticFile( String filePath ) throws IOException {
+
+//        System.out.println("getRequestedStaticFile");
+//        System.out.println( filePath );
+
+        Boolean fileFound = false;
+        Integer securityStep = 0;
+
+        File requestedFile = null;
+        while( !fileFound && securityStep < stepsWeb.length ) {
+
+            URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/"+ stepsWeb[ securityStep ] +"/build/"+ filePath);
+
+            try {
+                requestedFile = new File(requestedFileUrl.toURI());
+                fileFound = true;
+            }
+            catch (Exception e) {
+                try {
+                    requestedFile = new File(requestedFileUrl.getPath());
+                    fileFound = true;
+                }
+                catch (Exception ex) {
+                    fileFound = false;
+                }
+            }
+
+            securityStep++;
+        }
+
+//        System.out.println("path del file richiesto");
+//        System.out.println( filePath );
+//        if (requestedFile != null) System.out.println(requestedFile.toPath());
+//        else System.out.println("file non trovato");
+
+
+        return requestedFile;
+
+    }
+
+    private ByteArrayResource getRequestedStaticFileBytes( String filePath ) throws IOException {
+        File requestedFile = getRequestedStaticFile( filePath );
+        return new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
+    }
+
+    private String getRequestedStaticFileContent( String filePath ) throws IOException {
+        File requestedFile = getRequestedStaticFile( filePath );
+        return Files.readString(Path.of(requestedFile.getAbsolutePath()));
+    }
+
 
     @GetMapping
     public ModelAndView publicHome( HttpServletRequest request ) {
@@ -85,20 +145,15 @@ public class WebController {
             @PathVariable("ext") String picExt
     ) throws IOException {
 
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/free/build/"+ picName +"."+ picExt);
-        File requestedFile = null;
-        try {
-            requestedFile = new File(requestedFileUrl.toURI());
-        } catch (URISyntaxException e) {
-            requestedFile = new File(requestedFileUrl.getPath());
-        }
+//        ByteArrayResource inputStream = getRequestedStaticFileBytes( picName +"."+ picExt );
+        File requestedFile = getRequestedStaticFile( picName +"."+ picExt );
+        ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
 
-        final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
         return
             ResponseEntity
                 .status(HttpStatus.OK)
                 .contentLength(inputStream.contentLength())
-                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
+                .contentType(MediaType.parseMediaType(Files.probeContentType( requestedFile.toPath() )))
                 .body(inputStream)
         ;
 
@@ -110,19 +165,11 @@ public class WebController {
             @PathVariable( "file" ) String fileName,
             @PathVariable( "ext" ) String ext
     ) throws IOException {
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/free/build/"+ fileName +"."+ ext);
-        File requestedFile = null;
-        try {
-            requestedFile = new File(requestedFileUrl.toURI());
-        } catch (URISyntaxException e) {
-            requestedFile = new File(requestedFileUrl.getPath());
-        }
-
+        File requestedFile = getRequestedStaticFile( fileName +"."+ ext);
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
 
         System.out.println("path del file che da problemi col mime type");
         System.out.println( requestedFile.toPath() );
-
 
         return
             ResponseEntity
@@ -140,14 +187,7 @@ public class WebController {
             @PathVariable( "file" ) String fileName,
             @PathVariable( "ext" ) String ext
     ) throws IOException {
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/free/build/static/media/"+ fileName + ".svg");
-        File requestedFile = null;
-        try {
-            requestedFile = new File(requestedFileUrl.toURI());
-        } catch (URISyntaxException e) {
-            requestedFile = new File(requestedFileUrl.getPath());
-        }
-
+        File requestedFile = getRequestedStaticFile( "/static/media/"+ fileName + ".svg");
         String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf("image/svg+xml"));
@@ -155,54 +195,16 @@ public class WebController {
     }
 
     @GetMapping(path = "/static/js/{file}")
-    public ResponseEntity<String> getRootLevelJavascriptFiles(@PathVariable( "file" ) String fileName) throws IOException {
-
-        System.out.println("richiesta file JS");
-        System.out.println( fileName );
-
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/free/build/static/js/"+ fileName);
-        File requestedFile = null;
-        try {
-            requestedFile = new File(requestedFileUrl.toURI());
-        } catch (URISyntaxException e) {
-            requestedFile = new File(requestedFileUrl.getPath());
-        }
-
-
-        System.out.println( requestedFileUrl );
-        System.out.println( requestedFileUrl.toString() );
-
-
-        String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
+    public ResponseEntity<String> getRootLevelJavascriptFiles(@PathVariable( "file" ) String fileName, HttpServletRequest request) throws IOException {
+        String requestedFileContent = getRequestedStaticFileContent( "/static/js/"+ fileName );
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf("application/javascript"));
         return new ResponseEntity<String>(requestedFileContent, headers, HttpStatus.OK);
-
-        /*
-        String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
-        final ByteArrayResource inputStream = new ByteArrayResource(Files.readAllBytes(requestedFile.toPath()));
-        return
-            ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(inputStream.contentLength())
-                .contentType(MediaType.parseMediaType(Files.probeContentType(requestedFile.toPath())))
-                .body(inputStream)
-            ;
-         */
     }
 
     @GetMapping(path = "/static/css/{file}")
-    public ResponseEntity<String> getRootLevelCssStyleFiles(@PathVariable( "file" ) String fileName) throws IOException {
-
-        URL requestedFileUrl = this.getClass().getClassLoader().getResource("react_js/free/build/static/css/"+ fileName);
-        File requestedFile = null;
-        try {
-            requestedFile = new File(requestedFileUrl.toURI());
-        } catch (URISyntaxException e) {
-            requestedFile = new File(requestedFileUrl.getPath());
-        }
-
-        String requestedFileContent = Files.readString(Path.of(requestedFile.getAbsolutePath()));
+    public ResponseEntity<String> getRootLevelCssStyleFiles(@PathVariable( "file" ) String fileName, HttpServletRequest request) throws IOException {
+        String requestedFileContent = getRequestedStaticFileContent( "/static/css/"+ fileName );
         return new ResponseEntity<String>(requestedFileContent, null, HttpStatus.OK);
     }
 

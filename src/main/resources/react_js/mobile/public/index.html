@@ -28,9 +28,11 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <input type="hidden" value="{{session}}"/>
-    <input type="hidden" value="{{platform}}"/>
-    <input type="hidden" value="{{ pin }}"/>
+    <input type="hidden" th:value="{{session}}"/>
+    <input type="hidden" th:value="{session}"/>
+    <input type="hidden" th:value="${session}"/>
+    <input type="hidden" th:value="{{platform}}"/>
+    <input type="hidden" th:value="{{ pin }}"/>
     <div id="root"></div>
     <!--
       This HTML file is a template.
