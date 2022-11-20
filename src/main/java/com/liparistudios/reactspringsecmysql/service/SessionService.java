@@ -111,6 +111,7 @@ public class SessionService {
 
 
     public Session getSessionByCode( String code ) {
+        System.out.println("getSessionByCode "+ code);
         return
             sessionRepository
                 .findByCode( code )

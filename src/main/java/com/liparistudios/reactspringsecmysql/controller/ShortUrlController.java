@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -17,6 +18,8 @@ import java.util.Map;
 @RestController
 @RequestMapping({"/", "/short-api"})
 public class ShortUrlController {
+
+	@Autowired SessionHandlerForControllers sessionHandler;
 
 
     /**
@@ -46,7 +49,7 @@ public class ShortUrlController {
 
 //			Map<String, Object> platformDATA = mapper.readValue(rawPlatformDATA, Map.class);
 			if( version != null && ( version.equals("1") || version.equals("v1") ) ) {
-				SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
+//				SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
 				pageVars = sessionHandler.accessSession( request, response, code, pin, platformID );
 			}
 

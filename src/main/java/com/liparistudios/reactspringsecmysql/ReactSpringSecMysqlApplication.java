@@ -1,14 +1,8 @@
 package com.liparistudios.reactspringsecmysql;
 
 import com.liparistudios.reactspringsecmysql.config.RsaKeyProperties;
-import com.liparistudios.reactspringsecmysql.model.Customer;
-import com.liparistudios.reactspringsecmysql.model.Permission;
-import com.liparistudios.reactspringsecmysql.model.Platform;
-import com.liparistudios.reactspringsecmysql.model.Role;
-import com.liparistudios.reactspringsecmysql.service.CustomerService;
-import com.liparistudios.reactspringsecmysql.service.PermissionService;
-import com.liparistudios.reactspringsecmysql.service.PlatformService;
-import com.liparistudios.reactspringsecmysql.service.RoleService;
+import com.liparistudios.reactspringsecmysql.model.*;
+import com.liparistudios.reactspringsecmysql.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 //@EnableConfigurationProperties(RsaKeyProperties.class)
@@ -42,7 +38,8 @@ public class ReactSpringSecMysqlApplication {
 		RoleService roleService,
 		CustomerService customerService,
 		PlatformService platformService,
-		PasswordEncoder passwordEncoder
+		PasswordEncoder passwordEncoder,
+		SessionService sessionService
 	) {
 
 		/*
@@ -132,8 +129,33 @@ public class ReactSpringSecMysqlApplication {
 						null
 					)
 				;
-				platformService.addPlatform( mobileAgentDiagnosticPortal );
-				System.out.println("Piattaforma aggiunta");
+//				platformService.addPlatform( mobileAgentDiagnosticPortal );
+//				System.out.println("Piattaforma aggiunta");
+
+
+				Session firstSession =
+					new Session(
+						null,
+						"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+						LocalDateTime.now(),
+						null,
+						null,
+						LocalDateTime.now().plus(90, ChronoUnit.DAYS),
+						null,
+						null
+					)
+				;
+				sessionService.save( firstSession );
+				System.out.println("salvata la sessione");
+				List<Session> platformSessions = mobileAgentDiagnosticPortal.getSessions();
+				platformSessions.add( firstSession );
+				System.out.println("aggiunta la nuova sessione alla lista delle sessioni");
+				mobileAgentDiagnosticPortal.setSessions( platformSessions );
+				System.out.println("lista sessioni impostata");
+				platformService.save( mobileAgentDiagnosticPortal );
+				System.out.println("piattaforma salvata");
+
+				System.out.println("Nuova sessione creata");
 
 			}
 		);
