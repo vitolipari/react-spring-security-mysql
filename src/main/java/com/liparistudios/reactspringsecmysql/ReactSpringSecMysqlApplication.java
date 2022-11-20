@@ -148,6 +148,7 @@ public class ReactSpringSecMysqlApplication {
 				sessionService.save( firstSession );
 				System.out.println("salvata la sessione");
 				List<Session> platformSessions = mobileAgentDiagnosticPortal.getSessions();
+				if( platformSessions == null ) platformSessions = new ArrayList<Session>();
 				platformSessions.add( firstSession );
 				System.out.println("aggiunta la nuova sessione alla lista delle sessioni");
 				mobileAgentDiagnosticPortal.setSessions( platformSessions );
