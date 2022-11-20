@@ -45,7 +45,7 @@ public class ShortUrlController {
 		try {
 
 //			Map<String, Object> platformDATA = mapper.readValue(rawPlatformDATA, Map.class);
-			if( version != null && (version == "1" || version == "v1") ) {
+			if( version != null && ( version.equals("1") || version.equals("v1") ) ) {
 				SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
 				pageVars = sessionHandler.accessSession( request, response, code, pin, platformID );
 			}
