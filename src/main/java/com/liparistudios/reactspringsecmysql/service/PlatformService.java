@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Service
 public class PlatformService {
 
-    private final PlatformRepository platformRepository;
+    @Autowired private PlatformRepository platformRepository;
 
     @Autowired
     public PlatformService( PlatformRepository repo ) {

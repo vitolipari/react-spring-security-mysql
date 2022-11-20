@@ -44,12 +44,23 @@ public class SessionHandlerForControllers {
 			LocalDateTime now = LocalDateTime.now();
 
 			// controllo sessione
+			System.out.println("cerco la sessione "+ code);
+			System.out.println("session service");
+			System.out.println(sessionService);
+
+//			if( sessionService == null ) sessionService = new SessionService();
+
 			Session session = sessionService.getSessionByCode( code );
+			System.out.println("sessione presa");
+			System.out.println( session );
 			((Map<String, Object>) pageVars.get("session")).put("id", session.getId());
 
 
 			// Platform platform = platformService.getPlatformBySessionCode( code );
+			System.out.println("ricavo la pittaforma");
 			Platform platform = platformService.getPlatformBySessionId( session.getId() );
+			System.out.println( platform );
+			System.out.println( platformID );
 
 			pageVars.put("platform", platform);
 
@@ -107,6 +118,8 @@ public class SessionHandlerForControllers {
 		}
 		catch (Exception e) {
 			// codice sessione non trovato
+
+			e.printStackTrace();
 
 			pageVars.put("error",
 				new HashMap<String, Object>(){{

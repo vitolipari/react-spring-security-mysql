@@ -114,9 +114,12 @@ public class SessionService {
         return
             sessionRepository
                 .findByCode( code )
-                .orElseThrow( () -> {
-                    throw new IllegalStateException("SessionID non associata a nessuna sessione");
-                })
+                .orElseGet( () -> null )
+//                .or( () -> null )
+//                .orElse( ses -> null )
+//                .orElseThrow( () -> {
+//                    throw new IllegalStateException("SessionID non associata a nessuna sessione");
+//                })
         ;
     }
 
