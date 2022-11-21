@@ -28,10 +28,8 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <input type="hidden" th:value="${session}"/>
-    <input type="hidden" th:value="${session}"/>
-    <input type="hidden" th:value="${platform}"/>
-    <input type="hidden" th:value="${ pin }"/>
+    <input type="hidden" id="data" th:value="${ data }"/>
+    <input type="hidden" id="pin" th:value="${ pin }"/>
     <div id="root"></div>
     <!--
       This HTML file is a template.

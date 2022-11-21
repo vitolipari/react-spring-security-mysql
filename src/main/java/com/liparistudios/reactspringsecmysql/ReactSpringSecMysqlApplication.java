@@ -119,7 +119,7 @@ public class ReactSpringSecMysqlApplication {
 				Session firstSession =
 					new Session(
 						null,
-						"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+						"5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
 						LocalDateTime.now(),
 						null,
 						null,
@@ -132,7 +132,7 @@ public class ReactSpringSecMysqlApplication {
 				sessionService.save( firstSession );
 				System.out.println("salvata la sessione");
 
-				Platform mobileAgentDiagnosticPortal = platformService.getPlatformById( 1L );
+				Platform mobileAgentDiagnosticPortal = platformService.getPlatformByName("Mobile Agent Diagnostic Portal");
 				List<Session> platformSessions = mobileAgentDiagnosticPortal.getSessions();
 				if( platformSessions == null ) platformSessions = new ArrayList<Session>();
 				platformSessions.add( firstSession );
