@@ -21,7 +21,32 @@ const App = ( propr: AppProps ): JSX.Element => {
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Preparing for auth
-        </p>      
+        </p>
+        <div>
+          <code>sessionID</code>
+          <pre>{ '' }</pre>
+        </div>
+
+        <div>
+          <code>sessionCODE</code>
+          <pre>{ '' }</pre>
+        </div>
+
+        <div>
+          <code>platfornID</code>
+          <pre>{ '' }</pre>
+        </div>
+
+        <div>
+          <code>platfornNAME</code>
+          <pre>{ '' }</pre>
+        </div>
+
+        <div>
+          <code>platfornLOGO_URL</code>
+          <pre>{ '' }</pre>
+        </div>
+
       </header>
     </div>
   );

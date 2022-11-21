@@ -71,11 +71,11 @@ public class ReactSpringSecMysqlApplication {
 								add( permissionService.getByName("LOGOUT") );
 							}}
 						),
-							new Role(
-								null,
-								"MASTER",
-								permissionService.getAllPermissions()
-							)
+						new Role(
+							null,
+							"MASTER",
+							permissionService.getAllPermissions()
+						)
 					)
 					.forEach( role -> {
 						System.out.println("aggiungo ruolo");
@@ -116,23 +116,6 @@ public class ReactSpringSecMysqlApplication {
 				System.out.println("fine dell'inserimento dei permessi");
 
 
-				Platform mobileAgentDiagnosticPortal =
-					new Platform(
-						null,
-						"Mobile Agent Dignostic Portal",
-						null,
-						LocalDateTime.now(),
-						null,
-						null,
-						null,
-						null,
-						null
-					)
-				;
-//				platformService.addPlatform( mobileAgentDiagnosticPortal );
-//				System.out.println("Piattaforma aggiunta");
-
-
 				Session firstSession =
 					new Session(
 						null,
@@ -145,18 +128,22 @@ public class ReactSpringSecMysqlApplication {
 						null
 					)
 				;
+				System.out.println("Nuova sessione creata");
 				sessionService.save( firstSession );
 				System.out.println("salvata la sessione");
+
+				Platform mobileAgentDiagnosticPortal = platformService.getPlatformById( 1L );
 				List<Session> platformSessions = mobileAgentDiagnosticPortal.getSessions();
 				if( platformSessions == null ) platformSessions = new ArrayList<Session>();
 				platformSessions.add( firstSession );
 				System.out.println("aggiunta la nuova sessione alla lista delle sessioni");
+
 				mobileAgentDiagnosticPortal.setSessions( platformSessions );
 				System.out.println("lista sessioni impostata");
-				platformService.save( mobileAgentDiagnosticPortal );
-				System.out.println("piattaforma salvata");
 
-				System.out.println("Nuova sessione creata");
+				platformService.addPlatform( mobileAgentDiagnosticPortal );
+				System.out.println("Piattaforma aggiunta");
+
 
 			}
 		);

@@ -34,13 +34,7 @@ public class SessionHandlerForControllers {
 		Map<String, Object> pageVars = new HashMap<String, Object>();
 		try {
 
-			pageVars = new HashMap<String, Object>(){{
-				put("session",
-					new HashMap<String, Object>(){{
-						put("code", code);
-					}}
-				);
-			}};
+
 			LocalDateTime now = LocalDateTime.now();
 
 			// controllo sessione
@@ -53,7 +47,8 @@ public class SessionHandlerForControllers {
 			Session session = sessionService.getSessionByCode( code );
 			System.out.println("sessione presa");
 			System.out.println( session );
-			((Map<String, Object>) pageVars.get("session")).put("id", session.getId());
+			pageVars = new HashMap<String, Object>();
+			// ((Map<String, Object>) pageVars.get("session")).put("id", session.getId());
 
 
 			// Platform platform = platformService.getPlatformBySessionCode( code );
@@ -66,28 +61,34 @@ public class SessionHandlerForControllers {
 
 			// controllo sessione che può essere abilitata
 			if( session.isLive() ) {
+				/*
 				((Map<String, Object>) pageVars.get("session")).put("live",
 					new HashMap<String, Object>(){{
 						put("since", session.getAccess());
 					}}
 				);
+				*/
 			}
 			else {
 
 				// controllo sessione scaduta
 				if( session.isExpired() ) {
+					/*
 					((Map<String, Object>) pageVars.get("session")).put("expired", session.isExpired());
+					 */
 				}
 				else {
 
 					// controllo sessione chiusa
 					if( session.isClosed() ) {
+						/*
 						((Map<String, Object>) pageVars.get("session")).put("closed", session.isClosed());
+						*/
 					}
 					else {
 
 						// sessione OK
-						((Map<String, Object>) pageVars.get("session")).put("access", now);
+						// ((Map<String, Object>) pageVars.get("session")).put("access", now);
 
 						// controllo timeToEnable
 						if(now.isBefore( session.getOpen().plus(90, ChronoUnit.SECONDS) )) {
@@ -98,7 +99,7 @@ public class SessionHandlerForControllers {
 						else {
 							// sessione scaduta
 							session.setClosed( now );
-							((Map<String, Object>) pageVars.get("session")).put("closed", now);
+							// ((Map<String, Object>) pageVars.get("session")).put("closed", now);
 
 						}
 
@@ -111,7 +112,7 @@ public class SessionHandlerForControllers {
 			}
 
 
-
+			pageVars.put("session", session);
 			sessionService.save( session );
 
 

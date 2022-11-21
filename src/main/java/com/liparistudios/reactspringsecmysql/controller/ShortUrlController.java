@@ -28,7 +28,7 @@ public class ShortUrlController {
 	 * /api/v{ version }/session/access/{ sessionCode }?auth={ pin }&platform={ platformID }
 	 *
 	 * Esempio
-	 * /s?v=1&s=a87043e26113f240d3b3ee354b9d920e0b0318c5e97b67bba3d03aaa71fd&p=0123456789012345&pl=6
+	 * /s?v=1&s=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&p=0123456789012345&pl=1
      */
 	@GetMapping("/s")
 	public ModelAndView accessByVirginSessionShortUrl(
@@ -70,6 +70,38 @@ public class ShortUrlController {
 
 		System.out.println("Controllo dati per la pagina");
 		System.out.println(pageVars);
+		/*
+		{
+			session={
+				code=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855,
+				expired=true,
+				id=6
+			},
+			platform=
+				Platform(
+					id=1,
+					name=Mobile Agent Dignostic Portal,
+					exp=null,
+					open=2023-11-20T15:35,
+					logoFilePath=null,
+					logoFileUrl=null,
+					sessions=[
+						Session(
+							id=6,
+							code=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855,
+							open=2022-11-21T14:46:07.786948,
+							access=null,
+							enabled=null,
+							exp=2023-02-19T14:46:07.787030,
+							closed=null,
+							customer=null
+						)
+					],
+					enabled=null,
+					logoFileContent=null
+				)
+			}
+		 */
 
 		ModelAndView page = new ModelAndView("mobile/build/index");
 		page.addAllObjects(pageVars);
