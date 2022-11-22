@@ -1,12 +1,21 @@
 import pkg from 'elliptic';
-const { eddsa, ec } = pkg;
 import { sha256 } from "js-sha256";
-import { errorlog, showlog, convert, bytesEncodeTypes } from "@liparistudios/js-utils";
+// @ts-ignore
+import { errorlog, showlog, convert, bytesEncodeTypes } from '@liparistudios/js-utils';
 
-type GenerateKeysOptionType = {
+const { eddsa, ec } = pkg;
+
+export type GenerateKeysOptionType = {
     showTimer: boolean;
     debug: boolean;
     privateKeyFormat: string;
+};
+
+export type KeyPackType = {
+    algorithm: object;
+    keys: object;
+    publicKeyHex: string;
+    privateKeyHex: string
 };
 
 export const curveName: string = "secp256k1";
@@ -14,7 +23,7 @@ export const curveName: string = "secp256k1";
 //const curveName = "ed25519"; va bene per eddsa
 let processTime = 0;
 
-export const generateKeys = (pwd: string, options: GenerateKeysOptionType | undefined, ...params) => {
+export const generateKeys = (pwd: string, options: GenerateKeysOptionType | undefined, ...params: any[]): Promise<KeyPackType> => {
     return (
         Promise.resolve()
 

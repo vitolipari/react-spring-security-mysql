@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {generateKeys} from "../service";
+import {generateKeys, KeyPackType} from "./service";
 
 
 type ProfileType = {
@@ -50,9 +50,16 @@ const App = (): JSX.Element => {
 
 
               // generazione chiavi
-              generateKeys( sessionData.pin )
-                  .then( keyPack => {})
-                  .catch(e => {})
+              generateKeys( sessionData.pin, undefined )
+                  .then( (keyPack: KeyPackType) => {
+                      console.log("chiavi generate");
+                      console.log( keyPack );
+
+                  })
+                  .catch(e => {
+                      console.log("errore alla generazione delle chiavi")
+                      console.log( e );
+                  })
               ;
 
               // invio chiave pubblica per questa sessione

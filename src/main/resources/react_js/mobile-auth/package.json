@@ -10,6 +10,7 @@
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "elliptic": "6.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -17,7 +18,8 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@liparistudios/js-utils": "git+https://github.com/vitolipari/js-utils.git"
+    "@liparistudios/js-utils": "git+https://github.com/vitolipari/js-utils.git",
+    "@types/elliptic": "^6.4.14"
   },
   "scripts": {
     "start": "react-scripts start",
