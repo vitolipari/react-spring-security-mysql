@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+cd src/main/resources/react_js
+
+cd ./admin
+npm run build
+
+cd ../customer
+npm run build
+
+cd ../free
+npm run build
+
+cd ../mobile
+npm run build
+
+cd ../mobile-auth
+npm run build
+
+# root path del progetto
+cd ../../../../

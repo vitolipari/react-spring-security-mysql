@@ -26,16 +26,15 @@ public class ShortUrlController {
 
 
     /**
-     * /s?v={ version }&s={ session }&p={ pin }&pl={ platformID }
+     * /s?s={ session }&p={ pin }&pl={ platformID }
 	 * equivalente di
-	 * /api/v{ version }/session/access/{ sessionCode }?auth={ pin }&platform={ platformID }
+	 * /session/access/{ sessionCode }?auth={ pin }&platform={ platformID }
 	 *
 	 * Esempio
-	 * /s?v=1&s=5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9&p=0123456789012345&pl=2
+	 * /s?s=5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9&p=0123456789012345&pl=2
      */
 	@GetMapping("/s")
 	public ModelAndView accessByVirginSessionShortUrl(
-		@RequestParam(name = "v", required = false) String version,
 		@RequestParam(name = "s", required = true) String code,
 		@RequestParam(name = "p", required = true) String pin,
 		@RequestParam(name = "pl", required = true) Long platformID,
@@ -50,11 +49,7 @@ public class ShortUrlController {
 
 		try {
 
-//			Map<String, Object> platformDATA = mapper.readValue(rawPlatformDATA, Map.class);
-			if( version != null && ( version.equals("1") || version.equals("v1") ) ) {
-//				SessionHandlerForControllers sessionHandler = new SessionHandlerForControllers();
-				pageVars = sessionHandler.accessSession( request, response, code, pin, platformID );
-			}
+			pageVars = sessionHandler.accessSession( request, response, code, pin, platformID );
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -33,7 +33,8 @@ public class WebController {
     private String[] stepsWeb = {
         "free",
         "admin",
-        "mobile"
+        "mobile",
+        "mobile-auth"
     };
 
 

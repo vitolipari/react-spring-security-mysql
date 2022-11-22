@@ -130,12 +130,20 @@ public class SecurityConfiguration {
                     .antMatchers("/public").permitAll()
                     .antMatchers("/public/**").permitAll()
 
+					// access to session for authentication
                     .antMatchers("/api/v1/session/open/*").permitAll()
                     .antMatchers("/api/v1/session/open/*").permitAll()
                     .antMatchers("/s/*").permitAll()
                     .antMatchers("/s?*").permitAll()
                     .antMatchers("/s").permitAll()
 
+					// back from authentication
+					.antMatchers("/oath2/gobackwithprofiledata").permitAll()
+					.antMatchers("/oath2/gobackwithprofiledata?*").permitAll()
+					.antMatchers("/oauth2/preauthorize").permitAll()
+					.antMatchers("/oauth2/preauthorize?*").permitAll()
+
+					// H2
                     .antMatchers("/h2-console").permitAll()
                     .antMatchers("/h2-console/").permitAll()
                     .antMatchers("/h2-console/*").permitAll()
