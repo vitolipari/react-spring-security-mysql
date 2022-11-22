@@ -16,6 +16,9 @@
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4"
   },
+  "devDependencies": {
+    "@liparistudios/js-utils": "git+https://github.com/vitolipari/js-utils.git"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

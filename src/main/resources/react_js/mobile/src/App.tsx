@@ -38,7 +38,8 @@ const App = (props: AppProps): JSX.Element => {
                         "response_type=" + process.env.REACT_APP_GOOGLE_AUTH_RESPONSE_TYPE,
                         "state=" + btoa(JSON.stringify({
                             access_time: ((new Date()).getTime()),
-                            ...sessionData
+                            ...sessionData,
+                            pin: document.getElementById('pin')?.value
                         })),
                     ]
                     .join("&")

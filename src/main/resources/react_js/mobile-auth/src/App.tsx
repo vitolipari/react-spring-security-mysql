@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {generateKeys} from "../service";
 
 
 type ProfileType = {
@@ -21,7 +22,20 @@ const App = (): JSX.Element => {
     let profileStringData: string = atob( profileRawData || "" );
     let profileData: ProfileType = JSON.parse( profileStringData || '{"picture": undefined, "access_token": undefined}');
 
+    let sessionRawDataContainer: any = document.getElementById("session");
+    let sessionRawData: string | undefined = !!sessionRawDataContainer ? sessionRawDataContainer.value : "";
+    let sessionStringData: string = atob( sessionRawData || "" );
+    let sessionData = JSON.parse( sessionStringData || '{}');
+
     const [profilePic, setProfilePic] = useState<string | undefined>();
+
+
+    console.log("profileData");
+    console.log(profileData);
+
+    console.log("sessionData");
+    console.log(sessionData);
+
 
     if( !!profileData.picture ) {
         fetch(
@@ -34,6 +48,14 @@ const App = (): JSX.Element => {
           .then(imageBlob => {
               setProfilePic( URL.createObjectURL(imageBlob) );
 
+
+              // generazione chiavi
+              generateKeys( sessionData.pin )
+                  .then( keyPack => {})
+                  .catch(e => {})
+              ;
+
+              // invio chiave pubblica per questa sessione
 
 
               // TODO e2ee
