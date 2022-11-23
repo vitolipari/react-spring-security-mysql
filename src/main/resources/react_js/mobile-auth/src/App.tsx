@@ -49,11 +49,16 @@ const App = (): JSX.Element => {
               setProfilePic( URL.createObjectURL(imageBlob) );
 
 
+              // TODO generazione certificato
+
+
               // generazione chiavi
               generateKeys( sessionData.pin, undefined )
                   .then( (keyPack: KeyPackType) => {
                       console.log("chiavi generate");
                       console.log( keyPack );
+
+
 
                   })
                   .catch(e => {
