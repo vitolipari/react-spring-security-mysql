@@ -18,10 +18,43 @@ export type KeyPackType = {
     privateKeyHex: string
 };
 
+export type X509CertType = {
+
+};
+
+export type X509CertOptType = {};
+
 export const curveName: string = "secp256k1";
 //const curveName = "curve25519";
 //const curveName = "ed25519"; va bene per eddsa
 let processTime = 0;
+
+
+export const generateX509Cert = (seed: string | undefined, option: X509CertOptType = {}): X509CertType => {
+
+
+    /*
+    https://github.com/PeculiarVentures/x509
+    https://www.npmjs.com/package/@peculiar/x509
+    https://kellyjonbrazil.github.io/jc/docs/parsers/x509_cert
+    https://smallstep.com/blog/x509-certificate-flexibility/
+    https://security.stackexchange.com/questions/44251/openssl-generate-different-types-of-self-signed-certificate
+    https://msol.io/blog/tech/create-a-self-signed-ecc-certificate/
+    https://connect2id.com/products/nimbus-jose-jwt/openssl-key-generation
+    https://stackoverflow.com/questions/11992036/how-do-i-create-an-ecdsa-certificate-with-the-openssl-command-line
+    https://stackoverflow.com/questions/71478504/how-to-generate-ca-certificate-for-certains-ciphersuites
+    https://superuser.com/questions/1062275/using-ecdh-with-openssl
+    https://developers.yubico.com/PIV/Guides/Generating_keys_using_OpenSSL.html
+    https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-on-debian-10
+     */
+
+
+
+
+
+
+}
+
 
 export const generateKeys = (pwd: string, options: GenerateKeysOptionType | undefined, ...params: any[]): Promise<KeyPackType> => {
     return (
@@ -85,7 +118,7 @@ export const generateKeys = (pwd: string, options: GenerateKeysOptionType | unde
                 //let privateKey = sessionAlgorithmKeys.getSecret();
 
                 // public key
-                let publicKey: string = sessionAlgorithmKeys.getPublic().encode("hex");
+                let publicKey: string = sessionAlgorithmKeys.getPublic().encode("hex", false);
                 //let publicKey = sessionAlgorithmKeys.getPublic();
 
 
