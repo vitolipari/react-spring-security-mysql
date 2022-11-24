@@ -29,6 +29,9 @@ const App = (props: AppProps): JSX.Element => {
         setTimeout(
             function () {
 
+                let pinContainer: any = document.getElementById("pin");
+                let pin: string = pinContainer.value || "";
+
                 let redirectBaseDomain = `http://localhost:9009`;
                 let url = [
                         process.env.REACT_APP_GOOGLE_AUTH_URL +
@@ -39,7 +42,7 @@ const App = (props: AppProps): JSX.Element => {
                         "state=" + btoa(JSON.stringify({
                             access_time: ((new Date()).getTime()),
                             ...sessionData,
-                            pin: document.getElementById('pin')?.value
+                            pin: pin
                         })),
                     ]
                     .join("&")

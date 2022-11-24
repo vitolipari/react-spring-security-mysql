@@ -63,7 +63,7 @@ const App = (): JSX.Element => {
     console.log(sessionData);
 
 
-    if( !!profileData.picture ) {
+    if( !!profileData.picture && !profilePic ) {
         fetch(
             profileData.picture,
             {
@@ -85,6 +85,8 @@ const App = (): JSX.Element => {
 
     if( !handshakeDone ) {
 
+        setHandshakeDone( true );
+
         generateX509Cert( sessionData.pin )
             .then( ( certificate: string ) => {
 
@@ -104,7 +106,7 @@ const App = (): JSX.Element => {
                     .then(response => {
 
                         // END
-                        setHandshakeDone( true );
+
 
                     })
                     .catch(e => {

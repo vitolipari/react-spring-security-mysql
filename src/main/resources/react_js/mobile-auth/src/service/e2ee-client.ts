@@ -157,11 +157,7 @@ export const generateX509Cert = (seed: string | undefined, option: X509CertOptTy
                                     cursor++;
                                 }
 
-                                return (
-                                    `-----BEGIN CERTIFICATE-----
-                                    ${ pem }
-                                    -----END CERTIFICATE-----`
-                                );
+                                return `-----BEGIN CERTIFICATE-----${ pem }-----END CERTIFICATE-----`;
 
                             })
                             .catch(e => {
