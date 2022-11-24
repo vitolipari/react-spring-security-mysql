@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {generateKeys, KeyPackType} from "./service";
+import {generateKeys, generateX509Cert, KeyPackType, X509CertType} from "./service";
 
 
 type ProfileType = {
@@ -49,20 +49,36 @@ const App = (): JSX.Element => {
               setProfilePic( URL.createObjectURL(imageBlob) );
 
 
-              // TODO generazione certificato
 
+              generateX509Cert( sessionData.pin )
+                  .then( (certificate: string ) => {
 
-              // generazione chiavi
-              generateKeys( sessionData.pin, undefined )
-                  .then( (keyPack: KeyPackType) => {
-                      console.log("chiavi generate");
-                      console.log( keyPack );
+                      console.log("certificate");
+                      console.log( certificate );
 
+                      // handShake
+                      fetch(
+                          'http://localhost:9009/api/v1/session/handshake',
+                          {
+                              method: 'POST',
+                              // headers: { Authorization: `Bearer ${ profileData.access_token }` },
+                              body: JSON.stringify( certificate )
+                          }
+                      )
+                          .then(response => response.json())
+                          .then(response => {
 
+                              // END
+
+                          })
+                          .catch(e => {
+                              console.log("errore all'handshaking'")
+                              console.log( e );
+                          })
 
                   })
                   .catch(e => {
-                      console.log("errore alla generazione delle chiavi")
+                      console.log("errore alla generazione delle chiavi e del certificato")
                       console.log( e );
                   })
               ;

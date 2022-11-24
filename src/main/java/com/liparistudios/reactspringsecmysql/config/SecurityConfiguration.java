@@ -143,6 +143,10 @@ public class SecurityConfiguration {
 					.antMatchers("/oauth2/preauthorize").permitAll()
 					.antMatchers("/oauth2/preauthorize?*").permitAll()
 
+                    // hand-shake
+                    .antMatchers("/api/v1/session/handshake").permitAll()
+
+
 					// H2
                     .antMatchers("/h2-console").permitAll()
                     .antMatchers("/h2-console/").permitAll()

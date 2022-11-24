@@ -55,4 +55,21 @@ public class SessionController {
     }
 
 
+	@ResponseBody
+    @PostMapping("/handshake")
+    public Map<String, Object> sessionHandShake (
+        HttpServletRequest request,
+        HttpServletResponse response,
+        @RequestBody String certPEM
+    ) {
+
+        System.out.println("handshake");
+        System.out.println( certPEM );
+
+        return new HashMap<String, Object>(){{ put("status", "SUCCESS"); }};
+
+    }
+
+
+
 }
