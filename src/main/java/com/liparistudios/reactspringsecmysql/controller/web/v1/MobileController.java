@@ -98,9 +98,6 @@ public class MobileController {
 
 
 
-
-
-
             pageVars.put("profile", pageVarsContent);
             pageVars.put("session", state);
 

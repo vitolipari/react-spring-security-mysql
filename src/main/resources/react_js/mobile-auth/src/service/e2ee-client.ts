@@ -152,9 +152,9 @@ export const generateX509Cert = (seed: string | undefined, option: X509CertOptTy
                                 let chunckPartMagnitude = (fullPEM.length / 64);
                                 chunckPartMagnitude += ((chunckPartMagnitude - Math.floor( chunckPartMagnitude )) > 0) ? 1 : 0;
                                 while( cursor < chunckPartMagnitude ) {
-                                    let chunck = fullPEM.substr( cursor, 64 );
+                                    let chunck = fullPEM.substr( (cursor * 64), 64 );
                                     pem += chunck +'\n';
-                                    cursor += 64;
+                                    cursor++;
                                 }
 
                                 return (
