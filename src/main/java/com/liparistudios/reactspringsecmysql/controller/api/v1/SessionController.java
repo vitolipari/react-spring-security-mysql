@@ -40,7 +40,11 @@ public class SessionController {
      */
     @ResponseBody
     @GetMapping("/open/{platformID}")
-    public Map<String, Object> openNewSession(HttpServletRequest request, HttpServletResponse response, @PathVariable(name = "platformID", required = true) Long platformId ) {
+    public Map<String, Object> openNewSession(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        @PathVariable(name = "platformID", required = true) Long platformId
+    ) {
         Session newSession = sessionService.openNewSession( platformId );
 
         return
