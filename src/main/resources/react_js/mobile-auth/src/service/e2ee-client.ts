@@ -157,7 +157,11 @@ export const generateX509Cert = (seed: string | undefined, option: X509CertOptTy
                                     cursor++;
                                 }
 
-                                return `-----BEGIN CERTIFICATE-----${ pem }-----END CERTIFICATE-----`;
+                                console.log( `-----BEGIN CERTIFICATE-----\n${ pem }\n-----END CERTIFICATE-----` );
+                                return `-----BEGIN CERTIFICATE-----
+                                ${ btoa(JSON.stringify(cert)) }
+                                -----END CERTIFICATE-----`;
+                                // return btoa(JSON.stringify(cert));
 
                             })
                             .catch(e => {

@@ -1,11 +1,13 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
 import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
+import com.liparistudios.reactspringsecmysql.service.E2eeService;
 import com.liparistudios.reactspringsecmysql.service.PlatformService;
 import com.liparistudios.reactspringsecmysql.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +19,18 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -33,6 +41,8 @@ public class SessionController {
     @Autowired private PlatformService platformService;
     @Autowired private SessionService sessionService;
     @Autowired private CustomerServiceImplementation customerService;
+
+    @Autowired private E2eeService e2eeService;
 
     /**
      * Apertura di una nuova sessione
@@ -80,63 +90,37 @@ public class SessionController {
 //            --data-binary '"-----BEGIN CERTIFICATE-----\n                                    eyJWZXJzaW9uIjoiMyIsIlNlcmlhbCBOdW1iZXIiOiJkMjdlZmY1MWVjYzRjMmZj\nYmM1NGY2MDkwNzNmNzU2ZDQzYTZiMGVlNmMyNTZlNjc3ZWYwZjU2MzRhMDNiNzVk\nIiwiU3ViamVjdCI6eyJDb21tb24gTmFtZSI6Ik1vYmlsZSBBZ2VudCBBdXRoIFNl\ncnZlciJ9LCJJc3N1ZXIiOnsiQ291bnRyeSI6IklUIiwiQ29tbW9uIE5hbWUiOiJD\nYW5pbm9TUkwiLCJTdGF0ZSI6Ikl0YWx5IiwiTG9jYWxpdHkiOiJNYXJzYWxhIiwi\nT3JnYW5pemF0aW9uIjoiQ2FuaW5vU1JMIiwiT3JnYW5pemF0aW9uIFVuaXQiOiJk\nZXYiLCJQb3N0YWwgQ29kZSI6IjkxMDI1IiwiU3RyZWV0IEFkZHJlc3MiOiJ2aWEg\nZGVsbG8gc2JhcmNvLCA5NiJ9LCJWYWxpZGl0eSI6eyJOb3QgQmVmb3JlIjoiMjAy\nMi0xMS0yNFQxODo0NjoyNC45ODNaIiwiTm90IEFmdGVyIjoiMjAyMy0wMi0yMlQx\nODo0NjoyNC45ODNaIn0sIk5vdCBCZWZvcmUiOiIyMDIyLTExLTI0VDE4OjQ2OjI0\nLjk4NFoiLCJOb3QgQWZ0ZXIiOiIyMDIzLTAyLTIyVDE4OjQ2OjI0Ljk4NFoiLCJT\naWduYXR1cmUgQWxnb3JpdGhtIjoiRUNEU0FXaXRoU0hBMjU2IiwiUHVibGljIEtl\neSBJbmZvIjp7IkFsZ29yaXRobSI6IkVsbGlwdGljIEN1cnZlIiwiQ3VydmUiOiJz\nZWNwMjU2azEiLCJLZXkgU2l6ZSI6IjI1NiIsIlB1YmxpYyBWYWx1ZSI6IjA0YzU3\nZWI1YTIxNWI0YTFiZmUzN2Q2MDI4MGE3NDI5NjUwYTNhMzg1NTA3ZmFhNGFmNmYw\nYzYzNjljMTFiYjc0YjAzNjEwOWFhNjFhNjg3ODBkNmQ5ZDM1MTkwNTU2NTlkYzlk\nZTQ2ZGU0MGQyMjhmNTcwODU4ZDIzMTg1MDFlNmUifSwiRmluZ2VycHJpbnQiOiIx\nMjYwMzIyMmY0M2MwM2RiNzg2NmUxNDhkOGFjZDVhYzNjNDAwZGU3NTczMjExNzhi\nZWVlMjczOGNlYTgzM2EyIiwiU2lnbmF0dXJlIjoiMzA0NDAyMjA1NDhlZjQyYzY5\nZWU5YWQ0NzY0ODEwMDRhZmIyYzVjNjQwMzU3MThkOWUwN2ZmMWVkNGZiODQ0MzA3\nZThmZTBiMDIyMDc5ZjZhYTJmNWNlZjRkM2UxNmE5MGU4MzE1NTRhMjc5ODEwODE5\nZGY2ZmVmMjkxZDRmMzljODAyYTVmN2U5ZTkifQ==\n\n\n                                    -----END CERTIFICATE-----"'
     /**
      *
-     * @param request
-     * @param response
      * @param certPEM
      * @return
      */
-	@ResponseBody
-    @PostMapping("/handshake")
-    public Map<String, Object> sessionHandShake (
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody String certPEM
-    ) {
+    @PostMapping(value = "/handshake", consumes="text/plain")
+    public Map<String, Object> sessionHandShake ( @RequestBody String certPEM ) {
 
         System.out.println("handshake");
         System.out.println( certPEM );
 
-        certPEM =
-            certPEM
-                .replace("-----BEGIN CERTIFICATE-----", "")
-                .replace("-----END CERTIFICATE-----", "")
-                .replace("\\n", "")
-                .replace("\\t", "")
-                .replace(" ", "")
-                .trim()
-        ;
-
-        System.out.println( certPEM );
-
-
-        byte[] bytes = null;
-        String certJson = new String();
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> certMap = null;
-
 
         try {
-            // decode base64
-            bytes = Base64.getDecoder().decode( certPEM );
-//            bytes = Base64.getDecoder().decode( certPEM.getBytes(StandardCharsets.UTF_8) );
-            certJson = new String(bytes);
-
-            // json to Map
-            certMap = mapper.readValue(certJson, Map.class);
-            //Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>() {});
-
-        } catch (Exception e) {
+            e2eeService.ecdhKeysFromExternalCertificate( certPEM );
+        }
+        catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-
-        System.out.println( certJson );
-        System.out.println( certMap );
-
-
-        // extract values
-        // check validity
-        // check fingerprint
-        // check signature
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
 
         return new HashMap<String, Object>(){{ put("status", "SUCCESS"); }};
@@ -144,5 +128,16 @@ public class SessionController {
     }
 
 
+
+
+
+    @PostMapping(value = "/test", consumes="text/plain")
+    public Map<String, Object> test () {
+
+        System.out.println("TEST");
+
+        return new HashMap<String, Object>(){{ put("status", "SUCCESS"); }};
+
+    }
 
 }
