@@ -11,6 +11,8 @@ import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -136,12 +138,10 @@ public class E2eeService {
 
 		// decode base64
 		bytes = Base64.getDecoder().decode( certPEM );
-//            bytes = Base64.getDecoder().decode( certPEM.getBytes(StandardCharsets.UTF_8) );
 		certJson = new String(bytes);
 
 		// json to Map
 		certMap = mapper.readValue(certJson, Map.class);
-		//Map<String, String> map = mapper.readValue(json, new TypeReference<Map<String, String>>() {});
 
 		System.out.println( certJson );
 		System.out.println( certMap );
@@ -153,8 +153,14 @@ public class E2eeService {
 		System.out.println("not before");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before") );
 		System.out.println("now");
+		LocalDateTime now = LocalDateTime.now();
+		System.out.println( now );
 		System.out.println("not after");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not After") );
+
+
+		now.isBefore(  );
+		now.isAfter(  )
 
 		// check fingerprint
 
@@ -186,7 +192,7 @@ public class E2eeService {
 	}
 
 
-	public ECDHKeyPack ecdhKeysFromExternalCertificate(String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
+	public ECDHKeyPack ecdhKeysFromExternalCertificate( String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
 		String certPublicKey = checkCertificate( pemCert );
 		if( certPublicKey != null ) {
 			// String sharedHexKey = ecdhSharedKeyFromExternalPublicKey( certPublicKey );
