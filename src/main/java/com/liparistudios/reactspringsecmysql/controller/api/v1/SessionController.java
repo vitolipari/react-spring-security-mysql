@@ -2,8 +2,11 @@ package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
 import com.liparistudios.reactspringsecmysql.model.Customer;
+import com.liparistudios.reactspringsecmysql.model.ECDHKeyPack;
 import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
@@ -99,9 +102,9 @@ public class SessionController {
         System.out.println("handshake");
         System.out.println( certPEM );
 
-
+        ECDHKeyPack keyPack = new ECDHKeyPack();
         try {
-            e2eeService.ecdhKeysFromExternalCertificate( certPEM );
+            keyPack = e2eeService.ecdhKeysFromExternalCertificate( certPEM );
         }
         catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -123,7 +126,11 @@ public class SessionController {
         }
 
 
-        return new HashMap<String, Object>(){{ put("status", "SUCCESS"); }};
+        ECDHKeyPack finalKeyPack = keyPack;
+        return new HashMap<String, Object>(){{
+            put("status", "SUCCESS");
+            put("publicKey", finalKeyPack.getPublicKey());
+        }};
 
     }
 

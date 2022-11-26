@@ -12,7 +12,6 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -118,7 +117,7 @@ public class E2eeService {
 
 	}
 
-	public String checkCertificate( String pemCert ) throws JsonProcessingException {
+	public ECDHKeyPack checkCertificate(String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
 
 		String certPEM =
 			pemCert
@@ -152,34 +151,39 @@ public class E2eeService {
 		// check validity
 		System.out.println("not before");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before") );
+		LocalDateTime startValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before").toString() );
 		System.out.println("now");
 		LocalDateTime now = LocalDateTime.now();
 		System.out.println( now );
 		System.out.println("not after");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not After") );
+		LocalDateTime endValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not After").toString() );
 
 
-		now.isBefore(  );
-		now.isAfter(  )
+		if( now.isBefore( endValidity ) && now.isAfter( startValidity ) ) {
 
-		// check fingerprint
-
-
-
-		// check signature
-		System.out.println("fingerprint");
-		System.out.println( certMap.get("Fingerprint") );
-		System.out.println("signature");
-		System.out.println( certMap.get("Signature") );
-		System.out.println("public key");
-		System.out.println( ((Map<String, Object>)certMap.get("Public Key Info")).get("Public Value") );
+			// check fingerprint
 
 
 
+			// check signature
+			System.out.println("fingerprint");
+			System.out.println( certMap.get("Fingerprint") );
+			System.out.println("signature");
+			System.out.println( certMap.get("Signature") );
+			System.out.println("public key");
+			System.out.println( ((Map<String, Object>)certMap.get("Public Key Info")).get("Public Value") );
 
-		return null;
+
+
+			return ecdhKeysFromExternalPublicKey( ((Map<String, Object>)certMap.get("Public Key Info")).get("Public Value").toString() );
+
+
+		}
+		else return null;
 	}
 
+/*
 	public String ecdhSharedKeyFromExternalCertificate( String pemCert ) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException, JsonProcessingException {
 		String certPublicKey = checkCertificate( pemCert );
 		if( certPublicKey != null ) {
@@ -190,18 +194,16 @@ public class E2eeService {
 		}
 		return null;
 	}
-
+ */
 
 	public ECDHKeyPack ecdhKeysFromExternalCertificate( String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
-		String certPublicKey = checkCertificate( pemCert );
-		if( certPublicKey != null ) {
-			// String sharedHexKey = ecdhSharedKeyFromExternalPublicKey( certPublicKey );
-			ecdhKeysFromExternalPublicKey( certPublicKey );
+		ECDHKeyPack keys = checkCertificate( pemCert );
+		if( keys != null ) {
+			return keys;
 		}
 		else {
-
+			return null;
 		}
-		return null;
 	}
 
 
