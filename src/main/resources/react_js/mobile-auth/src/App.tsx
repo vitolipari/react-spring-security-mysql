@@ -87,8 +87,16 @@ const App = (): JSX.Element => {
 
         setHandshakeDone( true );
 
-        generateX509Cert( sessionData.pin )
-            .then( ( certificate: string ) => {
+        generateX509Cert( 
+            sessionData.pin, 
+            {
+                alg: true, 
+                publicKey: true, 
+                timer: false, 
+                debug: false
+            } 
+        )
+            .then( ({ certificate: string, alg: any, publicKey: string }) => {
 
                 console.log("certificate");
                 console.log( certificate );
@@ -106,6 +114,8 @@ const App = (): JSX.Element => {
                     .then(response => {
 
                         // END
+                        console.log("response");
+                        console.log( response );
 
 
                     })

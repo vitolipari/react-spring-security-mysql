@@ -53,7 +53,12 @@ export type X509CertType = {
     "Signature": string | number[];
 };
 
-export type X509CertOptType = {};
+export type CreateX509CertificateOptionType = {
+    timer: boolean | undefined;
+    debug: boolean | undefined;
+    publicKey: boolean | undefined;
+    alg: boolean | undefined;
+};
 
 export type DigitalSignatureResultType = {
     hash: string;
@@ -66,7 +71,7 @@ export const curveName: string = "secp256k1";
 let processTime = 0;
 
 
-export const generateX509Cert = (seed: string | undefined, option: X509CertOptType = {}): Promise<string> => {
+export const generateX509Cert = (seed: string | undefined, option: CreateX509CertificateOptionType | undefined): Promise<string | {alg: any; publicKey: string;}> => {
 
     let privateKey: string = '';
     let alg: any = undefined;
@@ -262,8 +267,9 @@ export const generateKeys = (pwd: string | undefined, options: GenerateKeysOptio
     );
 }
 
-/*
-export const generateSessionKey = (remoteRawHexPublicKey, options, ...params) => {
+
+
+export const generateSessionKey = (remoteRawHexPublicKey: string, options, ...params) => {
 
     return (
         Promise.resolve()
@@ -305,7 +311,7 @@ export const generateSessionKey = (remoteRawHexPublicKey, options, ...params) =>
     );
 
 }
-*/
+
 
 
 
