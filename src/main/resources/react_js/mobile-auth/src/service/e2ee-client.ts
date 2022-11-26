@@ -71,7 +71,7 @@ export const curveName: string = "secp256k1";
 let processTime = 0;
 
 
-export const generateX509Cert = (seed: string | undefined, option: CreateX509CertificateOptionType | undefined): Promise<string | {alg: any; publicKey: string;}> => {
+export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<string | {alg: any; publicKey: string;}> => {
 
     let privateKey: string = '';
     let alg: any = undefined;
@@ -123,12 +123,12 @@ export const generateX509Cert = (seed: string | undefined, option: CreateX509Cer
             .then( (cert: X509CertType) => {
 
                 return (
-                    generateKeys( seed, undefined )
+                    generateKeys( seed )
                         .then( (keys: KeyPackType) => {
                             privateKey = keys.privateKeyHex;
                             alg = keys.algorithm;
                             cert["Public Key Info"]["Public Value"] = keys.publicKeyHex;
-                            return cert;
+                            return ({certificate: cert, ...keys});
                         })
                         .catch(e => {
                             return Promise.reject( e );
@@ -139,18 +139,22 @@ export const generateX509Cert = (seed: string | undefined, option: CreateX509Cer
 
 
             // signature ---------------------------------------------------------
-            .then( (cert: X509CertType) => {
+            .then( ({certificate: X509CertType, algorithm, publicKeyHex, privateKeyHex}) => {
+            // .then( obj => {
+
+                obj.certificate
+
                 try {
-                    let clonedCert = JSON.parse( JSON.stringify( cert ) );
+                    let clonedCert = JSON.parse( JSON.stringify( certificate ) );
                     delete clonedCert.Fingerprint;
                     delete clonedCert.Signature;
                     return (
                         createDigitalSignatureFor( JSON.stringify( clonedCert ), privateKey, alg, undefined )
                             .then( (signaturePack: DigitalSignatureResultType) => {
-                                cert.Fingerprint = signaturePack.hash;
-                                cert.Signature = signaturePack.signature;
+                                certificate.Fingerprint = signaturePack.hash;
+                                certificate.Signature = signaturePack.signature;
 
-                                let fullPEM = btoa(JSON.stringify(cert));
+                                let fullPEM = btoa(JSON.stringify(certificate));
                                 let pem = '';
 
                                 let cursor = 0;
@@ -164,7 +168,7 @@ export const generateX509Cert = (seed: string | undefined, option: CreateX509Cer
 
                                 console.log( `-----BEGIN CERTIFICATE-----\n${ pem }\n-----END CERTIFICATE-----` );
                                 return `-----BEGIN CERTIFICATE-----
-                                ${ btoa(JSON.stringify(cert)) }
+                                ${ btoa(JSON.stringify(certificate)) }
                                 -----END CERTIFICATE-----`;
                                 // return btoa(JSON.stringify(cert));
 
@@ -189,7 +193,7 @@ export const generateX509Cert = (seed: string | undefined, option: CreateX509Cer
 }
 
 
-export const generateKeys = (pwd: string | undefined, options: GenerateKeysOptionType | undefined, ...params: any[]): Promise<KeyPackType> => {
+export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...params: any[]): Promise<KeyPackType> => {
     return (
         Promise.resolve()
 
