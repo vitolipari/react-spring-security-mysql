@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.profile-pic {
+  border-radius: 100%;
+  width: 200px;
+}

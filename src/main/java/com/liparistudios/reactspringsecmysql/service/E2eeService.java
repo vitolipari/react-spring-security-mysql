@@ -12,6 +12,7 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +118,7 @@ public class E2eeService {
 
 	}
 
-	public ECDHKeyPack checkCertificate(String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
+	public ECDHKeyPack checkCertificate( String pemCert ) throws JsonProcessingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException {
 
 		String certPEM =
 			pemCert
@@ -125,8 +126,11 @@ public class E2eeService {
 				.collect(Collectors.joining())
 				.replace("-----BEGIN CERTIFICATE-----", "")
 				.replace("-----END CERTIFICATE-----", "")
+				.replace("\"", "")
 		;
 
+		System.out.println("cert content");
+		System.out.println( certPEM );
 
 		byte[] bytes = null;
 		String certJson = new String();
@@ -136,7 +140,8 @@ public class E2eeService {
 		System.out.println("estrazione b64");
 
 		// decode base64
-		bytes = Base64.getDecoder().decode( certPEM );
+//		bytes = Base64.getDecoder().decode( certPEM );
+		bytes = Base64.getUrlDecoder().decode( certPEM );
 		certJson = new String(bytes);
 
 		// json to Map
@@ -149,15 +154,17 @@ public class E2eeService {
 		// extract values
 
 		// check validity
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX");
+
 		System.out.println("not before");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before") );
-		LocalDateTime startValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before").toString() );
+		LocalDateTime startValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not Before").toString(), formatter );
 		System.out.println("now");
 		LocalDateTime now = LocalDateTime.now();
 		System.out.println( now );
 		System.out.println("not after");
 		System.out.println( ( (Map<String, Object>) certMap.get("Validity")).get("Not After") );
-		LocalDateTime endValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not After").toString() );
+		LocalDateTime endValidity = LocalDateTime.parse( ( (Map<String, Object>) certMap.get("Validity")).get("Not After").toString(), formatter );
 
 
 		if( now.isBefore( endValidity ) && now.isAfter( startValidity ) ) {

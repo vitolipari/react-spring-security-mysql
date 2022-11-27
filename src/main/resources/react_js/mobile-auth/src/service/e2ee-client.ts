@@ -71,7 +71,7 @@ export const curveName: string = "secp256k1";
 let processTime = 0;
 
 
-export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<string | {alg: any; publicKey: string;}> => {
+export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<{certificate: string, alg: any; publicKey: string; keys: any;}> => {
 
     let privateKey: string = '';
     let alg: any = undefined;
@@ -139,10 +139,7 @@ export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOp
 
 
             // signature ---------------------------------------------------------
-            .then( ({certificate: X509CertType, algorithm, publicKeyHex, privateKeyHex}) => {
-            // .then( obj => {
-
-                obj.certificate
+            .then( ({certificate, algorithm, publicKeyHex, privateKeyHex, keys}) => {
 
                 try {
                     let clonedCert = JSON.parse( JSON.stringify( certificate ) );
@@ -167,9 +164,18 @@ export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOp
                                 }
 
                                 console.log( `-----BEGIN CERTIFICATE-----\n${ pem }\n-----END CERTIFICATE-----` );
-                                return `-----BEGIN CERTIFICATE-----
-                                ${ btoa(JSON.stringify(certificate)) }
-                                -----END CERTIFICATE-----`;
+
+                                return ({
+                                    certificate:
+                                        `-----BEGIN CERTIFICATE-----${ btoa(JSON.stringify(certificate)) }-----END CERTIFICATE-----`,
+                                    alg: algorithm,
+                                    publicKey: publicKeyHex,
+                                    keys: keys
+                                });
+
+                                // return `-----BEGIN CERTIFICATE-----
+                                // ${ btoa(JSON.stringify(certificate)) }
+                                // -----END CERTIFICATE-----`;
                                 // return btoa(JSON.stringify(cert));
 
                             })
@@ -273,7 +279,7 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
 
 
 
-export const generateSessionKey = (remoteRawHexPublicKey: string, options, ...params) => {
+export const generateSessionKey = (remoteRawHexPublicKey: string, options: {algorithm: any, keys: any}, ...params: any[]): Promise<string> => {
 
     return (
         Promise.resolve()
@@ -307,7 +313,7 @@ export const generateSessionKey = (remoteRawHexPublicKey: string, options, ...pa
                 let remotePublicKey = keyPack.algorithm.keyFromPublic(remoteRawHexPublicKey, "hex");
                 // showlog("safe-package | generateSessionKey > remotePublicKey");
                 // showlog(remotePublicKey);
-                let sessionKey = keyPack.keys.derive(remotePublicKey.getPublic()).toString(16);
+                let sessionKey: string = keyPack.keys.derive(remotePublicKey.getPublic()).toString(16);
 
                 return sessionKey;
             })

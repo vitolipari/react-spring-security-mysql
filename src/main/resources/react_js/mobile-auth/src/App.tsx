@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { generateX509Cert } from "./service";
+import {generateSessionKey, generateX509Cert} from "./service";
 import {isBoolean} from "util";
 
 
@@ -88,7 +88,7 @@ const App = (): JSX.Element => {
         setHandshakeDone( true );
 
         generateX509Cert( sessionData.pin )
-            .then( ({ certificate: string, alg: any, publicKey: string }) => {
+            .then( ({ certificate, alg, publicKey, keys }) => {
 
                 console.log("certificate");
                 console.log( certificate );
@@ -109,6 +109,19 @@ const App = (): JSX.Element => {
                         console.log("response");
                         console.log( response );
 
+                        generateSessionKey( response.publicKey, { algorithm: alg, keys: keys })
+                            .then( (sessionKey: string) => {
+
+
+                                console.log("session key");
+                                console.log(sessionKey);
+
+
+                            })
+                            .catch( e => {
+                                // TODO
+                            })
+
 
                     })
                     .catch(e => {
@@ -125,25 +138,13 @@ const App = (): JSX.Element => {
 
     }
 
-    // invio chiave pubblica per questa sessione
-
-
-    // TODO e2ee
-    // java side
-    // https://neilmadden.blog/2016/05/20/ephemeral-elliptic-curve-diffie-hellman-key-agreement-in-java/
-    // https://gist.github.com/zcdziura/7652286
-    // https://stackoverflow.com/questions/66060346/trying-to-create-a-ecdh-keypair-in-java
-    // https://stackoverflow.com/questions/34096955/how-to-serialize-and-consume-ecdh-parameters-in-java
-    // https://stackoverflow.com/questions/51861056/javascript-java-ecdh
-    //
-
 
   return (
     <div className="App">
       <header className="App-header">
         <img
             src={ profilePic || logo }
-            className={ !!profilePic ? "" : "App-logo"}
+            className={ !!profilePic ? " profile-pic" : "App-logo"}
             alt={!!profilePic ? "" : "logo"}
         />
 
