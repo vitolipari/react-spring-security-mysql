@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {generateSessionKey, generateX509Cert} from "./service";
+import {generateSessionKey, generateX509Cert, generateX509PemCert} from "./service";
 import {isBoolean} from "util";
+// import {showlog} from "@liparistudios/js-utils";
 
 
 type ProfileType = {
@@ -87,11 +88,20 @@ const App = (): JSX.Element => {
 
         setHandshakeDone( true );
 
-        generateX509Cert( sessionData.pin )
+        generateX509PemCert( sessionData.pin )
             .then( ({ certificate, alg, publicKey, keys }) => {
 
                 console.log("certificate");
                 console.log( certificate );
+
+                console.log("keys");
+                console.log( keys );
+
+                console.log("alg");
+                console.log( alg );
+
+                console.log("publicKey");
+                console.log( publicKey );
 
                 // handShake
                 fetch(
@@ -99,7 +109,7 @@ const App = (): JSX.Element => {
                     {
                         method: 'POST',
                         // headers: { Authorization: `Bearer ${ profileData.access_token }` },
-                        body: JSON.stringify( certificate )
+                        body: certificate
                     }
                 )
                     .then(response => response.json())
@@ -119,7 +129,10 @@ const App = (): JSX.Element => {
 
                             })
                             .catch( e => {
-                                // TODO
+
+                                console.log("Error");
+                                console.log( e );
+                                
                             })
 
 

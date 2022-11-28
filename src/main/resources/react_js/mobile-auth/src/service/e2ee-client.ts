@@ -3,6 +3,8 @@ import { sha256 } from "js-sha256";
 // @ts-ignore
 import { errorlog, showlog, convert, bytesEncodeTypes } from '@liparistudios/js-utils';
 import moment from 'moment';
+// @ts-ignore
+import jwkToPem from 'jwk-to-pem';
 
 const { eddsa, ec } = pkg;
 
@@ -12,11 +14,38 @@ export type GenerateKeysOptionType = {
     privateKeyFormat: string;
 };
 
+
+/**
+ *
+ * TODO guarda questo
+ * https://github.com/junkurihara/jscu/tree/develop/packages/js-x509-utils
+ * meglio questo
+ * https://www.npmjs.com/package/jwk-to-pem
+ *
+ *
+ *
+ * jwk
+ * The "d" parameter is the private key's ArrayBuffer, url-encoded in Base64.
+ * The "x" parameter is the first half of the uncompressed public key in an ArrayBuffer, url-encoded as a Base64 string.
+ * The "y" parameter is the second half of the uncompressed public key in an ArrayBuffer, url-encoded as a Base64 string.
+ * ( new Uint8Array([ ... ]) ).buffer > String.fromCharCode > bta() > replace(/\//g, '_') > replace(/=/g, '') > replace(/\+/g, '-')
+ */
+export type JwkType = {
+    kty: string;
+    crv: string;
+    x: string;
+    y: string;
+    d?: string;
+    kid: string;
+};
+
+
 export type KeyPackType = {
     algorithm: object;
     keys: object;
     publicKeyHex: string;
-    privateKeyHex: string
+    privateKeyHex: string;
+    jwk: JwkType;
 };
 
 export type X509CertType = {
@@ -65,10 +94,51 @@ export type DigitalSignatureResultType = {
     signature: string;
 };
 
-export const curveName: string = "secp256k1";
+// export const curveName: string = "secp256k1";
+export const curveName: string = "P-256";
 //const curveName = "curve25519";
+//const curveName = "secp256r1";  = P-256
 //const curveName = "ed25519"; va bene per eddsa
 let processTime = 0;
+
+
+
+
+export const generateX509PemCert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<{certificate: string, alg: any; publicKey: string; keys: any;}> => {
+    return (
+        Promise.resolve()
+
+            .then( () => {
+
+                return (
+                    generateKeys( seed )
+                        .then( (keys: KeyPackType) => {
+                            return keys;
+                        })
+                        .catch(e => {
+                            return Promise.reject( e );
+                        })
+                );
+
+            })
+
+
+            .then( ( pack: KeyPackType ) => {
+
+                return ({
+                    certificate: jwkToPem( pack.jwk ),
+                    alg: pack.algorithm,
+                    publicKey: pack.publicKeyHex,
+                    keys: pack.keys
+                });
+
+            })
+
+
+
+    );
+}
+
 
 
 export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<{certificate: string, alg: any; publicKey: string; keys: any;}> => {
@@ -269,7 +339,14 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                     algorithm: sessionAlgorithmCurve,
                     keys: sessionAlgorithmKeys,
                     publicKeyHex: publicKey,
-                    privateKeyHex: privateKey
+                    privateKeyHex: privateKey,
+                    jwk: {
+                        kty: "EC",
+                        crv: curveName,
+                        x: publicKey.substr(1, 32),
+                        y: publicKey.substr(33),
+                        kid: "Public Key ID"
+                    }
                 });
 
 
@@ -402,6 +479,8 @@ export const createDigitalSignatureFor = (dataToSign: string, privateKey: string
             })
     );
 }
+
+
 
 /*
 export const verifyDigitalSignatureFor = (data, signature, publicKeyHex, algorithm, options) => {

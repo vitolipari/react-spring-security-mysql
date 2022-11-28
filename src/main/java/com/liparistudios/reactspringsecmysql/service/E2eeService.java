@@ -3,14 +3,19 @@ package com.liparistudios.reactspringsecmysql.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.liparistudios.reactspringsecmysql.model.ECDHKeyPack;
+import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.ECPointUtil;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.math.ec.ECCurve;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyAgreement;
+import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 import java.security.*;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -80,16 +85,42 @@ public class E2eeService {
 	public void extractPublicKeyFromCertificate() {}
 
 
+
+	public ECPublicKey hexPublicKeyToPublicKey(String rawPubKey, String curveName) throws NoSuchAlgorithmException {
+		byte[] rawPublicKey = DatatypeConverter.parseHexBinary(rawPubKey);
+		ECPublicKey ecPublicKey = null;
+		KeyFactory kf = null;
+
+		ECNamedCurveParameterSpec ecNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec(curveName);
+		ECCurve curve = ecNamedCurveParameterSpec.getCurve();
+		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecNamedCurveParameterSpec.getSeed());
+		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, rawPublicKey);
+		ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, ecNamedCurveParameterSpec);
+		ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
+
+		kf = java.security.KeyFactory.getInstance("EC");
+
+		try {
+			ecPublicKey = (ECPublicKey) kf.generatePublic(publicKeySpec);
+		} catch (Exception e) {
+			System.out.println("Caught Exception public key: " + e.toString());
+		}
+
+		return ecPublicKey;
+	}
+
+
 	public ECDHKeyPack ecdhKeysFromExternalPublicKey( String otherPublicKeyHexFormat ) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException {
 
-
-		byte[] otherPk = hexToBytes( otherPublicKeyHexFormat );
-
-		String ecdhCurvenameString = "secp256k1";	// was secp256r1
+		String ecdhCurvenameString = "secp256r1";	// was secp256r1
 		// standard curvennames
 		// secp256r1 [NIST P-256, X9.62 prime256v1]
 		// secp384r1 [NIST P-384]
 		// secp521r1 [NIST P-521]
+
+		ECPublicKey externalPk = hexPublicKeyToPublicKey( otherPublicKeyHexFormat, ecdhCurvenameString );
+		//byte[] otherPk = hexToBytes( externalPk );
+
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", "SunEC");
 		ECGenParameterSpec ecParameterSpec = new ECGenParameterSpec(ecdhCurvenameString);
 		keyPairGenerator.initialize(ecParameterSpec);
@@ -100,14 +131,17 @@ public class E2eeService {
 		System.out.println("publicKey: " + publicKey);
 
 
+		/*
 		// Perform key agreement
 		KeyFactory kf = KeyFactory.getInstance("EC");
-		X509EncodedKeySpec pkSpec = new X509EncodedKeySpec(otherPk);
+		X509EncodedKeySpec pkSpec = new X509EncodedKeySpec( externalPk ); // errore, i byte[]  della public key devono provenire da una public key in formato PEM
 		PublicKey otherPublicKey = kf.generatePublic(pkSpec);
+		 */
 
 		KeyAgreement ka = KeyAgreement.getInstance("ECDH");
 		ka.init(privateKey);
-		ka.doPhase(otherPublicKey, true);
+		// ka.doPhase(otherPublicKey, true);
+		ka.doPhase(externalPk, true);
 
 		// Read shared secret
 		byte[] sharedSecret = ka.generateSecret();
