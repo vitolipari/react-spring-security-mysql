@@ -8,6 +8,9 @@ import jwkToPem from 'jwk-to-pem';
 
 const { eddsa, ec } = pkg;
 
+import x509 from 'js-x509-utils';
+import {DER} from "js-x509-utils/dist/typedef";
+
 export type GenerateKeysOptionType = {
     showTimer: boolean;
     debug: boolean;
@@ -104,7 +107,7 @@ let processTime = 0;
 
 
 
-export const generateX509PemCert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<{certificate: string, alg: any; publicKey: string; keys: any;}> => {
+export const generateX509PemCert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<string | DER> => {
     return (
         Promise.resolve()
 
@@ -125,12 +128,49 @@ export const generateX509PemCert = (seed?: string, option?: CreateX509Certificat
 
             .then( ( pack: KeyPackType ) => {
 
-                return ({
-                    certificate: jwkToPem( pack.jwk ),
-                    alg: pack.algorithm,
-                    publicKey: pack.publicKeyHex,
-                    keys: pack.keys
-                });
+
+
+
+
+                let issuer = {
+                    countryName: 'IT',
+                    stateOrProvinceName: 'Sicily',
+                    localityName: 'Marsala',
+                    organizationName: 'CaninoSRL',
+                    organizationalUnitName: 'Dev',
+                    commonName: 'caninosrl.it'
+                };
+
+
+                return (
+
+                    x509.fromJwk(
+                        pack.jwk,
+                        pack.jwk,
+                        'pem',
+                        {
+                            signature: 'ecdsa-with-sha256', // signature algorithm
+                            days: 365, // expired in days
+                            issuer: issuer, // issuer
+                            subject: issuer // assume that issuer = subject, i.e., self-signed certificate
+                        }
+                    )
+                    // .then( (pem: string) => {
+                    //
+                    //     return ({
+                    //         certificate: pem,
+                    //         alg: pack.algorithm,
+                    //         publicKey: pack.publicKeyHex,
+                    //         keys: pack.keys
+                    //     });
+                    //
+                    // })
+                    // .catch( e => Promise.reject( e ))
+
+                )
+
+
+
 
             })
 
@@ -330,9 +370,20 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                 let privateKey: string = sessionAlgorithmKeys.getPrivate().toString(16);
                 //let privateKey = sessionAlgorithmKeys.getSecret();
 
+                let jwkPrivateKey = btoa( convert( privateKey, { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
+
+                // TODO
+                // ( new Uint8Array([ ... ]) ).buffer > String.fromCharCode > bta() > replace(/\//g, '_') > replace(/=/g, '') > replace(/\+/g, '-')
+
+
                 // public key
                 let publicKey: string = sessionAlgorithmKeys.getPublic().encode("hex", false);
                 //let publicKey = sessionAlgorithmKeys.getPublic();
+
+                let jwkPublicKeyX = btoa( convert( publicKey.substr(1, 32), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
+                let jwkPublicKeyY = btoa( convert( publicKey.substr(33), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
+                // TODO
+                // ( new Uint8Array([ ... ]) ).buffer > String.fromCharCode > bta() > replace(/\//g, '_') > replace(/=/g, '') > replace(/\+/g, '-')
 
 
                 return ({
@@ -343,8 +394,9 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                     jwk: {
                         kty: "EC",
                         crv: curveName,
-                        x: publicKey.substr(1, 32),
-                        y: publicKey.substr(33),
+                        x: jwkPublicKeyX,
+                        y: jwkPublicKeyY,
+                        d: jwkPrivateKey,
                         kid: "Public Key ID"
                     }
                 });
@@ -356,7 +408,43 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
 
 
 
+export const generateSessionKeyByCert = (ownCertificate: string | DER, externalCertificate: string | DER): Promise<string> => {
+    /*
+    const crtsample = '-----BEGIN CERTIFICATE-----...';
+
+    const jwkey = x509.toJwk(crtsample, 'pem');
+    // now you get JWK public key from PEM-formatted certificate
+
+    const parsed = x509.parse(crtsample, 'pem');
+    // now you get parsed object from PEM-formatted certificate
+    // {tbsCertificate, signatureValue, signatureAlgorithm}
+     */
+
+
+
+}
+
+
+export const generateSessionKeyByCertAndExternalPublicKey = (ownCertificate: string | DER, remotePublicKey: string | Uint8Array | number[]): Promise<string> => {
+    /*
+    const crtsample = '-----BEGIN CERTIFICATE-----...';
+
+    const jwkey = x509.toJwk(crtsample, 'pem');
+    // now you get JWK public key from PEM-formatted certificate
+
+    const parsed = x509.parse(crtsample, 'pem');
+    // now you get parsed object from PEM-formatted certificate
+    // {tbsCertificate, signatureValue, signatureAlgorithm}
+     */
+
+
+
+}
+
+
 export const generateSessionKey = (remoteRawHexPublicKey: string, options: {algorithm: any, keys: any}, ...params: any[]): Promise<string> => {
+
+
 
     return (
         Promise.resolve()

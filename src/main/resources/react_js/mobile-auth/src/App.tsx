@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import {generateSessionKey, generateX509Cert, generateX509PemCert} from "./service";
 import {isBoolean} from "util";
+import x509 from "js-x509-utils";
 // import {showlog} from "@liparistudios/js-utils";
 
 
@@ -89,19 +90,19 @@ const App = (): JSX.Element => {
         setHandshakeDone( true );
 
         generateX509PemCert( sessionData.pin )
-            .then( ({ certificate, alg, publicKey, keys }) => {
+            .then( (certificate) => {
 
                 console.log("certificate");
                 console.log( certificate );
-
-                console.log("keys");
-                console.log( keys );
-
-                console.log("alg");
-                console.log( alg );
-
-                console.log("publicKey");
-                console.log( publicKey );
+                //
+                // console.log("keys");
+                // console.log( keys );
+                //
+                // console.log("alg");
+                // console.log( alg );
+                //
+                // console.log("publicKey");
+                // console.log( publicKey );
 
                 // handShake
                 fetch(
@@ -119,6 +120,10 @@ const App = (): JSX.Element => {
                         console.log("response");
                         console.log( response );
 
+
+
+
+
                         generateSessionKey( response.publicKey, { algorithm: alg, keys: keys })
                             .then( (sessionKey: string) => {
 
@@ -132,7 +137,7 @@ const App = (): JSX.Element => {
 
                                 console.log("Error");
                                 console.log( e );
-                                
+
                             })
 
 
