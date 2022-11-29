@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {generateSessionKey, generateX509Cert, generateX509PemCert} from "./service";
+import {generateSessionKey, generateSessionKeyByCert, generateX509Cert, generateX509PemCert} from "./service";
 import {isBoolean} from "util";
 import x509 from "js-x509-utils";
 // import {showlog} from "@liparistudios/js-utils";
@@ -94,6 +94,24 @@ const App = (): JSX.Element => {
 
                 console.log("certificate");
                 console.log( certificate );
+
+
+
+
+                generateSessionKeyByCert(certificate, certificate)
+                    .then(r => {
+                        console.log("r");
+                        console.log(r);
+                    })
+                    .catch(e => {
+                        console.log("errore");
+                        console.log(e);
+                    })
+                ;
+
+
+
+
                 //
                 // console.log("keys");
                 // console.log( keys );
@@ -121,9 +139,21 @@ const App = (): JSX.Element => {
                         console.log( response );
 
 
+                        generateSessionKeyByCert(certificate, certificate)
+                            .then(r => {
+                                console.log("r");
+                                console.log(r);
+                            })
+                            .catch(e => {
+                                console.log("errore");
+                                console.log(e);
+                            })
+                        ;
 
 
 
+
+                        /*
                         generateSessionKey( response.publicKey, { algorithm: alg, keys: keys })
                             .then( (sessionKey: string) => {
 
@@ -139,6 +169,7 @@ const App = (): JSX.Element => {
                                 console.log( e );
 
                             })
+                        */
 
 
                     })

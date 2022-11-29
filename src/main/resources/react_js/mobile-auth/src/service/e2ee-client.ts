@@ -6,10 +6,12 @@ import moment from 'moment';
 // @ts-ignore
 import jwkToPem from 'jwk-to-pem';
 
-const { eddsa, ec } = pkg;
-
 import x509 from 'js-x509-utils';
 import {DER} from "js-x509-utils/dist/typedef";
+// import {DER} from "js-x509-utils/dist/typedef";
+
+const { eddsa, ec } = pkg;
+
 
 export type GenerateKeysOptionType = {
     showTimer: boolean;
@@ -97,11 +99,12 @@ export type DigitalSignatureResultType = {
     signature: string;
 };
 
-// export const curveName: string = "secp256k1";
-export const curveName: string = "P-256";
-//const curveName = "curve25519";
-//const curveName = "secp256r1";  = P-256
-//const curveName = "ed25519"; va bene per eddsa
+export const curveName: string = "secp256k1"; // P256K
+// export const curveName: string = "P-256K"; // P256K
+// export const curveName = "secp256r1"; //  = P-256
+// export const curveName: string = "P-256";
+// export const curveName = "curve25519";
+// export const curveName = "ed25519"; // va bene per eddsa
 let processTime = 0;
 
 
@@ -130,6 +133,8 @@ export const generateX509PemCert = (seed?: string, option?: CreateX509Certificat
 
 
 
+                console.log("creazione certificato");
+                console.log( pack );
 
 
                 let issuer = {
@@ -360,8 +365,14 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
             // key generation -----------------------------------------------------------------------------------------------
             .then( pwdHex => {
 
+                console.log("generazione chiavi");
+
                 let sessionAlgorithmCurve = new ec( curveName ); // secp256k1
                 let sessionAlgorithmKeys = sessionAlgorithmCurve.keyFromPrivate(pwdHex, "hex");
+
+
+                console.log(sessionAlgorithmCurve);
+                console.log(sessionAlgorithmKeys);
 
                 //let sessionAlgorithmCurve = new eddsa( curveName ); // curve25519
                 //let sessionAlgorithmKeys = sessionAlgorithmCurve.keyFromSecret(pwdHex);
@@ -370,20 +381,21 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                 let privateKey: string = sessionAlgorithmKeys.getPrivate().toString(16);
                 //let privateKey = sessionAlgorithmKeys.getSecret();
 
-                let jwkPrivateKey = btoa( convert( privateKey, { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
-
-                // TODO
-                // ( new Uint8Array([ ... ]) ).buffer > String.fromCharCode > bta() > replace(/\//g, '_') > replace(/=/g, '') > replace(/\+/g, '-')
+                let jwkPrivateKey = convert( '0x'+ privateKey, { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.BASE64 });
+                // con padding
+                jwkPrivateKey = btoa(String.fromCharCode.apply(null, convert( '0x'+ privateKey, { from: bytesEncodeTypes.HEX })));
 
 
                 // public key
                 let publicKey: string = sessionAlgorithmKeys.getPublic().encode("hex", false);
                 //let publicKey = sessionAlgorithmKeys.getPublic();
 
-                let jwkPublicKeyX = btoa( convert( publicKey.substr(1, 32), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
-                let jwkPublicKeyY = btoa( convert( publicKey.substr(33), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.UINT8ARRAY }) );
-                // TODO
-                // ( new Uint8Array([ ... ]) ).buffer > String.fromCharCode > bta() > replace(/\//g, '_') > replace(/=/g, '') > replace(/\+/g, '-')
+                let jwkPublicKeyX = convert( '0x'+ publicKey.substr(1, 64), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.BASE64 });
+                let jwkPublicKeyY = convert( '0x'+ publicKey.substr(65), { from: bytesEncodeTypes.HEX, to: bytesEncodeTypes.BASE64 });
+                // jwkPublicKeyX = btoa(String.fromCharCode.apply(null, convert( '0x'+ publicKey.substr(1, 32), { from: bytesEncodeTypes.HEX })));
+                // jwkPublicKeyY = btoa(String.fromCharCode.apply(null, convert( '0x'+ publicKey.substr(33), { from: bytesEncodeTypes.HEX })));
+
+
 
 
                 return ({
@@ -393,7 +405,7 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                     privateKeyHex: privateKey,
                     jwk: {
                         kty: "EC",
-                        crv: curveName,
+                        crv: (curveName === 'secp256k1') ? 'P-256K' : curveName,
                         x: jwkPublicKeyX,
                         y: jwkPublicKeyY,
                         d: jwkPrivateKey,
@@ -403,6 +415,8 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
 
 
             })
+
+            .catch(e => Promise.reject( e ) )
     );
 }
 
@@ -410,16 +424,54 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
 
 export const generateSessionKeyByCert = (ownCertificate: string | DER, externalCertificate: string | DER): Promise<string> => {
     /*
-    const crtsample = '-----BEGIN CERTIFICATE-----...';
 
-    const jwkey = x509.toJwk(crtsample, 'pem');
+    const jwkey = x509.toJwk(ownCertificate, 'pem');
     // now you get JWK public key from PEM-formatted certificate
 
-    const parsed = x509.parse(crtsample, 'pem');
+    const parsed = x509.parse(ownCertificate, 'pem');
     // now you get parsed object from PEM-formatted certificate
     // {tbsCertificate, signatureValue, signatureAlgorithm}
+
      */
 
+
+    // extract publicKey
+    // extract privateKey
+    const jwkey = x509.toJwk(ownCertificate, 'pem');
+    const parsed = x509.parse(ownCertificate, 'pem');
+
+    console.log("generateSessionKeyByCert");
+    console.log(ownCertificate);
+    console.log(jwkey);
+    console.log(parsed);
+
+    /*
+    
+    jwkey = {
+        crv: "P-256K"
+        kty: "EC"
+        x: "TFfrWiFbShv-N9YCgKdCllCjo4VQf6pK9vDGNpwRu3Q"
+        y: "sDYQmqYaaHgNbZ01GQVWWdyd5G3kDSKPVwhY0jGFAeY"
+    }
+
+    parsed = {
+        signatureAlgorithm: {
+            algorithm: "ecdsa-with-sha256"
+            parameters: Object { hash: "SHA-256" }
+        }
+        signatureValue: Uint8Array(70) [ 48, 68, 2, … ]
+        tbsCertificate: Uint8Array(354) [ 48, 130, 1, … ]
+    }
+
+     */
+
+    // extract externalPublicKey
+    // const externalJwkey = x509.toJwk(externalCertificate, 'pem');
+    // const externalParsed = x509.parse(externalCertificate, 'pem');
+
+
+
+    return Promise.resolve("");
 
 
 }
@@ -437,7 +489,7 @@ export const generateSessionKeyByCertAndExternalPublicKey = (ownCertificate: str
     // {tbsCertificate, signatureValue, signatureAlgorithm}
      */
 
-
+    return Promise.resolve("");
 
 }
 
