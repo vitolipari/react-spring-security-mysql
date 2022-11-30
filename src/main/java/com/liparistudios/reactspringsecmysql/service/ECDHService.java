@@ -51,7 +51,7 @@ public class ECDHService {
 
 
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH","BC");
-		ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec("P-256K");  // TODO da sistemare, prima era secp256k1
+		ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec("prime256v1");  // TODO da sistemare, prima era secp256k1
 		kpg.initialize(parameterSpec);
 		KeyPair kp = kpg.generateKeyPair();
 		byte[] ourPk = kp.getPublic().getEncoded();

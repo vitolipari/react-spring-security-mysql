@@ -99,9 +99,9 @@ export type DigitalSignatureResultType = {
     signature: string;
 };
 
-export const curveName: string = "secp256k1"; // P256K
+// export const curveName: string = "secp256k1"; // P256K
 // export const curveName: string = "P-256K"; // P256K
-// export const curveName = "secp256r1"; //  = P-256
+export const curveName = "secp256r1"; //  = P-256  = prime256v1
 // export const curveName: string = "P-256";
 // export const curveName = "curve25519";
 // export const curveName = "ed25519"; // va bene per eddsa
@@ -392,6 +392,8 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
 
 
 
+                // @ts-ignore
+                // @ts-ignore
                 return ({
                     algorithm: sessionAlgorithmCurve,
                     keys: sessionAlgorithmKeys,
@@ -399,7 +401,16 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                     privateKeyHex: privateKey,
                     jwk: {
                         kty: "EC",
-                        crv: (curveName === 'secp256k1') ? 'P-256K' : curveName,
+                        crv: (
+                            // @ts-ignore
+                            (curveName === 'secp256k1')
+                                ? 'P-256K'
+                                : (
+                                    (curveName === 'secp256r1')
+                                        ? 'P-256'
+                                        : curveName
+                                )
+                        ),
                         x: jwkPublicKeyX,
                         y: jwkPublicKeyY,
                         d: jwkPrivateKey,
