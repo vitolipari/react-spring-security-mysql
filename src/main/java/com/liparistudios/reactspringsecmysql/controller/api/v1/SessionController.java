@@ -9,10 +9,8 @@ import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.ECDHKeyPack;
 import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
-import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
-import com.liparistudios.reactspringsecmysql.service.E2eeService;
-import com.liparistudios.reactspringsecmysql.service.PlatformService;
-import com.liparistudios.reactspringsecmysql.service.SessionService;
+import com.liparistudios.reactspringsecmysql.service.*;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -45,7 +45,8 @@ public class SessionController {
     @Autowired private SessionService sessionService;
     @Autowired private CustomerServiceImplementation customerService;
 
-    @Autowired private E2eeService e2eeService;
+    // @Autowired private E2eeService e2eeService;
+    @Autowired private ECDHService ecdhService;
 
     /**
      * Apertura di una nuova sessione
@@ -102,20 +103,11 @@ public class SessionController {
         System.out.println("handshake");
         System.out.println( certPEM );
 
-        ECDHKeyPack keyPack = new ECDHKeyPack();
+        String ownCertificate = "";
         try {
-            keyPack = e2eeService.ecdhKeysFromExternalCertificate( certPEM );
-        }
-        catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
+            ownCertificate = ecdhService.generateSharedKeyFromExternalCertificate( certPEM );
         }
         catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-        catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
         catch (InvalidKeyException e) {
@@ -124,12 +116,31 @@ public class SessionController {
         catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        catch (CertificateException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (OperatorCreationException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        catch (NoSuchProviderException e) {
+            throw new RuntimeException(e);
+        }
 
 
-        ECDHKeyPack finalKeyPack = keyPack;
+        // ECDHKeyPack finalKeyPack = keyPack;
+        String finalOwnCertificate = ownCertificate;
         return new HashMap<String, Object>(){{
             put("status", "SUCCESS");
-            put("publicKey", finalKeyPack.getPublicKey());
+            put("cert", finalOwnCertificate);
         }};
 
     }

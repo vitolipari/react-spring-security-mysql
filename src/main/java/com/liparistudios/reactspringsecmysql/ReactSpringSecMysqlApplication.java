@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.Security;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -22,6 +23,8 @@ import java.util.stream.Stream;
 //@EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
 public class ReactSpringSecMysqlApplication {
+
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReactSpringSecMysqlApplication.class, args);

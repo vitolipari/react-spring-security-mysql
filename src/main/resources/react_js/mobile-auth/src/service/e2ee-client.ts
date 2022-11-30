@@ -147,11 +147,15 @@ export const generateX509PemCert = (seed?: string, option?: CreateX509Certificat
                 };
 
 
+                let publicJwk = JSON.parse( JSON.stringify( pack.jwk ) );
+                delete publicJwk.d;
+                let privateJwk = pack.jwk;
+
                 return (
 
                     x509.fromJwk(
-                        pack.jwk,
-                        pack.jwk,
+                        publicJwk,
+                        privateJwk,
                         'pem',
                         {
                             signature: 'ecdsa-with-sha256', // signature algorithm
@@ -160,22 +164,8 @@ export const generateX509PemCert = (seed?: string, option?: CreateX509Certificat
                             subject: issuer // assume that issuer = subject, i.e., self-signed certificate
                         }
                     )
-                    // .then( (pem: string) => {
-                    //
-                    //     return ({
-                    //         certificate: pem,
-                    //         alg: pack.algorithm,
-                    //         publicKey: pack.publicKeyHex,
-                    //         keys: pack.keys
-                    //     });
-                    //
-                    // })
-                    // .catch( e => Promise.reject( e ))
 
                 )
-
-
-
 
             })
 
@@ -185,7 +175,11 @@ export const generateX509PemCert = (seed?: string, option?: CreateX509Certificat
 }
 
 
-
+/**
+ * @deprecated
+ * @param seed
+ * @param option
+ */
 export const generateX509Cert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<{certificate: string, alg: any; publicKey: string; keys: any;}> => {
 
     let privateKey: string = '';
@@ -446,7 +440,7 @@ export const generateSessionKeyByCert = (ownCertificate: string | DER, externalC
     console.log(parsed);
 
     /*
-    
+
     jwkey = {
         crv: "P-256K"
         kty: "EC"
