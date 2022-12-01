@@ -5,9 +5,12 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
 import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.ECPointUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Service;
@@ -20,10 +23,11 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class ECDHService {
@@ -31,6 +35,235 @@ public class ECDHService {
 
 
 	public String generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException {
+
+		Security.addProvider(new BouncyCastleProvider());
+
+
+		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+		X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate( new ByteArrayInputStream(pemCertificate.getBytes()) );
+
+		certificate.checkValidity();
+
+		PublicKey externalPublicKey = certificate.getPublicKey();
+
+		System.out.println("chiave esterna publica");
+		System.out.println( externalPublicKey );
+		System.out.println("chiave esterna publica toString");
+		System.out.println( externalPublicKey.toString() );
+		System.out.println("chiave esterna publica getEncoded");
+		System.out.println( externalPublicKey.getEncoded() );
+
+
+		System.out.println("chiave public esterna algoritmo");
+		System.out.println( externalPublicKey.getAlgorithm() );
+		System.out.println("chiave public esterna formato");
+		System.out.println( externalPublicKey.getFormat() );
+
+		System.out.println("estrazione coordinate dalla chiave publica esterna");
+		byte[] x = ((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray();
+		byte[] y = ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray();
+		System.out.println("X");
+		System.out.println(Arrays.toString(x));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) );
+		System.out.println("Y");
+		System.out.println(Arrays.toString(y));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16) );
+
+
+
+		String rawExternalPublicKey = "04" + ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) + ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16);
+		System.out.println("raw public external key");
+		System.out.println(rawExternalPublicKey);
+
+		byte[] byteExternalPublicKey = new byte[rawExternalPublicKey.length() / 2];
+		for (int i = 0; i < byteExternalPublicKey.length; i++) {
+			int index = i * 2;
+			int val = Integer.parseInt(rawExternalPublicKey.substring(index, index + 2), 16);
+			byteExternalPublicKey[i] = (byte)val;
+		}
+
+		System.out.println("bytes raw external public key");
+		System.out.println( Arrays.toString( byteExternalPublicKey ) );
+
+		System.out.println("spec ECDSA");
+
+
+
+
+//		byte[] ecRawExternalPublicKey = externalPublicKey.getEncoded();
+		byte[] ecRawExternalPublicKey = byteExternalPublicKey;
+		ECPublicKey ecExternalPublicKey = null;
+		KeyFactory externalKeyFactor = null;
+
+		ECNamedCurveParameterSpec ecExternalNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
+		ECCurve curve = ecExternalNamedCurveParameterSpec.getCurve();
+		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecExternalNamedCurveParameterSpec.getSeed());
+		System.out.println("curva");
+		System.out.println( ellipticCurve );
+		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, ecRawExternalPublicKey);
+		System.out.println("Point");
+		System.out.println(ecPoint);
+		ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, ecExternalNamedCurveParameterSpec);
+		ECPublicKeySpec externalPublicKeySpec = new java.security.spec.ECPublicKeySpec(ecPoint, ecParameterSpec);
+
+		externalKeyFactor = java.security.KeyFactory.getInstance("EC");
+		// this is externalPubicKey
+		ecExternalPublicKey = (ECPublicKey) externalKeyFactor.generatePublic(externalPublicKeySpec);
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+
+		KeyPair pair = keyGen.generateKeyPair();
+		ECPublicKey pub = (ECPublicKey)pair.getPublic();
+		ECPrivateKey pvt = (ECPrivateKey)pair.getPrivate();
+
+		byte[] pubEncoded = pub.getEncoded();
+		byte[] pvtEncoded = pvt.getEncoded();
+
+		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
+		keyAgree.init(pvt);
+		keyAgree.doPhase(ecExternalPublicKey, true);
+
+		byte[] sessionKey = keyAgree.generateSecret();
+
+		System.out.println("session key");
+		System.out.println(sessionKey);
+
+		Stream.of( sessionKey )
+			.map( b -> {
+				System.out.print(b);
+				return b;
+			})
+		;
+
+
+
+		return sessionKey.toString();
+
+
+	}
+
+
+
+	public String __TO_TEST_HYBRID_generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException {
+
+		Security.addProvider(new BouncyCastleProvider());
+
+
+		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+		X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate( new ByteArrayInputStream(pemCertificate.getBytes()) );
+
+		certificate.checkValidity();
+
+		PublicKey externalPublicKey = certificate.getPublicKey();
+
+		System.out.println("chiave esterna publica");
+		System.out.println( externalPublicKey );
+		System.out.println("chiave esterna publica toString");
+		System.out.println( externalPublicKey.toString() );
+		System.out.println("chiave esterna publica getEncoded");
+		System.out.println( externalPublicKey.getEncoded() );
+
+
+		System.out.println("chiave public esterna algoritmo");
+		System.out.println( externalPublicKey.getAlgorithm() );
+		System.out.println("chiave public esterna formato");
+		System.out.println( externalPublicKey.getFormat() );
+
+		System.out.println("estrazione coordinate dalla chiave publica esterna");
+		byte[] x = ((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray();
+		byte[] y = ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray();
+		System.out.println("X");
+		System.out.println(Arrays.toString(x));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) );
+		System.out.println("Y");
+		System.out.println(Arrays.toString(y));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16) );
+
+
+
+		String rawExternalPublicKey = "04" + ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) + ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16);
+		System.out.println("raw public external key");
+		System.out.println(rawExternalPublicKey);
+
+		byte[] byteExternalPublicKey = new byte[rawExternalPublicKey.length() / 2];
+		for (int i = 0; i < byteExternalPublicKey.length; i++) {
+			int index = i * 2;
+			int val = Integer.parseInt(rawExternalPublicKey.substring(index, index + 2), 16);
+			byteExternalPublicKey[i] = (byte)val;
+		}
+
+		System.out.println("bytes raw external public key");
+		System.out.println( Arrays.toString( byteExternalPublicKey ) );
+
+		System.out.println("spec ECDSA");
+
+
+
+
+//		byte[] ecRawExternalPublicKey = externalPublicKey.getEncoded();
+		byte[] ecRawExternalPublicKey = byteExternalPublicKey;
+		ECPublicKey ecExternalPublicKey = null;
+		KeyFactory externalKeyFactor = null;
+
+		ECNamedCurveParameterSpec ecExternalNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
+		ECCurve curve = ecExternalNamedCurveParameterSpec.getCurve();
+		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecExternalNamedCurveParameterSpec.getSeed());
+		System.out.println("curva");
+		System.out.println( ellipticCurve );
+		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, ecRawExternalPublicKey);
+		System.out.println("Point");
+		System.out.println(ecPoint);
+		ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, ecExternalNamedCurveParameterSpec);
+		ECPublicKeySpec externalPublicKeySpec = new java.security.spec.ECPublicKeySpec(ecPoint, ecParameterSpec);
+
+		externalKeyFactor = java.security.KeyFactory.getInstance("EC");
+		// this is externalPubicKey
+		ecExternalPublicKey = (ECPublicKey) externalKeyFactor.generatePublic(externalPublicKeySpec);
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDH", "BC");
+		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+
+		KeyPair pair = keyGen.generateKeyPair();
+		ECPublicKey pub = (ECPublicKey)pair.getPublic();
+		ECPrivateKey pvt = (ECPrivateKey)pair.getPrivate();
+
+		byte[] pubEncoded = pub.getEncoded();
+		byte[] pvtEncoded = pvt.getEncoded();
+
+		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
+		keyAgree.init(pvt);
+		keyAgree.doPhase(ecExternalPublicKey, true);
+
+		byte[] sessionKey = keyAgree.generateSecret();
+
+		System.out.println("session key");
+		System.out.println(sessionKey);
+
+		Stream.of( sessionKey )
+			.map( b -> {
+				System.out.print(b);
+				return b;
+			})
+		;
+
+
+
+		return sessionKey.toString();
+
+
+	}
+
+
+	public String __old__generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException {
 
 		Security.addProvider(new BouncyCastleProvider());
 
