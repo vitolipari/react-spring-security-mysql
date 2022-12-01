@@ -56,10 +56,10 @@ public class ECDHService {
 
 		System.out.println("spec ECDSA");
 
-		KeyPairGenerator kpg = KeyPairGenerator.getInstance( externalPublicKey.getAlgorithm(), "BC" ); // "BC", "SunEC", new BouncyCastleProvider()
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance( externalPublicKey.getAlgorithm() ); // "BC", "SunEC", new BouncyCastleProvider()
 		// prime256v1,
 		// ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec("P-256");
-		ECGenParameterSpec parameterSpec = new ECGenParameterSpec("P-256");
+		ECGenParameterSpec parameterSpec = new ECGenParameterSpec("secp256r1");
 		kpg.initialize(parameterSpec);
 		KeyPair kp = kpg.generateKeyPair();
 		byte[] ourPk = kp.getPublic().getEncoded();
@@ -70,7 +70,7 @@ public class ECDHService {
 		System.out.println( kp.getPublic().getEncoded() );
 		System.out.println( kp.getPublic().getEncoded().toString() );
 
-		System.out.println("chiave public esterna algoritmo e formato");
+		System.out.println("chiave publica interna algoritmo e formato");
 		System.out.println( kp.getPublic().getAlgorithm() );
 		System.out.println( kp.getPublic().getFormat() );
 
