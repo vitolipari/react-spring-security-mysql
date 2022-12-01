@@ -75,7 +75,7 @@ public class ECDHService {
 		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16) );
 
 
-
+/*
 		KeyFactory kf = KeyFactory.getInstance("EC");
 
 		AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");
@@ -84,23 +84,54 @@ public class ECDHService {
 
 		ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(new ECPoint(((ECPublicKey) externalPublicKey).getW().getAffineX(), ((ECPublicKey) externalPublicKey).getW().getAffineY()), ecParameterSpec);
 		ECPublicKey ecExternalPublicKey = (ECPublicKey) kf.generatePublic(ecPublicKeySpec);
+*/
 
 
 
-
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC"); // dalla chiave esterna
 		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
 
 		KeyPair pair = keyGen.generateKeyPair();
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
 		ECPrivateKey pvt = (ECPrivateKey)pair.getPrivate();
 
+
+		System.out.println("chiave interna publica");
+		System.out.println( pub );
+		System.out.println("chiave interna publica toString");
+		System.out.println( pub.toString() );
+		System.out.println("chiave interna publica getEncoded");
+		System.out.println( pub.getEncoded() );
+
+
+		System.out.println("chiave public interna algoritmo");
+		System.out.println( pub.getAlgorithm() );
+		System.out.println("chiave public interna formato");
+		System.out.println( pub.getFormat() );
+
+		System.out.println("estrazione coordinate dalla chiave publica interna");
+//		byte[] x = ((ECPublicKey) pub).getW().getAffineX().toByteArray();
+//		byte[] y = ((ECPublicKey) pub).getW().getAffineY().toByteArray();
+		System.out.println("X");
+		System.out.println(Arrays.toString(x));
+		System.out.println( ((ECPublicKey) pub).getW().getAffineX() );
+		System.out.println( ((ECPublicKey) pub).getW().getAffineX().toString(10) );
+		System.out.println( ((ECPublicKey) pub).getW().getAffineX().toString(16) );
+		System.out.println("Y");
+		System.out.println(Arrays.toString(y));
+		System.out.println( ((ECPublicKey) pub).getW().getAffineY() );
+		System.out.println( ((ECPublicKey) pub).getW().getAffineY().toString(10) );
+		System.out.println( ((ECPublicKey) pub).getW().getAffineY().toString(16) );
+
+
+
 		byte[] pubEncoded = pub.getEncoded();
 		byte[] pvtEncoded = pvt.getEncoded();
 
 		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
 		keyAgree.init(pvt);
-		keyAgree.doPhase(ecExternalPublicKey, true);
+//		keyAgree.doPhase(ecExternalPublicKey, true);
+		keyAgree.doPhase(externalPublicKey, true);
 
 		byte[] sessionKey = keyAgree.generateSecret();
 
