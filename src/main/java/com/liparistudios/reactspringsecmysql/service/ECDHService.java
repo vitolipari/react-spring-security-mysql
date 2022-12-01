@@ -35,7 +35,95 @@ public class ECDHService {
 
 
 
-	public String generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException {
+	public String generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidParameterSpecException {
+
+		Security.addProvider(new BouncyCastleProvider());
+
+
+		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+		X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate( new ByteArrayInputStream(pemCertificate.getBytes()) );
+
+		certificate.checkValidity();
+
+		PublicKey externalPublicKey = certificate.getPublicKey();
+
+		System.out.println("chiave esterna publica");
+		System.out.println( externalPublicKey );
+		System.out.println("chiave esterna publica toString");
+		System.out.println( externalPublicKey.toString() );
+		System.out.println("chiave esterna publica getEncoded");
+		System.out.println( externalPublicKey.getEncoded() );
+
+
+		System.out.println("chiave public esterna algoritmo");
+		System.out.println( externalPublicKey.getAlgorithm() );
+		System.out.println("chiave public esterna formato");
+		System.out.println( externalPublicKey.getFormat() );
+
+		System.out.println("estrazione coordinate dalla chiave publica esterna");
+		byte[] x = ((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray();
+		byte[] y = ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray();
+		System.out.println("X");
+		System.out.println(Arrays.toString(x));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) );
+		System.out.println("Y");
+		System.out.println(Arrays.toString(y));
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY() );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(10) );
+		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16) );
+
+
+
+		KeyFactory kf = KeyFactory.getInstance("EC");
+
+		AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");
+		parameters.init(new ECGenParameterSpec("secp256r1"));
+		ECParameterSpec ecParameterSpec = parameters.getParameterSpec(ECParameterSpec.class);
+
+		ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(new ECPoint(((ECPublicKey) externalPublicKey).getW().getAffineX(), ((ECPublicKey) externalPublicKey).getW().getAffineY()), ecParameterSpec);
+		ECPublicKey ecExternalPublicKey = (ECPublicKey) kf.generatePublic(ecPublicKeySpec);
+
+
+
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC");
+		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+
+		KeyPair pair = keyGen.generateKeyPair();
+		ECPublicKey pub = (ECPublicKey)pair.getPublic();
+		ECPrivateKey pvt = (ECPrivateKey)pair.getPrivate();
+
+		byte[] pubEncoded = pub.getEncoded();
+		byte[] pvtEncoded = pvt.getEncoded();
+
+		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
+		keyAgree.init(pvt);
+		keyAgree.doPhase(ecExternalPublicKey, true);
+
+		byte[] sessionKey = keyAgree.generateSecret();
+
+		System.out.println("session key");
+		System.out.println(sessionKey);
+
+		Stream.of( sessionKey )
+			.map( b -> {
+				System.out.print(b);
+				return b;
+			})
+		;
+
+
+
+		return sessionKey.toString();
+
+
+	}
+
+
+
+	public String __OLD_1_generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException {
 
 		Security.addProvider(new BouncyCastleProvider());
 
@@ -96,12 +184,12 @@ public class ECDHService {
 
 		byte[] ecRawExternalPublicKey =
 			ByteBuffer
-//				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray().length + 1)
-				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + 1)
-//				.put((byte)4)
-				.put((byte)3)
+//				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + 1)
+//				.put((byte)3)
+				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray().length + 1)
+				.put((byte)4)
 				.put(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray())
-//				.put(((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray())
+				.put(((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray())
 				.array()
 		;
 
