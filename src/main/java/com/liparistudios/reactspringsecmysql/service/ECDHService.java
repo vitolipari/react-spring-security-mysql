@@ -19,6 +19,7 @@ import javax.crypto.KeyAgreement;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -93,9 +94,20 @@ public class ECDHService {
 
 
 
+		byte[] ecRawExternalPublicKey =
+			ByteBuffer
+				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray().length + 1)
+				.put((byte)4)
+				.put(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray())
+				.put(((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray())
+				.array()
+		;
+
+
+
 
 //		byte[] ecRawExternalPublicKey = externalPublicKey.getEncoded();
-		byte[] ecRawExternalPublicKey = byteExternalPublicKey;
+//		byte[] ecRawExternalPublicKey = byteExternalPublicKey;
 		ECPublicKey ecExternalPublicKey = null;
 		KeyFactory externalKeyFactor = null;
 
