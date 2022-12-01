@@ -20,6 +20,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
@@ -48,15 +49,34 @@ public class ECDHService {
 		System.out.println( externalPublicKey.getEncoded().toString() );
 
 
+		System.out.println("chiave public esterna algoritmo e formato");
+		System.out.println( externalPublicKey.getAlgorithm() );
+		System.out.println( externalPublicKey.getFormat() );
 
 
-		KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDH","BC");
-		ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec("prime256v1");  // TODO da sistemare, prima era secp256k1
+		System.out.println("spec ECDSA");
+
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance( externalPublicKey.getAlgorithm(), "BC" ); // "BC", "SunEC", new BouncyCastleProvider()
+		// prime256v1,
+		// ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec("P-256");
+		ECGenParameterSpec parameterSpec = new ECGenParameterSpec("P-256");
 		kpg.initialize(parameterSpec);
 		KeyPair kp = kpg.generateKeyPair();
 		byte[] ourPk = kp.getPublic().getEncoded();
 
+		System.out.println("chiave interna publica");
+		System.out.println( kp.getPublic() );
+		System.out.println( kp.getPublic().toString() );
+		System.out.println( kp.getPublic().getEncoded() );
+		System.out.println( kp.getPublic().getEncoded().toString() );
 
+		System.out.println("chiave public esterna algoritmo e formato");
+		System.out.println( kp.getPublic().getAlgorithm() );
+		System.out.println( kp.getPublic().getFormat() );
+
+
+
+		/*
 		KeyFactory kf = KeyFactory.getInstance("ECDH", "BC");
 		X509EncodedKeySpec pkSpec = new X509EncodedKeySpec( externalPublicKey.getEncoded() );
 		PublicKey otherPublicKey = kf.generatePublic(pkSpec);
@@ -65,6 +85,7 @@ public class ECDHService {
 		System.out.println( otherPublicKey.toString() );
 		System.out.println( otherPublicKey.getEncoded() );
 		System.out.println( otherPublicKey.getEncoded().toString() );
+		 */
 
 
 		System.out.println("controllo chiave di sessione");
@@ -76,6 +97,7 @@ public class ECDHService {
 		// ka.doPhase(otherPublicKey, true);
 
 
+		System.out.println("generating shared");
 
 		// Read shared secret
 		byte[] sharedSecret = ka.generateSecret();

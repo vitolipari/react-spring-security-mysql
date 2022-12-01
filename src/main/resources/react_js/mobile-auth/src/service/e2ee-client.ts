@@ -101,13 +101,12 @@ export type DigitalSignatureResultType = {
 
 // export const curveName: string = "secp256k1"; // P256K
 // export const curveName: string = "P-256K"; // P256K
-export const curveName = "secp256r1"; //  = P-256  = prime256v1
+// export const curveName = "secp256r1"; //  = P-256  = prime256v1
+export const curveName = "p256"; //  = P-256  = prime256v1
 // export const curveName: string = "P-256";
 // export const curveName = "curve25519";
 // export const curveName = "ed25519"; // va bene per eddsa
 let processTime = 0;
-
-
 
 
 export const generateX509PemCert = (seed?: string, option?: CreateX509CertificateOptionType): Promise<string | DER> => {
@@ -390,10 +389,31 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                 // jwkPublicKeyY = btoa(String.fromCharCode.apply(null, convert( '0x'+ publicKey.substr(33), { from: bytesEncodeTypes.HEX })));
 
 
+                let curve_name = curveName;
+                switch ( curveName ) {
+
+                    // @ts-ignore
+                    case 'secp256k1':
+                        curve_name = 'P-256K';
+                        break;
+
+                    // @ts-ignore
+                    case 'secp256r1':
+                        curve_name = 'P-256';
+                        break;
+
+                    // @ts-ignore
+                    case 'prime256v1':
+                        curve_name = 'P-256';
+                        break;
+
+                    // @ts-ignore
+                    case 'p256':
+                        curve_name = 'P-256';
+                        break;
+                }
 
 
-                // @ts-ignore
-                // @ts-ignore
                 return ({
                     algorithm: sessionAlgorithmCurve,
                     keys: sessionAlgorithmKeys,
@@ -401,16 +421,7 @@ export const generateKeys = (pwd?: string, options?: GenerateKeysOptionType, ...
                     privateKeyHex: privateKey,
                     jwk: {
                         kty: "EC",
-                        crv: (
-                            // @ts-ignore
-                            (curveName === 'secp256k1')
-                                ? 'P-256K'
-                                : (
-                                    (curveName === 'secp256r1')
-                                        ? 'P-256'
-                                        : curveName
-                                )
-                        ),
+                        crv: curve_name,
                         x: jwkPublicKeyX,
                         y: jwkPublicKeyY,
                         d: jwkPrivateKey,

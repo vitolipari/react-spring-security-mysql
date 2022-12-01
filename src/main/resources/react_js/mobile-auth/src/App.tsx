@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {generateSessionKey, generateSessionKeyByCert, generateX509Cert, generateX509PemCert} from "./service";
@@ -65,30 +65,12 @@ const App = (): JSX.Element => {
     console.log(sessionData);
 
 
-    if( !!profileData.picture && !profilePic ) {
-        fetch(
-            profileData.picture,
-            {
-                // headers: { Authorization: `Bearer ${ profileData.access_token }` }
-            }
-        )
-          .then(response => response.blob())
-          .then(imageBlob => {
-              setProfilePic( URL.createObjectURL(imageBlob) );
 
-          })
-          .catch( e => {
-            console.log("errore al caricamento della pic");
-            console.log( e );
-          })
-      ;
-    }
+    useEffect((): any => {
+        console.log("ComponentDidMount equivalent");
 
 
-    if( !handshakeDone ) {
-
-        setHandshakeDone( true );
-
+        // http://localhost:3001/s?s=5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9&p=0123456789012345&pl=2
         generateX509PemCert( sessionData.pin )
             .then( (certificate) => {
 
@@ -100,11 +82,11 @@ const App = (): JSX.Element => {
 
                 generateSessionKeyByCert(certificate, certificate)
                     .then(r => {
-                        console.log("r");
+                        console.log("result si generateSessionKeyByCert");
                         console.log(r);
                     })
                     .catch(e => {
-                        console.log("errore");
+                        console.log("errore generateSessionKeyByCert");
                         console.log(e);
                     })
                 ;
@@ -138,18 +120,18 @@ const App = (): JSX.Element => {
                         console.log("response");
                         console.log( response );
 
-
-                        generateSessionKeyByCert(certificate, certificate)
-                            .then(r => {
-                                console.log("r");
-                                console.log(r);
-                            })
-                            .catch(e => {
-                                console.log("errore");
-                                console.log(e);
-                            })
-                        ;
-
+                        /*
+                                                generateSessionKeyByCert(certificate, certificate)
+                                                    .then(r => {
+                                                        console.log("r");
+                                                        console.log(r);
+                                                    })
+                                                    .catch(e => {
+                                                        console.log("errore");
+                                                        console.log(e);
+                                                    })
+                                                ;
+                        */
 
 
 
@@ -185,7 +167,42 @@ const App = (): JSX.Element => {
             })
         ;
 
+        return () => {
+            // showlog("ComponentDidMount equivalent RETURN");
+            return null;
+        };
+    });
+
+
+    if( !!profileData.picture && !profilePic ) {
+        fetch(
+            profileData.picture,
+            {
+                // headers: { Authorization: `Bearer ${ profileData.access_token }` }
+            }
+        )
+          .then(response => response.blob())
+          .then(imageBlob => {
+              setProfilePic( URL.createObjectURL(imageBlob) );
+
+          })
+          .catch( e => {
+            console.log("errore al caricamento della pic");
+            console.log( e );
+          })
+      ;
     }
+
+/*
+    if( !handshakeDone ) {
+
+        setHandshakeDone( true );
+
+
+
+    }
+
+ */
 
 
   return (
