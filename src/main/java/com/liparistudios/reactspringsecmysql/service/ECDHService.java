@@ -96,10 +96,12 @@ public class ECDHService {
 
 		byte[] ecRawExternalPublicKey =
 			ByteBuffer
-				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray().length + 1)
-				.put((byte)4)
+//				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray().length + 1)
+				.allocate(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray().length + 1)
+//				.put((byte)4)
+				.put((byte)3)
 				.put(((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray())
-				.put(((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray())
+//				.put(((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray())
 				.array()
 		;
 
@@ -119,7 +121,7 @@ public class ECDHService {
 		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecExternalNamedCurveParameterSpec.getSeed());
 		System.out.println( ellipticCurve );
 		System.out.println( ellipticCurve.toString() );
-		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, ecRawExternalPublicKey);
+		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, ecRawExternalPublicKey); // va in errore Incorrect length for uncompressed encoding
 		System.out.println("Point");
 		System.out.println(ecPoint);
 		ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, ecExternalNamedCurveParameterSpec);
