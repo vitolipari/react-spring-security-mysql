@@ -100,17 +100,20 @@ public class ECDHService {
 		KeyFactory externalKeyFactor = null;
 
 		ECNamedCurveParameterSpec ecExternalNamedCurveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256r1");
-		ECCurve curve = ecExternalNamedCurveParameterSpec.getCurve();
-		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecExternalNamedCurveParameterSpec.getSeed());
 		System.out.println("curva");
+		ECCurve curve = ecExternalNamedCurveParameterSpec.getCurve();
+		System.out.println(curve);
+		System.out.println(curve.toString());
+		EllipticCurve ellipticCurve = EC5Util.convertCurve(curve, ecExternalNamedCurveParameterSpec.getSeed());
 		System.out.println( ellipticCurve );
+		System.out.println( ellipticCurve.toString() );
 		ECPoint ecPoint = ECPointUtil.decodePoint(ellipticCurve, ecRawExternalPublicKey);
 		System.out.println("Point");
 		System.out.println(ecPoint);
 		ECParameterSpec ecParameterSpec = EC5Util.convertSpec(ellipticCurve, ecExternalNamedCurveParameterSpec);
-		ECPublicKeySpec externalPublicKeySpec = new java.security.spec.ECPublicKeySpec(ecPoint, ecParameterSpec);
+		ECPublicKeySpec externalPublicKeySpec = new ECPublicKeySpec(ecPoint, ecParameterSpec);
 
-		externalKeyFactor = java.security.KeyFactory.getInstance("EC");
+		externalKeyFactor = KeyFactory.getInstance("ECDH");
 		// this is externalPubicKey
 		ecExternalPublicKey = (ECPublicKey) externalKeyFactor.generatePublic(externalPublicKeySpec);
 
