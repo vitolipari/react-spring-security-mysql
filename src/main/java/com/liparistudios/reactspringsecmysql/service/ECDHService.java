@@ -87,6 +87,8 @@ public class ECDHService {
 */
 
 
+		System.out.println("-------------------------------------------");
+
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC"); // dalla chiave esterna
 		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
@@ -124,15 +126,20 @@ public class ECDHService {
 		System.out.println( ((ECPublicKey) pub).getW().getAffineY().toString(16) );
 
 
+		System.out.println("start agreement");
 
 		byte[] pubEncoded = pub.getEncoded();
 		byte[] pvtEncoded = pvt.getEncoded();
 
 		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
+		System.out.println("instance");
 		keyAgree.init(pvt);
+		System.out.println("init");
 //		keyAgree.doPhase(ecExternalPublicKey, true);
 		keyAgree.doPhase(externalPublicKey, true);
+		System.out.println("phase");
 
+		System.out.println("secret generating");
 		byte[] sessionKey = keyAgree.generateSecret();
 
 		System.out.println("session key");
