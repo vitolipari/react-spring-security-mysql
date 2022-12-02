@@ -11,7 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.annotation.security.RolesAllowed;
+// import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.security.Principal;

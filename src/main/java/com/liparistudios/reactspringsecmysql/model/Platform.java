@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
+// import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.*;
 

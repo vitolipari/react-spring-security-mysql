@@ -38,6 +38,7 @@ public class ECDHService {
 	public String generateSharedKeyFromExternalCertificate(String pemCertificate ) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, OperatorCreationException, IOException, InvalidKeySpecException, NoSuchProviderException, InvalidAlgorithmParameterException, InvalidParameterSpecException {
 
 		Security.addProvider(new BouncyCastleProvider());
+		String provider = "SunEC"; // SunEC
 
 
 		CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
@@ -45,53 +46,36 @@ public class ECDHService {
 
 		certificate.checkValidity();
 
-		PublicKey externalPublicKey = certificate.getPublicKey();
+		// PublicKey externalPublicKey = certificate.getPublicKey();
+		ECPublicKey externalPublicKey = (ECPublicKey) certificate.getPublicKey();
 
 		System.out.println("chiave esterna publica");
 		System.out.println( externalPublicKey );
-		System.out.println("chiave esterna publica toString");
-		System.out.println( externalPublicKey.toString() );
-		System.out.println("chiave esterna publica getEncoded");
-		System.out.println( externalPublicKey.getEncoded() );
-
-
 		System.out.println("chiave public esterna algoritmo");
 		System.out.println( externalPublicKey.getAlgorithm() );
 		System.out.println("chiave public esterna formato");
 		System.out.println( externalPublicKey.getFormat() );
 
 		System.out.println("estrazione coordinate dalla chiave publica esterna");
-		byte[] x = ((ECPublicKey) externalPublicKey).getW().getAffineX().toByteArray();
-		byte[] y = ((ECPublicKey) externalPublicKey).getW().getAffineY().toByteArray();
+		byte[] x = externalPublicKey.getW().getAffineX().toByteArray();
+		byte[] y = externalPublicKey.getW().getAffineY().toByteArray();
 		System.out.println("X");
 		System.out.println(Arrays.toString(x));
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX() );
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(10) );
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineX().toString(16) );
+		System.out.println( externalPublicKey.getW().getAffineX() );
+		System.out.println( externalPublicKey.getW().getAffineX().toString(16) );
 		System.out.println("Y");
 		System.out.println(Arrays.toString(y));
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY() );
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(10) );
-		System.out.println( ((ECPublicKey) externalPublicKey).getW().getAffineY().toString(16) );
-
-
-/*
-		KeyFactory kf = KeyFactory.getInstance("EC");
-
-		AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");
-		parameters.init(new ECGenParameterSpec("secp256r1"));
-		ECParameterSpec ecParameterSpec = parameters.getParameterSpec(ECParameterSpec.class);
-
-		ECPublicKeySpec ecPublicKeySpec = new ECPublicKeySpec(new ECPoint(((ECPublicKey) externalPublicKey).getW().getAffineX(), ((ECPublicKey) externalPublicKey).getW().getAffineY()), ecParameterSpec);
-		ECPublicKey ecExternalPublicKey = (ECPublicKey) kf.generatePublic(ecPublicKeySpec);
-*/
+		System.out.println( externalPublicKey.getW().getAffineY() );
+		System.out.println( externalPublicKey.getW().getAffineY().toString(16) );
 
 
 		System.out.println("-------------------------------------------");
 
 
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC", "BC"); // dalla chiave esterna
-		keyGen.initialize(new ECGenParameterSpec("secp256r1"), new SecureRandom());
+		// EC, BC
+		// EC, SunEC
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(externalPublicKey.getAlgorithm(), provider); // dalla chiave esterna
+		keyGen.initialize(new ECGenParameterSpec("secp256r1"));
 
 		KeyPair pair = keyGen.generateKeyPair();
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
@@ -100,38 +84,62 @@ public class ECDHService {
 
 		System.out.println("chiave interna publica");
 		System.out.println( pub );
-		System.out.println("chiave interna publica toString");
-		System.out.println( pub.toString() );
-		System.out.println("chiave interna publica getEncoded");
-		System.out.println( pub.getEncoded() );
-
-
 		System.out.println("chiave public interna algoritmo");
 		System.out.println( pub.getAlgorithm() );
 		System.out.println("chiave public interna formato");
 		System.out.println( pub.getFormat() );
 
 		System.out.println("estrazione coordinate dalla chiave publica interna");
-//		byte[] x = ((ECPublicKey) pub).getW().getAffineX().toByteArray();
-//		byte[] y = ((ECPublicKey) pub).getW().getAffineY().toByteArray();
 		System.out.println("X");
-		System.out.println(Arrays.toString(x));
-		System.out.println( ((ECPublicKey) pub).getW().getAffineX() );
-		System.out.println( ((ECPublicKey) pub).getW().getAffineX().toString(10) );
-		System.out.println( ((ECPublicKey) pub).getW().getAffineX().toString(16) );
+		System.out.println( pub.getW().getAffineX() );
+		System.out.println( pub.getW().getAffineX().toString(16) );
 		System.out.println("Y");
-		System.out.println(Arrays.toString(y));
-		System.out.println( ((ECPublicKey) pub).getW().getAffineY() );
-		System.out.println( ((ECPublicKey) pub).getW().getAffineY().toString(10) );
-		System.out.println( ((ECPublicKey) pub).getW().getAffineY().toString(16) );
+		System.out.println( pub.getW().getAffineY() );
+		System.out.println( pub.getW().getAffineY().toString(16) );
 
 
-		System.out.println("start agreement");
+		// seconda chiave publica interna
+		KeyPair pair2 = keyGen.generateKeyPair();
+		ECPublicKey pub2 = (ECPublicKey)pair2.getPublic();
+		ECPrivateKey pvt2 = (ECPrivateKey)pair2.getPrivate();
 
-		byte[] pubEncoded = pub.getEncoded();
-		byte[] pvtEncoded = pvt.getEncoded();
 
-		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH");
+		System.out.println("chiave interna publica2");
+		System.out.println( pub2 );
+		System.out.println("chiave publica2 interna algoritmo");
+		System.out.println( pub2.getAlgorithm() );
+		System.out.println("chiave publica2 interna formato");
+		System.out.println( pub2.getFormat() );
+
+		System.out.println("estrazione coordinate dalla chiave publica2 interna");
+		System.out.println("X");
+		System.out.println( pub2.getW().getAffineX() );
+		System.out.println( pub2.getW().getAffineX().toString(16) );
+		System.out.println("Y");
+		System.out.println( pub2.getW().getAffineY() );
+		System.out.println( pub2.getW().getAffineY().toString(16) );
+
+
+		System.out.println("start agreement 2");
+
+		KeyAgreement keyAgree2 = KeyAgreement.getInstance("ECDH", provider);
+		System.out.println("instance");
+		keyAgree2.init(pvt);
+		System.out.println("init");
+//		keyAgree.doPhase(ecExternalPublicKey, true);
+		keyAgree2.doPhase(pub2, true);
+		System.out.println("phase");
+
+		System.out.println("secret generating");
+		byte[] sessionKey2 = keyAgree2.generateSecret();  // point is not on curve
+
+		System.out.println("session key");
+		System.out.println(sessionKey2);
+
+		System.out.println("--------------------------------------------------------");
+		System.out.println("start agreement originario ");
+
+		KeyAgreement keyAgree = KeyAgreement.getInstance("ECDH", provider);
 		System.out.println("instance");
 		keyAgree.init(pvt);
 		System.out.println("init");
@@ -140,7 +148,7 @@ public class ECDHService {
 		System.out.println("phase");
 
 		System.out.println("secret generating");
-		byte[] sessionKey = keyAgree.generateSecret();
+		byte[] sessionKey = keyAgree.generateSecret();  // point is not on curve
 
 		System.out.println("session key");
 		System.out.println(sessionKey);
