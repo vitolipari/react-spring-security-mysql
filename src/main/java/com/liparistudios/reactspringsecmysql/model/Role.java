@@ -1,12 +1,13 @@
 package com.liparistudios.reactspringsecmysql.model;
 
 import com.liparistudios.reactspringsecmysql.model.Permission;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

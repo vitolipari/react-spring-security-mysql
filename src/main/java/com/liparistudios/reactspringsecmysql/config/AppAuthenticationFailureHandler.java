@@ -1,14 +1,16 @@
 package com.liparistudios.reactspringsecmysql.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -20,7 +22,7 @@ public class AppAuthenticationFailureHandler extends SimpleUrlAuthenticationFail
 
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException, ServletException {
         System.out.println("onAuthenticationFailure");
         System.out.println(exception.getMessage());
         System.out.println(exception.getLocalizedMessage());

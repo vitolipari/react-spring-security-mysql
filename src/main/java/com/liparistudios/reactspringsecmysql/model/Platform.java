@@ -1,15 +1,11 @@
 package com.liparistudios.reactspringsecmysql.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import javax.persistence.*;
-// import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.*;
 

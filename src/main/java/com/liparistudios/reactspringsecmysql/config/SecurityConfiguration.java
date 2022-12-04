@@ -40,7 +40,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity( prePostEnabled = true )
 public class SecurityConfiguration {
 
 
@@ -119,57 +118,58 @@ public class SecurityConfiguration {
              */
 
 
-            .authorizeRequests( auth ->
+            .authorizeHttpRequests( auth ->
+//            .authorizeRequests( auth ->
                 auth
 
                     // rotte libere
-                    .antMatchers("/api/v1/customer/signup").permitAll()         // registrazione di un nuovo customer
-                    .antMatchers("/api/v1/role").permitAll()                    // lista di tutti i ruoli
+                    .requestMatchers("/api/v1/customer/signup").permitAll()         // registrazione di un nuovo customer
+                    .requestMatchers("/api/v1/role").permitAll()                    // lista di tutti i ruoli
 
                     // public routes
-                    .antMatchers("/public").permitAll()
-                    .antMatchers("/public/**").permitAll()
+                    .requestMatchers("/public").permitAll()
+                    .requestMatchers("/public/**").permitAll()
 
 					// access to session for authentication
-                    .antMatchers("/api/v1/session/open/*").permitAll()
-                    .antMatchers("/api/v1/session/open/*").permitAll()
-                    .antMatchers("/s/*").permitAll()
-                    .antMatchers("/s?*").permitAll()
-                    .antMatchers("/s").permitAll()
+                    .requestMatchers("/api/v1/session/open/*").permitAll()
+                    .requestMatchers("/api/v1/session/open/*").permitAll()
+                    .requestMatchers("/s/*").permitAll()
+                    .requestMatchers("/s?*").permitAll()
+                    .requestMatchers("/s").permitAll()
 
 					// back from authentication
-					.antMatchers("/oath2/gobackwithprofiledata").permitAll()
-					.antMatchers("/oath2/gobackwithprofiledata?*").permitAll()
-					.antMatchers("/oauth2/preauthorize").permitAll()
-					.antMatchers("/oauth2/preauthorize?*").permitAll()
+					.requestMatchers("/oath2/gobackwithprofiledata").permitAll()
+					.requestMatchers("/oath2/gobackwithprofiledata?*").permitAll()
+					.requestMatchers("/oauth2/preauthorize").permitAll()
+					.requestMatchers("/oauth2/preauthorize?*").permitAll()
 
                     // hand-shake
-                    .antMatchers("/api/v1/session/handshake").permitAll()
+                    .requestMatchers("/api/v1/session/handshake").permitAll()
 
 
 					// H2
-                    .antMatchers("/h2-console").permitAll()
-                    .antMatchers("/h2-console/").permitAll()
-                    .antMatchers("/h2-console/*").permitAll()
-                    .antMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/h2-console").permitAll()
+                    .requestMatchers("/h2-console/").permitAll()
+                    .requestMatchers("/h2-console/*").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll()
 
                     // FrontEnd
-                    .antMatchers("/").permitAll()
-                    .antMatchers("/**/*.png").permitAll()
-                    .antMatchers("/**/*.jpg").permitAll()
-                    .antMatchers("/**/*.ico").permitAll()
-                    .antMatchers("/*.ico").permitAll()
-                    .antMatchers("/*.json").permitAll()
-                    .antMatchers("/**/*.json").permitAll()
-                    .antMatchers("/**/static/js/*.js").permitAll()
-                    .antMatchers("/**/static/css/*.css").permitAll()
-                    .antMatchers("/**/static/**/*.map").permitAll()
-                    .antMatchers("/**/static/media/*").permitAll()
+                    .requestMatchers("/").permitAll()
+                    .requestMatchers("/**/*.png").permitAll()
+                    .requestMatchers("/**/*.jpg").permitAll()
+                    .requestMatchers("/**/*.ico").permitAll()
+                    .requestMatchers("/*.ico").permitAll()
+                    .requestMatchers("/*.json").permitAll()
+                    .requestMatchers("/**/*.json").permitAll()
+                    .requestMatchers("/**/static/js/*.js").permitAll()
+                    .requestMatchers("/**/static/css/*.css").permitAll()
+                    .requestMatchers("/**/static/**/*.map").permitAll()
+                    .requestMatchers("/**/static/media/*").permitAll()
 
 
                     // rotte private
-                    .antMatchers("/admin").hasAuthority("ADMIN")
-                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+                    .requestMatchers("/admin").hasAuthority("ADMIN")
+                    .requestMatchers("/admin/**").hasAuthority("ADMIN")
 
                     // tutto il resto
                     .anyRequest()

@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
 import com.liparistudios.reactspringsecmysql.model.Platform;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;

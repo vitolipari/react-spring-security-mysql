@@ -5,6 +5,7 @@ import com.liparistudios.reactspringsecmysql.model.Customer;
 import com.liparistudios.reactspringsecmysql.model.LoginAuthPack;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 //import com.liparistudios.reactspringsecmysql.service.TokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,26 +1,14 @@
 package com.liparistudios.reactspringsecmysql.controller.api.v1;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.liparistudios.reactspringsecmysql.businessLogic.SessionHandlerForControllers;
-import com.liparistudios.reactspringsecmysql.model.Customer;
-import com.liparistudios.reactspringsecmysql.model.ECDHKeyPack;
-import com.liparistudios.reactspringsecmysql.model.Platform;
 import com.liparistudios.reactspringsecmysql.model.Session;
 import com.liparistudios.reactspringsecmysql.service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -28,13 +16,8 @@ import java.security.NoSuchProviderException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RestController

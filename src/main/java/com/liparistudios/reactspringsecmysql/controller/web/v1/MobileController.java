@@ -8,12 +8,14 @@ import com.liparistudios.reactspringsecmysql.model.Session;
 import com.liparistudios.reactspringsecmysql.service.CustomerServiceImplementation;
 import com.liparistudios.reactspringsecmysql.service.SessionService;
 import com.liparistudios.reactspringsecmysql.service.external.social.GoogleService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
